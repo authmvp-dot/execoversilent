@@ -278,6 +278,8 @@ void YorzenRenderMenuTabs(float fTabOffset)
 				c::text::text_hov = c::main_color;
 			}
 
+			FeatureCheckbox("RGB Rainbow Theme", "Cycle Menu Colors Automatically", &c::bRGBTheme);
+
 			static bool tempCleanerOnce = false;
 			if (FeatureCheckbox("Temp File Cleaner", "Delete Temp/Cache Files.", &tempCleanerOnce)) {
 				if (tempCleanerOnce) {

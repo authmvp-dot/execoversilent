@@ -200,9 +200,17 @@ inline ImColor ImLerpColor(const ImColor& col1, const ImColor& col2, float t) {
 	);
 }
 
-// ÐžÐ±Ð½Ð¾Ð²Ð»ÐµÐ½Ð¸Ðµ Ñ‚ÐµÐ¼Ñ‹
+inline bool bRGBTheme = false;
+
+// Theme Update
 inline void UpdateTheme()
 {
+	if (bRGBTheme && ImGui::GetCurrentContext()) {
+		float hue = (float)fmod(ImGui::GetTime() * 0.25f, 1.0f);
+		c::main_color = ImColor::HSV(hue, 0.85f, 1.0f);
+		c::accent = c::main_color;
+		c::text::text_hov = c::main_color;
+	}
 
 	float change_anim_speed = ImGui::GetIO().DeltaTime * 10.f;
 
@@ -210,7 +218,7 @@ inline void UpdateTheme()
 
 	c::accent_color = utils::GetDarkColor(c::main_color);
 
-	if (bTheme) { // Ð¢Ñ‘Ð¼Ð½Ð°Ñ Ñ‚ÐµÐ¼Ð°
+	if (bTheme) { // Ð¢Ñ‘Ð¼Ð½Ð°Ñ  Ñ‚ÐµÐ¼Ð°
 
 		ImGui::GetStyle().Colors[ImGuiCol_Separator] = c::stroke_color;
 
