@@ -193,17 +193,21 @@ void ToggleClickability(bool clickable)
 	if (!hwnd || !IsWindow(hwnd))
 		return;
 
-	if (clickable) {
-		SetWindowLongPtr(hwnd, GWL_EXSTYLE, WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LAYERED);
-		SetForegroundWindow(hwnd);
+	if (hTargetWindow) {
+		if (clickable) {
+			SetWindowLongPtr(hwnd, GWL_EXSTYLE, WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LAYERED);
+			SetForegroundWindow(hwnd);
+		}
+		else {
+			SetWindowLongPtr(hwnd, GWL_EXSTYLE,
+				WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_NOACTIVATE);
+		}
+		SetLayeredWindowAttributes(hwnd, RGB(0, 0, 0), 255, LWA_ALPHA);
+		SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED);
+	} else {
+		SetWindowLongPtr(hwnd, GWL_EXSTYLE, WS_EX_APPWINDOW);
+		SetWindowPos(hwnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 	}
-	else {
-		SetWindowLongPtr(hwnd, GWL_EXSTYLE,
-			WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_NOACTIVATE);
-	}
-
-	SetLayeredWindowAttributes(hwnd, RGB(0, 0, 0), 255, LWA_ALPHA);
-	SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED);
 }
 
 inline namespace YorzenCombo

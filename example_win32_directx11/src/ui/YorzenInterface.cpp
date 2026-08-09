@@ -117,7 +117,7 @@ void Interface::HandleMenuKey()
                 if (hTargetWindow && IsWindow(hTargetWindow))
                     SetForegroundWindow(hTargetWindow);
             }
-            SetWindowPos(hWindow, HWND_TOPMOST, 0, 0, 0, 0,
+            SetWindowPos(hWindow, hTargetWindow ? HWND_TOPMOST : NULL, 0, 0, 0, 0,
                 SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_FRAMECHANGED);
         }
     }
