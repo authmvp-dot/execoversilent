@@ -929,9 +929,7 @@ namespace YorzenUI {
 						bg_draw->AddShadowRect(pos, pos + c::bg::size, ImColor(0.f, 0.f, 0.f, 1.f), 250.f, ImVec2(0, 0), ImDrawFlags_RoundCornersAll | ImDrawFlags_ShadowCutOutShapeBackground, c::bg::rounding);
 					ImGui::PopClipRect();
 
-					PushFont(font::inter_semibold);
-					rainbow.RenderText(utils::center_text(ImGui::GetWindowPos(), ImGui::GetWindowPos() + ImVec2(160, 75), YorzenName::cheat_name), YorzenName::cheat_name, 1.f, 1.f, bg_draw);
-					PopFont();
+					// Removed BLAZE cheat name rendering
 
 					glow_text_drawlist = GetWindowDrawList();
 
@@ -946,12 +944,12 @@ namespace YorzenUI {
 					GetWindowDrawList()->AddRectFilled(pos, pos + ImVec2(c::bg::size.x, 75), utils::GetColorWithAlpha(c::child::background, c::child::background.w / 2), c::bg::rounding, ImDrawFlags_RoundCornersTop);
 					GetWindowDrawList()->AddRectFilled(pos + ImVec2(0, 75), pos + ImVec2(c::bg::size.x, 76), ImGui::GetColorU32(c::child::stroke), c::bg::rounding);
 
-					// Top-Left Header Navigation Tabs (Aligned to Left)
+					// Top-Left Header Navigation Tabs (Icons + Label)
 					ImGui::SetCursorPos(ImVec2(18.f, 17.5f));
 					ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(8.f, 0.f));
 					for (int i = 0; i < IM_ARRAYSIZE(tab_list); i++) {
 						if (i > 0) ImGui::SameLine();
-						std::string tab_label = std::string(tab_ico_list[i]) + "  " + tab_list[i];
+						std::string tab_label = std::string(tab_ico_list[i]) + " " + tab_list[i];
 						custom::SubTab(tab_label.c_str(), &iTabs, i);
 					}
 					ImGui::PopStyleVar();
