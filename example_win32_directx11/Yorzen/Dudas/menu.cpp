@@ -15,6 +15,8 @@
 #include <functional>
 #include <string>
 
+#include <AIMBOTMEMORY.H>
+
 extern AimbotMemory Aim;
 
 // Extern-only YorzenKey access (do NOT include yorzen.h Ã¢â‚¬â€ it defines globals).

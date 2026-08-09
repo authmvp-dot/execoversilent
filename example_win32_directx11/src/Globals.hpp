@@ -6,6 +6,28 @@
 #include <imgui.h>
 #include <unordered_map>
 #include <string>
+#include <vector>
+
+struct Vector3 {
+	float x, y, z;
+	static Vector3 Zero() { return { 0.f, 0.f, 0.f }; }
+};
+
+struct Matrix4x4 {
+	float m[4][4];
+};
+
+struct Player {
+	std::string name;
+	Vector3 position;
+	bool isVisible;
+};
+
+struct GroundLootEntry {
+	uint32_t id;
+	std::string name;
+	Vector3 position;
+};
 
 static int auth_tab = 0;
 static bool aimbot_master_enabled = false;
