@@ -1,16 +1,16 @@
 #include "BackendBridge.hpp"
 #include "SyncGlobals.hpp"
-#include <example_win32_directx11/src/adb/adb.hpp>
-#include <example_win32_directx11/src/Globals.hpp>
+#include <src/adb/adb.hpp>
+#include <src/Globals.hpp>
 #include <urlmon.h>
 #pragma comment(lib, "urlmon.lib")
-#include <example_win32_directx11/BlazeMem.h>
-#include <example_win32_directx11/src/Overlay/Overlay.hpp>
-#include <example_win32_directx11/EspLines/Memory/Memory.hpp>
-#include <example_win32_directx11/AIMBOTMEMORY.H>
-#include <example_win32_directx11/notifications.h>
-#include <example_win32_directx11/Yorzen/Dudas/ui_settings.hpp>
-#include <example_win32_directx11/ImGui/font_defines.h>
+#include <BlazeMem.h>
+#include <src/Overlay/Overlay.hpp>
+#include <EspLines/Memory/Memory.hpp>
+#include <AIMBOTMEMORY.H>
+#include <notifications.h>
+#include <Yorzen/Dudas/ui_settings.hpp>
+#include <ImGui/font_defines.h>
 #include <imgui_settings.h>
 
 inline namespace YorzenKey {

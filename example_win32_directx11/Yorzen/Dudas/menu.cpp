@@ -1,14 +1,14 @@
 #include "menu.hpp"
 #include "menu_widgets.hpp"
 
-#include <example_win32_directx11/Yorzen/Dudas/ui_settings.hpp>
-#include <example_win32_directx11/src/Backend/BackendBridge.hpp>
-#include <example_win32_directx11/src/Backend/BackendConfig.hpp>
-#include <example_win32_directx11/src/Globals.hpp>
-#include <example_win32_directx11/src/Overlay/Overlay.hpp>
-#include <example_win32_directx11/BlazeMem.h>
-#include <example_win32_directx11/ImGui/font_defines.h>
-#include <example_win32_directx11/ImGui/custom_widgets.hpp>
+#include <Yorzen/Dudas/ui_settings.hpp>
+#include <src/Backend/BackendBridge.hpp>
+#include <src/Backend/BackendConfig.hpp>
+#include <src/Globals.hpp>
+#include <src/Overlay/Overlay.hpp>
+#include <BlazeMem.h>
+#include <ImGui/font_defines.h>
+#include <ImGui/custom_widgets.hpp>
 #include <imgui_settings.h>
 #include <Windows.h>
 
@@ -17,7 +17,7 @@
 
 extern AimbotMemory Aim;
 
-// Extern-only YorzenKey access (do NOT include yorzen.h â€” it defines globals).
+// Extern-only YorzenKey access (do NOT include yorzen.h Ã¢â‚¬â€ it defines globals).
 inline namespace YorzenKey {
 	extern bool HideMenuCheck;
 	extern bool ClosedCheck;
@@ -76,7 +76,7 @@ bool FeatureCheckbox(const char* label, const char* tip, bool* v, std::function<
 
 void YorzenRenderMenuTabs(float fTabOffset)
 {
-	// Tab 0 â€” Aim
+	// Tab 0 Ã¢â‚¬â€ Aim
 	if (iTabs == 0)
 	{
 		ImGui::SetCursorPos(ImVec2(180, 85 + fTabOffset));
@@ -143,7 +143,7 @@ void YorzenRenderMenuTabs(float fTabOffset)
 		custom::EndChild();
 	}
 
-	// Tab 1 â€” Visual
+	// Tab 1 Ã¢â‚¬â€ Visual
 	if (iTabs == 1)
 	{
 		ImGui::SetCursorPos(ImVec2(180, 85 + fTabOffset));
@@ -209,7 +209,7 @@ void YorzenRenderMenuTabs(float fTabOffset)
 		custom::EndChild();
 	}
 
-	// Tab 2 â€” Brutal + Machine
+	// Tab 2 Ã¢â‚¬â€ Brutal + Machine
 	if (iTabs == 2)
 	{
 		ImGui::SetCursorPos(ImVec2(180, 85 + fTabOffset));
@@ -274,7 +274,7 @@ void YorzenRenderMenuTabs(float fTabOffset)
 		custom::EndChild();
 	}
 
-	// Tab 3 â€” Keybinds
+	// Tab 3 Ã¢â‚¬â€ Keybinds
 	if (iTabs == 3)
 	{
 		ImGui::SetCursorPos(ImVec2(180, 85 + fTabOffset));
@@ -307,7 +307,7 @@ void YorzenRenderMenuTabs(float fTabOffset)
 		custom::EndChild();
 	}
 
-	// Tab 4 â€” Settings
+	// Tab 4 Ã¢â‚¬â€ Settings
 	if (iTabs == 4)
 	{
 		ImGui::SetCursorPos(ImVec2(180, 85 + fTabOffset));

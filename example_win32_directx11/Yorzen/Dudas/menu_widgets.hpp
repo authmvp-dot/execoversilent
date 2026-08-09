@@ -1,6 +1,6 @@
 #pragma once
 
-#include <example_win32_directx11/ImGui/custom_widgets.hpp>
+#include <ImGui/custom_widgets.hpp>
 #include <imgui.h>
 #include <imgui_internal.h>
 #include <imgui_settings.h>

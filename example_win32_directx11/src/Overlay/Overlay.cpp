@@ -1,7 +1,7 @@
 #include "Overlay.hpp"
 #include <algorithm>
 #include <dwmapi.h>
-#include <example_win32_directx11/src/Globals.hpp>
+#include <src/Globals.hpp>
 #include <imgui_impl_dx11.h>
 #include <imgui_impl_win32.h>
 #include <iostream>
@@ -200,7 +200,7 @@ void Overlay::UpdateWindowPos() {
   g_Globals.EspConfig.Width = TargetWindowRect.Width();
   g_Globals.EspConfig.Height = TargetWindowRect.Height();
 
-  // Overlay matches emulator only â€” keybind HUD uses a separate desktop window.
+  // Overlay matches emulator only Ã¢â‚¬â€ keybind HUD uses a separate desktop window.
   RECT currentRect;
   GetWindowRect(hWindow, &currentRect);
   int currentWidth = currentRect.right - currentRect.left;
