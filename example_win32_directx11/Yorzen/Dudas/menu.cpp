@@ -87,16 +87,6 @@ void YorzenRenderMenuTabs(float fTabOffset)
 			if (ui.esp.AimbotEnabled)
 				edited::Combo("Aimbot Type", NULL, &ui.esp.AimbotType, "Visible\0Rage\0Legit\0");
 
-			FeatureCheckbox("AimBot External", "Aimbot External Aim", &ui.esp.AimExternalEnabled);
-			if (ui.esp.AimExternalEnabled) {
-				if (ui.esp.AimExternalBone < 0 || ui.esp.AimExternalBone > 4)
-					ui.esp.AimExternalBone = 0;
-				edited::Combo("External Bones", "Select Your Aim Pos", &ui.esp.AimExternalBone,
-					"Head\0Neck\0Chest\0Left Neck\0Right Neck\0");
-				edited::SliderFloat("External Fov", "External Aim Search Radius", &ui.esp.AimExternalFov, 1.f, 1200.f, "%.1f");
-				edited::SliderInt("External Distance", "External Max Range", &ui.esp.AimExternalDistance, 1, 200, "%d m");
-			}
-
 			FeatureCheckbox("Silent Aim", "Redirect Bullets While Firing", &ui.esp.AimSilentEnabled);
 			if (ui.esp.AimSilentEnabled) {
 				if (ui.esp.AimSilentHitbox < 0 || ui.esp.AimSilentHitbox > 1)
@@ -104,37 +94,16 @@ void YorzenRenderMenuTabs(float fTabOffset)
 				edited::Combo("Silent Aim Mode", "Max Head Or Body", &ui.esp.AimSilentHitbox, "Max (Head)\0Body\0");
 			}
 
-			FeatureCheckbox("Enemy Pull", "Pull Enemy Onto Aim Line", &ui.esp.PullEnemyEnabled);
-			if (ui.esp.PullEnemyEnabled)
-				edited::SliderFloat("Pull Distance", "Max Pull Range", &ui.esp.PullEnemyDistance, 1.f, 500.f, "%.0fm");
-
 			FeatureCheckbox("Auto Fire", "Auto Click When In Fov", &ui.esp.AutoFireEnabled);
 
 			FeatureCheckbox("Show Aim Fov", "Shows Aim Search Circle", &ui.esp.AimFovEnabled);
 			if (ui.esp.AimFovEnabled)
 				edited::ColorEdit4("Fov Color", NULL, ui.esp.AimFovColor);
 
-			FeatureCheckbox("No Recoil", "Less Weapon Kick", &ui.esp.NoRecoil);
 			FeatureCheckbox("Fast Reload", "Faster Reload", &ui.esp.FastReload);
-			FeatureCheckbox("Ignore Bots", "Skip Bot Targets", &ui.esp.IgnoreBots);
-			FeatureCheckbox("Ignore Knocked", "Skip Downed Enemies", &ui.esp.IgnoreKnockedEntity);
 
 			edited::SliderFloat("Fov Radius", "Aim Search Radius", &ui.esp.AimFovValue, 0.f, 1200.f, "%.1f");
 			edited::SliderInt("Aim Distance", "Max Aim Range (m)", &ui.esp.AimbotDistance, 0, 200, "%d m");
-
-			if (custom::Checkbox("Glitch Fire", &Backend_BlazeCheckbox(5931))) {
-				BlazeMemOnCheckboxToggled(5931, "Glitch Fire",
-					[]() { Aim.GlitchFireON(); }, []() { Aim.GlitchFireOFF(); });
-			}
-
-			FeatureCheckbox("Sniper Scope", "Sniper Aim On Fire", &ui.esp.SniperScopeEnabled);
-			if (ui.esp.SniperScopeEnabled)
-				edited::Combo("Scope Mode", NULL, &ui.esp.SniperScopeMode, "Head\0Body\0");
-
-			if (custom::Checkbox("Sniper Switch", &Backend_BlazeCheckbox(8))) {
-				BlazeMemOnCheckboxToggled(8, "Sniper Switch",
-					[]() { Aim.SniperSwitchon(); }, []() { Aim.SniperSwitchoff(); });
-			}
 		}
 		custom::EndChild();
 	}
@@ -162,10 +131,6 @@ void YorzenRenderMenuTabs(float fTabOffset)
 				edited::ColorEdit4("Fill Color", NULL, ui.esp.ESPBoxFillColor);
 			});
 
-			FeatureCheckbox("Skeleton", "Bone Overlay", &ui.esp.ESPBoneEnabled, []() {
-				edited::ColorEdit4("Bone Color", NULL, ui.esp.ESPBoneColor);
-			});
-
 			FeatureCheckbox("Health Bar", "Hp Bar", &ui.esp.PlayerHealthBar);
 			FeatureCheckbox("Weapon Icon", "Weapon Glyph", &ui.esp.PlayerWeaponIcon);
 
@@ -181,72 +146,20 @@ void YorzenRenderMenuTabs(float fTabOffset)
 				edited::ColorEdit4("Distance Color", NULL, ui.esp.PlayerDistanceColor);
 			});
 
-			FeatureCheckbox("Esp Rank", "Rank Tag", &ui.esp.RankEnabled, []() {
-				edited::ColorEdit4("Rank Color", NULL, ui.esp.RankColor);
-			});
-
-			FeatureCheckbox("Origin Line", "Line Under 20m", &ui.esp.SnapLinesEnabled);
-			FeatureCheckbox("Wukong Mode", "Visible Only", &ui.esp.WukongMode);
-			FeatureCheckbox("Rainbow Esp", "Cycle Colors", &ui.esp.RainbowESP);
-			FeatureCheckbox("Ignore Training Bots", "Hide Training Bots", &ui.esp.IgnoreTrainingBots);
-			FeatureCheckbox("Invalid Timer", "Match Timer", &ui.esp.InvalidTimer);
 			edited::SliderInt("Esp Distance", "Draw Distance (m)", &ui.esp.espmaxdis, 0, 200, "%d m");
-
-			if (custom::Button("Refresh Esp", ImVec2(ImGui::GetContentRegionAvail().x, 35))) {
-				g_Globals.EspConfig.Refresh = true;
-				Backend_Notify("ESP Refreshed", true);
-			}
 		}
 		custom::EndChild();
 	}
 
-	// Tab 2 — Brutal + Machine
+	// Tab 2 — Brutal
 	if (iTabs == 2)
 	{
 		ImGui::SetCursorPos(ImVec2(15, 80 + fTabOffset));
-		custom::Child("Brutal", ICON_COMPONENTS_LINE, "Movement, Wall Hacks & Exploits", ImVec2(510, 350), true, 0);
+		custom::Child("Brutal", ICON_COMPONENTS_LINE, "Movement & Exploits", ImVec2(510, 350), true, 0);
 		{
 			FeatureCheckbox("Speed Timer", "Faster Sprint", &ui.esp.SpeedTimerEnabled);
-
-			if (custom::Button("Load Wall Hack", ImVec2(ImGui::GetContentRegionAvail().x, 36))) {
-				BlazeMemRunLoad("Wall Hack", []() { Aim.SaveWallhackAoB(); });
-			}
-			if (custom::Checkbox("Wall Hack", &Backend_BlazeCheckbox(31))) {
-				BlazeMemOnCheckboxToggled(31, "Wall Hack",
-					[]() { Aim.ActivateWallhack(); }, []() { Aim.OFFWallhack(); });
-			}
-
-			if (custom::Button("Load Camera Right", ImVec2(ImGui::GetContentRegionAvail().x, 36))) {
-				BlazeMemRunLoad("Camera Right", []() { Aim.SaveCameraAoB(); });
-			}
-			if (custom::Checkbox("Camera Right", &Backend_BlazeCheckbox(301))) {
-				BlazeMemOnCheckboxToggled(301, "Camera Right",
-					[]() { Aim.ActivateCamera(); }, []() { Aim.OFFCamera(); });
-			}
-
-			if (custom::Button("Load Fast Landing", ImVec2(ImGui::GetContentRegionAvail().x, 36))) {
-				BlazeMemRunLoad("Fast Landing Hack", []() { Aim.SaveFastlandingAoB(); });
-			}
-			if (custom::Checkbox("Fast Landing", &Backend_BlazeCheckbox(111))) {
-				BlazeMemOnCheckboxToggled(111, "Fast Landing",
-					[]() { Aim.ActivateFastlanding(); }, []() { Aim.OFFFastlanding(); });
-			}
-
-			FeatureCheckbox("Burst Fire", "Rapid Burst", &ui.esp.BurstFire);
 			FeatureCheckbox("Vision Hack", "See Farther", &ui.esp.VisionHackEnabled);
 			FeatureCheckbox("Down Player", "Push Model Down", &ui.esp.DownPlayerEnabled);
-
-			if (FeatureCheckbox("No Gravity Fly", "WASD Space Up Ctrl Down", &ui.esp.NoGravityFlyEnabled)) {
-				g_Globals.Misc.NoGravityFlyEnabled = ui.esp.NoGravityFlyEnabled;
-				if (ui.esp.NoGravityFlyEnabled) {
-					g_Globals.Misc.FlyHackInternalEnabled = false;
-					FlyHack_LocalPlayer::Stop();
-					NoGravityFly::Start();
-				}
-				else {
-					NoGravityFly::Stop();
-				}
-			}
 
 			FeatureCheckbox("Spin Player", "Spin Character", &ui.esp.SpinPlayerEnabled);
 			if (ui.esp.SpinPlayerEnabled)
