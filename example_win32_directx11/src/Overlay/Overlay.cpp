@@ -91,7 +91,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam,
     POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
     ScreenToClient(hWnd, &pt);
     if (pt.y >= 0 && pt.y <= 75) {
-      if (pt.x >= 10 && pt.x <= 310 && pt.y > 12) {
+      if (YorzenMain::Auth && pt.x >= 10 && pt.x <= 310 && pt.y > 15) {
         return HTCLIENT;
       }
       return HTCAPTION;
