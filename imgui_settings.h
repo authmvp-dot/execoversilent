@@ -181,9 +181,10 @@ inline namespace c
 		}
 
 		inline ImVec4 text_active = ImColor(255, 255, 255);
-		inline ImVec4 text_hov = ImColor(255, 69, 0); // ÐšÑ€Ð°ÑÐ½Ñ‹Ð¹ Ð°ÐºÑ†ÐµÐ½Ñ‚ Ð¿Ñ€Ð¸ Ð½Ð°Ð²ÐµÐ´ÐµÐ½Ð¸Ð¸
+		inline ImVec4 text_hov = ImColor(255, 69, 0); // ÐšÑ€Ð°Ñ Ð½Ñ‹Ð¹ Ð°ÐºÑ†ÐµÐ½Ñ‚ Ð¿Ñ€Ð¸ Ð½Ð°Ð²ÐµÐ´ÐµÐ½Ð¸Ð¸
 		inline ImVec4 text = ImColor(200, 200, 200);
 	}
+	inline bool bRGBTheme = false;
 }
 
 // Ð¢ÐµÐ¼Ð° (Ð¿ÐµÑ€ÐµÐºÐ»ÑŽÑ‡ÐµÐ½Ð¸Ðµ)
@@ -200,12 +201,10 @@ inline ImColor ImLerpColor(const ImColor& col1, const ImColor& col2, float t) {
 	);
 }
 
-inline bool bRGBTheme = false;
-
 // Theme Update
 inline void UpdateTheme()
 {
-	if (bRGBTheme && ImGui::GetCurrentContext()) {
+	if (c::bRGBTheme && ImGui::GetCurrentContext()) {
 		float hue = (float)fmod(ImGui::GetTime() * 0.25f, 1.0f);
 		c::main_color = ImColor::HSV(hue, 0.85f, 1.0f);
 		c::accent = c::main_color;

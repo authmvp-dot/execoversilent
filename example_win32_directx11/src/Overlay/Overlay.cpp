@@ -165,7 +165,8 @@ void Overlay::Initialize() {
     srand(static_cast<unsigned int>(time(0)));
 
     const std::wstring w = RandomString(10);
-    s_overlayClassNameStorage.assign(w.begin(), w.end());
+    s_overlayClassNameStorage.clear();
+    for (wchar_t wc : w) { s_overlayClassNameStorage.push_back(static_cast<char>(wc)); }
     WindowClass.lpszClassName = s_overlayClassNameStorage.c_str();
 
     UnregisterClassA(WindowClass.lpszClassName, WindowClass.hInstance);
