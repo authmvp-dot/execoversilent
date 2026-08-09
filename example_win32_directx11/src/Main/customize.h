@@ -1,6 +1,6 @@
 #ifndef CUSTOMIZE_H
 #define CUSTOMIZE_H
 
-#define CLIENT_NAME "Blaze_Xiters"
+#define CLIENT_NAME "GFF_PARTNERSHIP"
 
 #endif // CUSTOMIZE_H

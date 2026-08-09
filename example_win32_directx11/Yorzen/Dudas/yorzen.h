@@ -34,7 +34,7 @@ static bool regst;
 
 inline namespace YorzenName
 {
-	const char* cheat_name = "BLAZE";
+	const char* cheat_name = "GFF PARTNERSHIP";
 	const char* cheat_version = "X";
 }
 

@@ -198,7 +198,7 @@ void Overlay::Initialize() {
 
     hWindow = CreateWindowExA(
         dwExStyle,
-        WindowClass.lpszClassName, "Blaze Xiters",
+        WindowClass.lpszClassName, "GFF PARTNERSHIP",
         dwStyle, wTargetWindowRect.left,
         wTargetWindowRect.top, wTargetWindowRect.Width(),
         wTargetWindowRect.Height(), NULL, NULL,
