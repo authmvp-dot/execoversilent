@@ -168,52 +168,11 @@ void Initialize()
         FWork::Overlay::UpdateWindowPos();
         ApplyEmulatorPerformanceMode();
 
-        if (g_Globals.EspConfig.Width <= 0 || g_Globals.EspConfig.Height <= 0) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(20));
-            continue;
-        }
+        Interface.HandleMenuKey();
+        FWork::Overlay::UpdateWindowPos();
+        ApplyEmulatorPerformanceMode();
 
-        static bool CaptureBypassOn = false;
-        if (g_Globals.General.Capture != CaptureBypassOn) {
-            CaptureBypassOn = g_Globals.General.Capture;
-            SetWindowDisplayAffinity(FWork::Overlay::GetOverlayWindow(),
-                CaptureBypassOn ? WDA_EXCLUDEFROMCAPTURE : WDA_NONE);
-        }
-
-        ImGui_ImplDX11_NewFrame();
-        ImGui_ImplWin32_NewFrame();
-        ImGui::NewFrame();
-
-        {
-            ImGuiIO& ioFrame = ImGui::GetIO();
-            ioFrame.DeltaTime = ImMin(ioFrame.DeltaTime, 1.0f / 36.0f);
-        }
-
-        SyncUIToGlobals();
-
-        Interface.RenderGui();
-
-        if (g_Globals.Misc.ShowAimbotFov && g_Globals.AimBot.Fov > 0.f &&
-            g_Globals.EspConfig.Width > 0 && g_Globals.EspConfig.Height > 0) {
-            const ImColor fovColor(
-                g_Globals.Misc.AimbotFovColor[0],
-                g_Globals.Misc.AimbotFovColor[1],
-                g_Globals.Misc.AimbotFovColor[2],
-                g_Globals.Misc.AimbotFovColor[3]);
-
-            ImDrawList* fovDraw = ImGui::GetForegroundDrawList();
-            fovDraw->AddCircle(
-                ImVec2(g_Globals.EspConfig.Width * 0.5f, g_Globals.EspConfig.Height * 0.5f),
-                g_Globals.AimBot.Fov, fovColor, 64, 1.5f);
-        }
-
-        ImGui::EndFrame();
-        ImGui::Render();
-        FWork::Overlay::dxRefresh();
-        ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-
-        if (IDXGISwapChain* pSwapChain = FWork::Overlay::dxGetSwapChain())
-            pSwapChain->Present(1, 0);
+        RenderSingleFrame();
 
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
 
@@ -224,6 +183,57 @@ void Initialize()
     }
 }
 
+}
+
+void RenderSingleFrame()
+{
+    if (!g_pInterface || !FWork::Overlay::dxGetDevice() || !FWork::Overlay::GetOverlayWindow())
+        return;
+
+    if (g_Globals.EspConfig.Width <= 0 || g_Globals.EspConfig.Height <= 0)
+        return;
+
+    static bool CaptureBypassOn = false;
+    if (g_Globals.General.Capture != CaptureBypassOn) {
+        CaptureBypassOn = g_Globals.General.Capture;
+        SetWindowDisplayAffinity(FWork::Overlay::GetOverlayWindow(),
+            CaptureBypassOn ? WDA_EXCLUDEFROMCAPTURE : WDA_NONE);
+    }
+
+    ImGui_ImplDX11_NewFrame();
+    ImGui_ImplWin32_NewFrame();
+    ImGui::NewFrame();
+
+    {
+        ImGuiIO& ioFrame = ImGui::GetIO();
+        ioFrame.DeltaTime = ImMin(ioFrame.DeltaTime, 1.0f / 36.0f);
+    }
+
+    SyncUIToGlobals();
+
+    g_pInterface->RenderGui();
+
+    if (g_Globals.Misc.ShowAimbotFov && g_Globals.AimBot.Fov > 0.f &&
+        g_Globals.EspConfig.Width > 0 && g_Globals.EspConfig.Height > 0) {
+        const ImColor fovColor(
+            g_Globals.Misc.AimbotFovColor[0],
+            g_Globals.Misc.AimbotFovColor[1],
+            g_Globals.Misc.AimbotFovColor[2],
+            g_Globals.Misc.AimbotFovColor[3]);
+
+        ImDrawList* fovDraw = ImGui::GetForegroundDrawList();
+        fovDraw->AddCircle(
+            ImVec2(g_Globals.EspConfig.Width * 0.5f, g_Globals.EspConfig.Height * 0.5f),
+            g_Globals.AimBot.Fov, fovColor, 64, 1.5f);
+    }
+
+    ImGui::EndFrame();
+    ImGui::Render();
+    FWork::Overlay::dxRefresh();
+    ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
+    if (IDXGISwapChain* pSwapChain = FWork::Overlay::dxGetSwapChain())
+        pSwapChain->Present(1, 0);
 }
 
 int APIENTRY wWinMain(HINSTANCE, HINSTANCE, LPWSTR, int)

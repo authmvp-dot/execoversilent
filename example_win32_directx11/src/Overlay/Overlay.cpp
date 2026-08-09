@@ -86,6 +86,22 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam,
   if (uMsg == WM_ERASEBKGND)
     return 1;
 
+  if (uMsg == WM_ENTERSIZEMOVE) {
+    SetTimer(hWnd, 1001, 10, NULL);
+  }
+  else if (uMsg == WM_EXITSIZEMOVE) {
+    KillTimer(hWnd, 1001);
+  }
+  else if (uMsg == WM_TIMER && wParam == 1001) {
+    extern void RenderSingleFrame();
+    RenderSingleFrame();
+    return 0;
+  }
+  else if (uMsg == WM_PAINT) {
+    extern void RenderSingleFrame();
+    RenderSingleFrame();
+  }
+
   if (uMsg == WM_SIZE) {
     FWork::Overlay::UpdateWindowPos();
   }
