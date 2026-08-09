@@ -92,22 +92,18 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam,
     POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
     ScreenToClient(hWnd, &pt);
 
+    // Top Header bar (0 to 75px)
     if (pt.y >= 0 && pt.y <= 75) {
-      if (pt.x >= 18 && pt.x <= 480 && pt.y > 12) {
-        if (ImGui::GetCurrentContext() && ImGui::IsAnyItemHovered()) {
-          return HTCLIENT;
-        }
+      // Header Tabs area -> HTCLIENT for clicking tabs
+      if (pt.x >= 15 && pt.x <= 480 && pt.y >= 12 && pt.y <= 65) {
+        return HTCLIENT;
       }
+      // Top header empty space -> HTCAPTION for smooth dragging window
       return HTCAPTION;
     }
 
-    if (ImGui::GetCurrentContext()) {
-      if (!ImGui::IsAnyItemHovered() && !ImGui::IsItemActive()) {
-        if (pt.x >= 0 && pt.x <= 700 && pt.y >= 0 && pt.y <= 600) {
-          return HTCAPTION;
-        }
-      }
-    }
+    // Main content area (below header) -> HTCLIENT so all widgets (Color Picker, Sliders, Combos) get mouse clicks
+    return HTCLIENT;
   }
 
   if (uMsg == WM_ENTERSIZEMOVE) {
