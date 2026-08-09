@@ -1,6 +1,7 @@
 #include "Overlay.hpp"
 #include <algorithm>
 #include <dwmapi.h>
+#include <shobjidl.h>
 #include <src/Globals.hpp>
 #include <imgui_impl_dx11.h>
 #include <imgui_impl_win32.h>
@@ -150,7 +151,7 @@ void Overlay::Initialize() {
         return;
     }
 
-    DWORD dwStyle = hTargetWindow ? (WS_POPUP | WS_VISIBLE) : (WS_POPUP | WS_VISIBLE | WS_MINIMIZEBOX);
+    DWORD dwStyle = hTargetWindow ? (WS_POPUP | WS_VISIBLE) : (WS_POPUP | WS_VISIBLE | WS_SYSMENU | WS_MINIMIZEBOX);
     DWORD dwExStyle = hTargetWindow ? (WS_EX_TOPMOST | WS_EX_TOOLWINDOW) : WS_EX_APPWINDOW;
 
     hWindow = CreateWindowExA(
@@ -174,6 +175,15 @@ void Overlay::Initialize() {
                            wTargetWindowRect.Width(), wTargetWindowRect.Height() };
         DwmExtendFrameIntoClientArea(hWindow, &Margins);
         SetLayeredWindowAttributes(hWindow, RGB(0, 0, 0), 255, LWA_ALPHA);
+    } else {
+        CoInitialize(NULL);
+        ITaskbarList* pTaskbar = nullptr;
+        if (SUCCEEDED(CoCreateInstance(CLSID_TaskbarList, NULL, CLSCTX_INPROC_SERVER, IID_ITaskbarList, (void**)&pTaskbar))) {
+            pTaskbar->HrInit();
+            pTaskbar->AddTab(hWindow);
+            pTaskbar->ActivateTab(hWindow);
+            pTaskbar->Release();
+        }
     }
 
     ShowWindow(hWindow, SW_SHOWDEFAULT);
