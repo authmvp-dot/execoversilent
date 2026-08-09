@@ -81,7 +81,7 @@ void YorzenRenderMenuTabs(float fTabOffset)
 	if (iTabs == 0)
 	{
 		ImGui::SetCursorPos(ImVec2(15, 85 + fTabOffset));
-		custom::Child("Aim", ICON_AIMBOT_INTERNAL, "Aimbot Settings", ImVec2(720, 205), true, 0);
+		custom::Child("Aim", ICON_AIMBOT_INTERNAL, "Aimbot & Trigger Settings", ImVec2(720, 425), true, 0);
 		{
 			FeatureCheckbox("Aimbot", "Enable Aim Assist", &ui.esp.AimbotEnabled);
 			if (ui.esp.AimbotEnabled)
@@ -118,12 +118,7 @@ void YorzenRenderMenuTabs(float fTabOffset)
 			FeatureCheckbox("Fast Reload", "Faster Reload", &ui.esp.FastReload);
 			FeatureCheckbox("Ignore Bots", "Skip Bot Targets", &ui.esp.IgnoreBots);
 			FeatureCheckbox("Ignore Knocked", "Skip Downed Enemies", &ui.esp.IgnoreKnockedEntity);
-		}
-		custom::EndChild();
 
-		ImGui::SetCursorPos(ImVec2(15, 300 + fTabOffset));
-		custom::Child("Trigger Module", ICON_AIMBOT_EXTERNAL, "Fov & Trigger", ImVec2(720, 210), true, 0);
-		{
 			edited::SliderFloat("Fov Radius", "Aim Search Radius", &ui.esp.AimFovValue, 0.f, 1200.f, "%.1f");
 			edited::SliderInt("Aim Distance", "Max Aim Range (m)", &ui.esp.AimbotDistance, 0, 200, "%d m");
 
@@ -148,7 +143,7 @@ void YorzenRenderMenuTabs(float fTabOffset)
 	if (iTabs == 1)
 	{
 		ImGui::SetCursorPos(ImVec2(15, 85 + fTabOffset));
-		custom::Child("Esp", ICON_BRUSH_LINE, "Player Esp", ImVec2(720, 205), true, 0);
+		custom::Child("Esp", ICON_BRUSH_LINE, "Player Esp & Options", ImVec2(720, 425), true, 0);
 		{
 			FeatureCheckbox("Enable Esp", "Master Esp Toggle", &ui.esp.ESPMasterEnabled);
 
@@ -185,12 +180,7 @@ void YorzenRenderMenuTabs(float fTabOffset)
 			FeatureCheckbox("Distance", "Distance Text", &ui.esp.PlayerDistanceEnabled, []() {
 				edited::ColorEdit4("Distance Color", NULL, ui.esp.PlayerDistanceColor);
 			});
-		}
-		custom::EndChild();
 
-		ImGui::SetCursorPos(ImVec2(15, 300 + fTabOffset));
-		custom::Child("Esp Extra", ICON_EYE_2_LINE, "Extra & Options", ImVec2(720, 210), true, 0);
-		{
 			FeatureCheckbox("Esp Rank", "Rank Tag", &ui.esp.RankEnabled, []() {
 				edited::ColorEdit4("Rank Color", NULL, ui.esp.RankColor);
 			});
@@ -214,7 +204,7 @@ void YorzenRenderMenuTabs(float fTabOffset)
 	if (iTabs == 2)
 	{
 		ImGui::SetCursorPos(ImVec2(15, 85 + fTabOffset));
-		custom::Child("Brutal", ICON_COMPONENTS_LINE, "Movement & Wall Hacks", ImVec2(720, 205), true, 0);
+		custom::Child("Brutal", ICON_COMPONENTS_LINE, "Movement, Wall Hacks & Exploits", ImVec2(720, 425), true, 0);
 		{
 			FeatureCheckbox("Speed Timer", "Faster Sprint", &ui.esp.SpeedTimerEnabled);
 
@@ -241,12 +231,7 @@ void YorzenRenderMenuTabs(float fTabOffset)
 				BlazeMemOnCheckboxToggled(111, "Fast Landing",
 					[]() { Aim.ActivateFastlanding(); }, []() { Aim.OFFFastlanding(); });
 			}
-		}
-		custom::EndChild();
 
-		ImGui::SetCursorPos(ImVec2(15, 300 + fTabOffset));
-		custom::Child("Machine", ICON_COMPONENTS_LINE, "Extra Exploits", ImVec2(720, 210), true, 0);
-		{
 			FeatureCheckbox("Burst Fire", "Rapid Burst", &ui.esp.BurstFire);
 			FeatureCheckbox("Vision Hack", "See Farther", &ui.esp.VisionHackEnabled);
 			FeatureCheckbox("Down Player", "Push Model Down", &ui.esp.DownPlayerEnabled);
