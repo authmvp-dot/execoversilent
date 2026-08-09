@@ -1,7 +1,6 @@
 #include "EclipseFontInit.hpp"
 
 #include <EclipseFontPack.h>
-#include <custom_logo.hpp>
 #include <src/Fonts/Fonts.hpp>
 #include <src/Fonts/icon.h>
 #include <UIStubs.hpp>
@@ -73,13 +72,6 @@ void LoadEclipseFonts(ID3D11Device* device)
         icon_compressed_data, icon_compressed_size, 41.0f, &weaponMergeCfg, weaponRanges);
 
     FWork::Fonts::LoadEspNameFonts();
-
-    if (device && texture::custom_logo == nullptr) {
-        D3DX11_IMAGE_LOAD_INFO info{};
-        ID3DX11ThreadPump* pump = nullptr;
-        D3DX11CreateShaderResourceViewFromMemory(
-            device, custom_logo_bytes, sizeof(custom_logo_bytes), &info, pump, &texture::custom_logo, 0);
-    }
 }
 
 }

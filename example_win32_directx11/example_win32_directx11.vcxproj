@@ -208,7 +208,6 @@
     <ClInclude Include="Yorzen\Dudas\yorzen.h" />
     <ClInclude Include="Keyauth.h" />
     <ClInclude Include="EclipseFontPack.h" />
-    <ClInclude Include="custom_logo.hpp" />
     <ClInclude Include="src\ui\EclipseFontInit.hpp" />
     <ClInclude Include="notifications.h" />
     <ClInclude Include="auth\auth.hpp" />

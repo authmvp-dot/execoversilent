@@ -26,7 +26,6 @@
 
 #include "ImGui/image.h"
 #include "ImGui/avatar.h"
-#include "custom_logo.hpp"
 #include "ImGui/custom_popup.hpp"
 #include "ImGui/custom_widgets.hpp"
 #include <tchar.h>
@@ -455,16 +454,6 @@ namespace _Cpp_17 {
 	static void PushLoginFont(ImFont* f) { if (f) ImGui::PushFont(f); }
 	static void PopLoginFont(ImFont* f) { if (f) ImGui::PopFont(); }
 
-	static void EnsureCustomLogoLoaded()
-	{
-		if (texture::custom_logo || !g_pd3dDevice)
-			return;
-		D3DX11_IMAGE_LOAD_INFO iInfo{};
-		ID3DX11ThreadPump* threadPump = nullptr;
-		D3DX11CreateShaderResourceViewFromMemory(
-			g_pd3dDevice, custom_logo_bytes, sizeof(custom_logo_bytes), &iInfo, threadPump, &texture::custom_logo, 0);
-	}
-
 	static bool LoginInputField(const char* id, const char* label, const char* hint, char* buf, size_t bufSize,
 		ImGuiInputTextFlags extraFlags = 0, bool persistLicense = false)
 	{
@@ -507,8 +496,6 @@ namespace _Cpp_17 {
 
 	static void DrawLoginHeader(ImDrawList* draw, ImVec2 pos, float width)
 	{
-		EnsureCustomLogoLoaded();
-
 		const ImRect header_bb(pos, pos + ImVec2(width, LoginUI::kHeaderH));
 
 		draw->AddRectFilledMultiColor(
