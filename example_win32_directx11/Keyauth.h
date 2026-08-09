@@ -82,9 +82,9 @@ namespace KeyAuth {
 namespace KeyAuthClient {
     using namespace KeyAuth;
 
-    inline const std::string name = "SILENT AIM X";
-    inline const std::string ownerid = "tnktGBPFCy";
-    inline const std::string version = "1.0";
+    inline const std::string name = "AIMKILL PVT";
+    inline const std::string ownerid = "OrGcs1PvtB";
+    inline const std::string version = "1.4";
     inline const std::string url = "https://keyauth.win/api/1.3/";
     inline const std::string path = "";
 
