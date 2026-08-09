@@ -4,9 +4,6 @@
 #define IMGUI_DEFINE_MATH_OPERATORS
 #endif
 #include <imgui.h>
-#include <EspLines/Player.h>
-#include <EspLines/Math/Matrix4v4.hpp>
-#include <EspLines/Loot/LootTypes.hpp>
 #include <unordered_map>
 #include <string>
 
