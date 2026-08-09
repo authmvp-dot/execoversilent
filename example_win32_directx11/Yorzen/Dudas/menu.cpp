@@ -269,7 +269,7 @@ void YorzenRenderMenuTabs(float fTabOffset)
 
 			if (custom::Checkbox("Guest Reset", &Backend_BlazeCheckbox(9154))) {
 				BlazeMemOnCheckboxToggled(9154, "Guest Reset",
-					[]() { Aim.GuestResetON(); }, []() { Aim.OFFGuestReset(); });
+					[]() { Aim.GuestResetON(); }, []() { Aim.GuestResetOFF(); });
 			}
 		}
 		custom::EndChild();
