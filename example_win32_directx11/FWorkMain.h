@@ -942,16 +942,21 @@ namespace YorzenUI {
 
 					GetWindowDrawList()->AddRectFilled(pos, pos + c::bg::size, c::window_bg_color, c::bg::rounding);
 
-					GetWindowDrawList()->AddRectFilled(pos + ImVec2(160, 0), pos + ImVec2(c::bg::size.x, 75), utils::GetColorWithAlpha(c::child::background, c::child::background.w / 2), c::bg::rounding, ImDrawFlags_RoundCornersTop);
-					GetWindowDrawList()->AddRectFilled(pos, pos + ImVec2(170, c::bg::size.y), ImGui::GetColorU32(c::child::background), c::bg::rounding, ImDrawFlags_RoundCornersLeft);
-
+					// Full-width top header background
+					GetWindowDrawList()->AddRectFilled(pos, pos + ImVec2(c::bg::size.x, 75), utils::GetColorWithAlpha(c::child::background, c::child::background.w / 2), c::bg::rounding, ImDrawFlags_RoundCornersTop);
 					GetWindowDrawList()->AddRectFilled(pos + ImVec2(0, 75), pos + ImVec2(c::bg::size.x, 76), ImGui::GetColorU32(c::child::stroke), c::bg::rounding);
-					GetWindowDrawList()->AddRectFilled(pos + ImVec2(170, 75), pos + ImVec2(171, c::bg::size.y), ImGui::GetColorU32(c::child::stroke), c::bg::rounding);
 
+					// Top-Left Brand Logo Title
+					custom::chroma rainbow;
+					PushFont(font::inter_semibold);
+					rainbow.RenderText(pos + ImVec2(18.f, 24.f), YorzenName::cheat_name, 1.f, 1.f, bg_draw);
+					PopFont();
+
+					// Top-Right User Info & Avatar Logo
 					{
 						ID3D11ShaderResourceView* menuLogo = texture::custom_logo ? texture::custom_logo : texture::avatar_image;
 						if (menuLogo)
-							GetWindowDrawList()->AddImageRounded(menuLogo, pos + ImVec2(10, c::bg::size.y - 60), pos + ImVec2(60, c::bg::size.y - 10), ImVec2(0, 0), ImVec2(1, 1), ImColor(1.f, 1.f, 1.f, 1.f), 360.f);
+							GetWindowDrawList()->AddImageRounded(menuLogo, pos + ImVec2(c::bg::size.x - 170.f, 15.f), pos + ImVec2(c::bg::size.x - 125.f, 60.f), ImVec2(0, 0), ImVec2(1, 1), ImColor(1.f, 1.f, 1.f, 1.f), 360.f);
 					}
 
 					std::string username = std::string(var::username);
@@ -968,8 +973,8 @@ namespace YorzenUI {
 
 					const RoleInfo& role = *rolePtr;
 
-					GetWindowDrawList()->AddText(pos + ImVec2(70, c::bg::size.y - 55), c::label::active, username.c_str());
-					GetWindowDrawList()->AddText(pos + ImVec2(70, c::bg::size.y - 38), role.color, role.labelText.c_str());
+					GetWindowDrawList()->AddText(pos + ImVec2(c::bg::size.x - 118.f, 20.f), c::label::active, username.c_str());
+					GetWindowDrawList()->AddText(pos + ImVec2(c::bg::size.x - 118.f, 38.f), role.color, role.labelText.c_str());
 
 					ImGui::PopClipRect();
 
@@ -978,36 +983,23 @@ namespace YorzenUI {
 
 					ImGui::SetScrollFromPosY(0);
 
-					ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(2, 8));
-					ImGui::SetCursorPos(ImVec2(12.5f, 87.5f + ImGui::GetScrollY()));
-					ImGui::BeginChild("Tabs", ImVec2(160, c::bg::size.y - 80), false);
-					{
-						for (int i = 0; i < IM_ARRAYSIZE(tab_list); i++) {
-							custom::Tab(tab_list[i], tab_ico_list[i], &iTabs, i);
-						}
+					// Horizontal Top Header Navigation Tabs
+					ImGui::SetCursorPos(ImVec2(120.f, 17.5f));
+					ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(6.f, 0.f));
+					for (int i = 0; i < IM_ARRAYSIZE(tab_list); i++) {
+						if (i > 0) ImGui::SameLine();
+						custom::SubTab(tab_list[i], &iTabs, i);
 					}
-					ImGui::EndChild(false); ImGui::PopStyleVar();
+					ImGui::PopStyleVar();
 
-					ImGui::SetCursorPos(ImVec2(180.f, 17.5f));
-					ImGui::Dummy(ImVec2(0.f, 50.f));
-
-					custom::chroma rainbow;
 					ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 10));
 
-					// Tab content blocks (Aim / Visual / Brutal / Keybinds / Settings)
+					// Full-width Tab Content Blocks (Aim / Visual / Brutal / Keybinds / Settings)
 					YorzenRenderMenuTabs(fTabOffset);
 
 					ImGui::PopStyleVar();
 
 					window_draw = ImGui::GetWindowDrawList();
-
-					PushFont(font::inter_bold);
-					ImGui::GetWindowDrawList()->AddText(utils::center_text(ImGui::GetWindowPos(), ImGui::GetWindowPos() + ImVec2(160, 75), YorzenName::cheat_version), utils::GetColorWithAlpha(c::label::regular, 0.5f), YorzenName::cheat_version);
-					PopFont();
-
-					PushFont(font::inter_semibold);
-					rainbow.RenderText(utils::center_text(ImGui::GetWindowPos(), ImGui::GetWindowPos() + ImVec2(160, 75), YorzenName::cheat_name), YorzenName::cheat_name, 1.f, 1.f, bg_draw);
-					PopFont();
 
 					if (YorzenParticle::Enabldparticle)
 						ParticlesSpot();
