@@ -102,8 +102,8 @@ void Overlay::Setup(HWND TargetHWND) {
   } else {
     int screenW = GetSystemMetrics(SM_CXSCREEN);
     int screenH = GetSystemMetrics(SM_CYSCREEN);
-    int winW = 760;
-    int winH = 545;
+    int winW = 420;
+    int winH = 530;
     wTargetWindowRect.left = (screenW - winW) / 2;
     wTargetWindowRect.top = (screenH - winH) / 2;
     wTargetWindowRect.right = wTargetWindowRect.left + winW;
@@ -134,11 +134,11 @@ void Overlay::Initialize() {
     WindowClass.cbClsExtra = 0;
     WindowClass.cbWndExtra = 0;
     WindowClass.hInstance = GetModuleHandle(NULL);
-    WindowClass.hIcon = NULL;
+    WindowClass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
     WindowClass.hCursor = LoadCursor(NULL, IDC_ARROW);
     WindowClass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
     WindowClass.lpszMenuName = NULL;
-    WindowClass.hIconSm = NULL;
+    WindowClass.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
 
     ATOM Class = RegisterClassExA(&WindowClass);
 
@@ -150,23 +150,15 @@ void Overlay::Initialize() {
         return;
     }
 
-    DWORD dwStyle = hTargetWindow ? (WS_POPUP | WS_VISIBLE) : (WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_VISIBLE);
-    DWORD dwExStyle = hTargetWindow ? (WS_EX_TOPMOST | WS_EX_TOOLWINDOW) : 0;
-
-    RECT rect = { 0, 0, wTargetWindowRect.Width(), wTargetWindowRect.Height() };
-    if (!hTargetWindow) {
-        AdjustWindowRect(&rect, dwStyle, FALSE);
-    }
-
-    int winWidth = rect.right - rect.left;
-    int winHeight = rect.bottom - rect.top;
+    DWORD dwStyle = hTargetWindow ? (WS_POPUP | WS_VISIBLE) : (WS_POPUP | WS_VISIBLE | WS_MINIMIZEBOX);
+    DWORD dwExStyle = hTargetWindow ? (WS_EX_TOPMOST | WS_EX_TOOLWINDOW) : WS_EX_APPWINDOW;
 
     hWindow = CreateWindowExA(
         dwExStyle,
         WindowClass.lpszClassName, "Blaze Xiters",
         dwStyle, wTargetWindowRect.left,
-        wTargetWindowRect.top, winWidth,
-        winHeight, NULL, NULL,
+        wTargetWindowRect.top, wTargetWindowRect.Width(),
+        wTargetWindowRect.Height(), NULL, NULL,
         GetModuleHandle(NULL), NULL);
 
     if (!hWindow) {

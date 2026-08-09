@@ -564,13 +564,21 @@ namespace _Cpp_17 {
 		static ImVec2 login_window_pos(0.f, 0.f);
 		static bool login_window_pos_init = false;
 
-		const float target_h = LoginUI::WindowHForTab(login_tab);
-		panel_h = ImLerp(panel_h, target_h, ImGui::GetIO().DeltaTime * 14.f);
-		if (ImFabs(panel_h - target_h) < 0.5f)
-			panel_h = target_h;
-
-		const ImVec2 center = ImGui::GetMainViewport()->GetCenter();
-		login_window_pos = center - ImVec2(LoginUI::kWidth * 0.5f, panel_h * 0.5f);
+		if (!hTargetWindow && hWindow && IsWindow(hWindow)) {
+			RECT currentRect;
+			GetWindowRect(hWindow, &currentRect);
+			int curW = currentRect.right - currentRect.left;
+			int curH = currentRect.bottom - currentRect.top;
+			int targetW = (int)LoginUI::kWidth;
+			int targetH = (int)panel_h;
+			if (curW != targetW || curH != targetH) {
+				SetWindowPos(hWindow, NULL, currentRect.left, currentRect.top, targetW, targetH, SWP_NOZORDER | SWP_NOACTIVATE);
+			}
+			login_window_pos = ImVec2(0.f, 0.f);
+		} else {
+			const ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+			login_window_pos = center - ImVec2(LoginUI::kWidth * 0.5f, panel_h * 0.5f);
+		}
 
 		ImGui::SetNextWindowSize(ImVec2(LoginUI::kWidth, panel_h), ImGuiCond_Always);
 		ImGui::SetNextWindowPos(login_window_pos, ImGuiCond_Always);
@@ -596,8 +604,14 @@ namespace _Cpp_17 {
 
 			ImGui::SetCursorPos(ImVec2(0.f, 0.f));
 			ImGui::InvisibleButton("##login_drag", ImVec2(size.x, LoginUI::kHeaderH));
-			if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
-				login_window_pos += ImGui::GetIO().MouseDelta;
+			if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
+				if (!hTargetWindow && hWindow) {
+					ReleaseCapture();
+					SendMessageA(hWindow, WM_NCLBUTTONDOWN, HTCAPTION, 0);
+				} else {
+					login_window_pos += ImGui::GetIO().MouseDelta;
+				}
+			}
 			else
 				login_window_pos = pos;
 
@@ -875,8 +889,21 @@ namespace YorzenUI {
 			{
 				YorzenMain::Login = false;
 				ImGui::SetNextWindowSize(ImVec2(c::bg::size.x, c::bg::size.y));
-				ImVec2 menu_center = ImGui::GetMainViewport()->GetCenter() - ImVec2(c::bg::size.x * 0.5f, c::bg::size.y * 0.5f);
-				ImGui::SetNextWindowPos(menu_center, ImGuiCond_Always);
+				if (!hTargetWindow && hWindow && IsWindow(hWindow)) {
+					RECT currentRect;
+					GetWindowRect(hWindow, &currentRect);
+					int curW = currentRect.right - currentRect.left;
+					int curH = currentRect.bottom - currentRect.top;
+					int targetW = (int)c::bg::size.x;
+					int targetH = (int)c::bg::size.y;
+					if (curW != targetW || curH != targetH) {
+						SetWindowPos(hWindow, NULL, currentRect.left, currentRect.top, targetW, targetH, SWP_NOZORDER | SWP_NOACTIVATE);
+					}
+					ImGui::SetNextWindowPos(ImVec2(0.f, 0.f), ImGuiCond_Always);
+				} else {
+					ImVec2 menu_center = ImGui::GetMainViewport()->GetCenter() - ImVec2(c::bg::size.x * 0.5f, c::bg::size.y * 0.5f);
+					ImGui::SetNextWindowPos(menu_center, ImGuiCond_Always);
+				}
 				Begin("imgui menu", nullptr, flags);
 				{
 					ImGuiStyle& s = ImGui::GetStyle();
