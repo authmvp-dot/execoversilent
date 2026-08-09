@@ -427,22 +427,22 @@ namespace custom {
 
 namespace _Cpp_17 {
 	namespace LoginUI {
-		constexpr float kWidth = 420.f;
+		constexpr float kWidth = 680.f;
 		constexpr float kHeaderH = 75.f;
 		constexpr float kPad = 15.f;
 		constexpr float kFieldH = 36.f;
 		constexpr float kStatusH = 18.f;
 		constexpr float kBtnH = 40.f;
 		constexpr float kItemGap = 6.f;
-		constexpr float kChildW = 390.f;
+		constexpr float kChildW = 650.f;
 		// custom::Child inner scroll area height ~= childArgH - 80
-		constexpr float kChildArgLogin = 392.f;
-		constexpr float kChildArgRegister = 468.f;
+		constexpr float kChildArgLogin = 330.f;
+		constexpr float kChildArgRegister = 330.f;
 		constexpr float kChildOuterLogin = kChildArgLogin - 25.f;
 		constexpr float kChildOuterRegister = kChildArgRegister - 25.f;
 		constexpr float kBodyTop = kHeaderH + 50.f;
-		constexpr float kLoginH = kBodyTop + kChildOuterLogin + 22.f;
-		constexpr float kRegisterH = kBodyTop + kChildOuterRegister + 22.f;
+		constexpr float kLoginH = 490.f;
+		constexpr float kRegisterH = 490.f;
 
 		inline float ChildArgForTab(int tab) {
 			return (tab == 0) ? kChildArgLogin : kChildArgRegister;

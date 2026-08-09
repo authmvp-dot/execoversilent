@@ -128,7 +128,7 @@ inline namespace c
 	inline namespace bg
 	{
 		inline ImVec4 background = ImColor(24, 24, 29); // Ð¢ÐµÐ¼Ð½Ñ‹Ð¹ Ñ„Ð¾Ð½
-		inline ImVec2 size = ImVec2(750, 525);
+		inline ImVec2 size = ImVec2(680, 490);
 		inline float rounding = 16.f; // Ð¡ÐºÑ€ÑƒÐ³Ð»ÐµÐ½Ð¸Ðµ
 	}
 

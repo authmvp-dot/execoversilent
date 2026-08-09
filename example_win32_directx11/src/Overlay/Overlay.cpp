@@ -4,6 +4,7 @@
 #include <shobjidl.h>
 #include <windowsx.h>
 #include <src/Globals.hpp>
+#include <imgui.h>
 #include <imgui_impl_dx11.h>
 #include <imgui_impl_win32.h>
 #include <iostream>
@@ -90,11 +91,22 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam,
   if (uMsg == WM_NCHITTEST && !hTargetWindow) {
     POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
     ScreenToClient(hWnd, &pt);
+
     if (pt.y >= 0 && pt.y <= 75) {
-      if (pt.x >= 18 && pt.x <= 550 && pt.y > 12) {
-        return HTCLIENT;
+      if (pt.x >= 18 && pt.x <= 480 && pt.y > 12) {
+        if (ImGui::GetCurrentContext() && ImGui::IsAnyItemHovered()) {
+          return HTCLIENT;
+        }
       }
       return HTCAPTION;
+    }
+
+    if (ImGui::GetCurrentContext()) {
+      if (!ImGui::IsAnyItemHovered() && !ImGui::IsItemActive()) {
+        if (pt.x >= 0 && pt.x <= 700 && pt.y >= 0 && pt.y <= 600) {
+          return HTCAPTION;
+        }
+      }
     }
   }
 
