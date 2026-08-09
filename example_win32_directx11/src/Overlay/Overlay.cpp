@@ -83,6 +83,9 @@ void CreateDeviceD3D() {
 
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam,
                             LPARAM lParam) {
+  if (uMsg == WM_ERASEBKGND)
+    return 1;
+
   if (uMsg == WM_SIZE) {
     FWork::Overlay::UpdateWindowPos();
   }
@@ -258,9 +261,10 @@ void Overlay::dxRefresh() {
     return;
 
   ID3dDeviceContext->OMSetRenderTargets(1, &ID3dRenderTargetView, nullptr);
-  static float TransparentColor[4] = {0, 0, 0, 0};
+  static float TransparentColor[4] = {0.f, 0.f, 0.f, 0.f};
+  static float SolidColor[4] = {12.f / 255.f, 10.f / 255.f, 21.f / 255.f, 1.f};
   ID3dDeviceContext->ClearRenderTargetView(ID3dRenderTargetView,
-                                           TransparentColor);
+                                           hTargetWindow ? TransparentColor : SolidColor);
 }
 
 void Overlay::dxPresent() {
