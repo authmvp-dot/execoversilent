@@ -25,3 +25,4 @@ inline bool& Backend_BlazeCheckbox(int) {
 inline void SyncUIToGlobals() {}
 inline void Backend_LoadConfig() {}
 inline void Backend_SaveConfig() {}
+inline void Backend_ResetConfig() {}

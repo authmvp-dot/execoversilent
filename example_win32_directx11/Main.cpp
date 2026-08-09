@@ -45,8 +45,6 @@ HMODULE g_hModule = nullptr;
 bool bShouldUnload = false;
 FWork::Interface* g_pInterface = nullptr;
 
-std::atomic<bool> g_AdbReady{ false };
-std::atomic<bool> g_AdbFailed{ false };
 std::atomic<bool> g_AuthStarted{ false };
 std::atomic<bool> g_AuthDone{ false };
 std::atomic<bool> g_AuthOK{ false };
