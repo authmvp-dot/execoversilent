@@ -602,20 +602,7 @@ namespace _Cpp_17 {
 			const ImVec2 size = ImGui::GetWindowSize();
 			ImDrawList* draw = ImGui::GetWindowDrawList();
 
-			ImGui::SetCursorPos(ImVec2(0.f, 0.f));
-			ImGui::InvisibleButton("##login_drag", ImVec2(size.x, LoginUI::kHeaderH));
-			if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
-				if (!hTargetWindow && hWindow) {
-					const ImVec2 delta = ImGui::GetIO().MouseDelta;
-					RECT r;
-					GetWindowRect(hWindow, &r);
-					SetWindowPos(hWindow, NULL, r.left + (int)delta.x, r.top + (int)delta.y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
-				} else {
-					login_window_pos += ImGui::GetIO().MouseDelta;
-				}
-			}
-			else
-				login_window_pos = pos;
+			login_window_pos = pos;
 
 			draw->AddRectFilled(pos + ImVec2(0.f, 4.f), pos + size + ImVec2(0.f, 4.f), ImColor(0, 0, 0, 65), c::bg::rounding);
 			draw->AddRectFilled(pos, pos + size, c::window_bg_color, c::bg::rounding);
@@ -908,17 +895,6 @@ namespace YorzenUI {
 				}
 				Begin("imgui menu", nullptr, flags);
 				{
-					ImGui::SetCursorPos(ImVec2(0.f, 0.f));
-					ImGui::InvisibleButton("##menu_header_drag", ImVec2(c::bg::size.x, 75.f));
-					if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
-						if (!hTargetWindow && hWindow) {
-							const ImVec2 delta = ImGui::GetIO().MouseDelta;
-							RECT r;
-							GetWindowRect(hWindow, &r);
-							SetWindowPos(hWindow, NULL, r.left + (int)delta.x, r.top + (int)delta.y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
-						}
-					}
-
 					ImGuiStyle& s = ImGui::GetStyle();
 					c::anim::speed = ImGui::GetIO().DeltaTime * 12.f;
 

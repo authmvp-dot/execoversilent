@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <dwmapi.h>
 #include <shobjidl.h>
+#include <windowsx.h>
 #include <src/Globals.hpp>
 #include <imgui_impl_dx11.h>
 #include <imgui_impl_win32.h>
@@ -85,6 +86,14 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam,
                             LPARAM lParam) {
   if (uMsg == WM_ERASEBKGND)
     return 1;
+
+  if (uMsg == WM_NCHITTEST && !hTargetWindow) {
+    POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
+    ScreenToClient(hWnd, &pt);
+    if (pt.y >= 0 && pt.y <= 75) {
+      return HTCAPTION;
+    }
+  }
 
   if (uMsg == WM_ENTERSIZEMOVE) {
     SetTimer(hWnd, 1001, 10, NULL);
