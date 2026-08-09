@@ -700,13 +700,6 @@ namespace _Cpp_17 {
 						std::string pass_copy(g_Globals.General.PassWord);
 						std::string key_copy(g_Globals.General.License);
 						std::thread([tabCopy, user_copy, pass_copy, key_copy]() mutable {
-							Backend_RunAdbInit();
-							if (g_AdbFailed.load()) {
-								login_status = "Connection failed. Launch your emulator with Free Fire open.";
-								login_loading = false;
-								return;
-							}
-
 							KeyAuthClient::EnsureInit();
 							if (tabCopy == 0)
 								KeyAuthClient::Internal.login(user_copy, pass_copy);
