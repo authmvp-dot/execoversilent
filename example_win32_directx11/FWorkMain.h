@@ -526,8 +526,6 @@ namespace _Cpp_17 {
 		if (!ImGui::GetCurrentContext())
 			return;
 
-		EnsureCustomLogoLoaded();
-
 		if (!login_license_loaded) {
 			LoadLoginLicenseKey();
 			login_license_loaded = true;
@@ -779,10 +777,6 @@ namespace YorzenUI {
 		ID3DX11ThreadPump* threadPump{ nullptr };
 		if (texture::avatar_image == nullptr)
 			D3DX11CreateShaderResourceViewFromMemory(g_pd3dDevice, avatar, sizeof(avatar), &iInfo, threadPump, &texture::avatar_image, 0);
-		if (texture::custom_logo == nullptr)
-			D3DX11CreateShaderResourceViewFromMemory(g_pd3dDevice, custom_logo_bytes, sizeof(custom_logo_bytes), &iInfo, threadPump, &texture::custom_logo, 0);
-		if (texture::logotype_image == nullptr)
-			D3DX11CreateShaderResourceViewFromMemory(g_pd3dDevice, custom_logo_bytes, sizeof(custom_logo_bytes), &iInfo, threadPump, &texture::logotype_image, 0);
 
 		ImGui::StyleColorsLight();
 		ImGuiStyle& s = ImGui::GetStyle();
@@ -1083,10 +1077,6 @@ namespace _Cpp_17 {
 				// D3DX11CreateShaderResourceViewFromMemory(g_pd3dDevice, preview_slow, sizeof(preview_slow), &iInfo, threadPump, &texture::preview_slow, 0);
 				if (texture::avatar_image == nullptr)
 					D3DX11CreateShaderResourceViewFromMemory(g_pd3dDevice, avatar, sizeof(avatar), &iInfo, threadPump, &texture::avatar_image, 0);
-			if (texture::custom_logo == nullptr)
-				D3DX11CreateShaderResourceViewFromMemory(g_pd3dDevice, custom_logo_bytes, sizeof(custom_logo_bytes), &iInfo, threadPump, &texture::custom_logo, 0);
-			if (texture::logotype_image == nullptr)
-				D3DX11CreateShaderResourceViewFromMemory(g_pd3dDevice, custom_logo_bytes, sizeof(custom_logo_bytes), &iInfo, threadPump, &texture::logotype_image, 0);
 			if (texture::background_image == nullptr)
 				//	D3DX11CreateShaderResourceViewFromMemory(g_pd3dDevice, background_img, sizeof(background_img), &iInfo, threadPump, &texture::background_image, 0);
 				if (texture::hwnd_image == nullptr)
