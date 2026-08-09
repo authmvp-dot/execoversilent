@@ -275,41 +275,8 @@ void YorzenRenderMenuTabs(float fTabOffset)
 		custom::EndChild();
 	}
 
-	// Tab 3 — Keybinds
+	// Tab 3 — Settings
 	if (iTabs == 3)
-	{
-		ImGui::SetCursorPos(ImVec2(15, 85 + fTabOffset));
-		custom::Child("Keybinds 1", ICON_KEYBOARD_LINE, "Primary Keys", ImVec2(352, ImGui::GetContentRegionAvail().y + 20), true, 0);
-		{
-			ImGui::Keybox("Hide Menu", &YorzenKey::HideMenuCheck, &YorzenKey::HideMenuKey);
-			ImGui::Keybox("Close Menu", &YorzenKey::ClosedCheck, &YorzenKey::ClosedKey);
-			ImGui::Keybox("Sniper Switch", &YorzenKey::SniperMacroCheck, &YorzenKey::SniperMacroKey);
-			ImGui::Keybox("Aimbot On/Off", &YorzenKey::AimbotToggleCheck, &YorzenKey::AimbotToggleKey);
-			ImGui::Keybox("Aimbot Legit Key", &YorzenKey::AimbotLegitCheck, &YorzenKey::AimbotLegitKey);
-			ImGui::Keybox("External Aim Toggle", &YorzenKey::AimbotExtCheck, &YorzenKey::AimbotExtKey);
-			ImGui::Keybox("Silent Aim Toggle", &YorzenKey::SilentAimCheck, &YorzenKey::SilentAimKey);
-			ImGui::Keybox("Enemy Pull Toggle", &YorzenKey::EnemyPullCheck, &YorzenKey::EnemyPullKey);
-			ImGui::Keybox("Teleport Kill", &YorzenKey::TeleportKillCheck, &YorzenKey::TeleportKillKey);
-		}
-		custom::EndChild();
-
-		ImGui::SetCursorPos(ImVec2(382, 85 + fTabOffset));
-		custom::Child("Keybinds 2", ICON_CRYSTAL_BALL_LINE, "Utility Keys", ImVec2(352, ImGui::GetContentRegionAvail().y + 20), true, 0);
-		{
-			ImGui::Keybox("Wall Hack", &YorzenKey::WallHack1Check, &YorzenKey::WallHack1Key);
-			ImGui::Keybox("Fast Landing", &YorzenKey::WallHack2Check, &YorzenKey::WallHack2Key);
-			ImGui::Keybox("Camera Right", &YorzenKey::CamaraJipiCheck, &YorzenKey::CamaraJipiKey);
-			ImGui::Keybox("Refresh Esp", &YorzenKey::RefreshEspCheck, &YorzenKey::RefreshEspKey);
-			ImGui::Keybox("Speed Timer", &YorzenKey::FakeLagCheck, &YorzenKey::FakeLagKey);
-			ImGui::Keybox("Streamer Mode", &YorzenKey::StreamerModeCheck, &YorzenKey::StreamerModeKey);
-			ImGui::Keybox("Wukong Mode", &YorzenKey::WukongModeCheck, &YorzenKey::WukongModeKey);
-			ImGui::Keybox("Sniper Scope", &YorzenKey::SniperScopeCheck, &YorzenKey::SniperScopeKey);
-		}
-		custom::EndChild();
-	}
-
-	// Tab 4 — Settings
-	if (iTabs == 4)
 	{
 		ImGui::SetCursorPos(ImVec2(15, 85 + fTabOffset));
 		custom::Child("Settings", ICON_SETTINGS_2_LINE, "General Settings", ImVec2(720, ImGui::GetContentRegionAvail().y + 20), true, 0);

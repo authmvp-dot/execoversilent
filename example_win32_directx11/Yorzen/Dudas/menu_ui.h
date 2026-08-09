@@ -60,8 +60,8 @@ static int iSubTabsVisual = 0;
 static int iSubTabsBrutal = 0;
 static int iSubTabsKeys = 0;
 
-const char* tab_list[] = { "Aim", "Visual", "Brutal", "Keybinds", "Settings" };
-const char* tab_ico_list[] = { ICON_AIMING_2_LINE, ICON_EYE_2_LINE, ICON_SKULL_LINE, ICON_KEYBOARD_LINE, ICON_SETTINGS_3_LINE };
+const char* tab_list[] = { "Aim", "Visual", "Brutal", "Settings" };
+const char* tab_ico_list[] = { ICON_AIMING_2_LINE, ICON_EYE_2_LINE, ICON_SKULL_LINE, ICON_SETTINGS_3_LINE };
 
 
 const char* tab_list1[] = { "Login", "Register" };
