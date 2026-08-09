@@ -44,6 +44,7 @@ using namespace adb;
 HMODULE g_hModule = nullptr;
 bool bShouldUnload = false;
 FWork::Interface* g_pInterface = nullptr;
+void RenderSingleFrame();
 
 std::atomic<bool> g_AuthStarted{ false };
 std::atomic<bool> g_AuthDone{ false };
