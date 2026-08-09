@@ -182,6 +182,8 @@ inline namespace YorzenCheck
 	bool AimSilentHookX;
 
 	bool g3siedkcheroesp = true;
+}
+
 extern HWND hTargetWindow;
 
 HWND hdPlayerWindow;
