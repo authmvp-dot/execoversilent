@@ -520,19 +520,12 @@ namespace _Cpp_17 {
 		shaderrt::Draw(draw, header_bb.Min, header_bb.Max, c::bg::rounding, 0.32f, ImShaderTex_WindowBg);
 		draw->PopClipRect();
 
-		ID3D11ShaderResourceView* headerLogo = texture::custom_logo ? texture::custom_logo : texture::logotype_image;
-		if (headerLogo) {
-			const ImVec2 logoMin = header_bb.Min + ImVec2(12.f, 12.f);
-			draw->AddImageRounded(headerLogo, logoMin, logoMin + ImVec2(52.f, 52.f),
-				ImVec2(0, 0), ImVec2(1, 1), IM_COL32_WHITE, 360.f);
-		}
-
 		PushLoginFont(font::inter_semibold);
-		draw->AddText(header_bb.Min + ImVec2(76.f, 16.f), (ImU32)c::main_color, YorzenName::cheat_name);
+		draw->AddText(header_bb.Min + ImVec2(18.f, 16.f), (ImU32)c::main_color, YorzenName::cheat_name);
 		PopLoginFont(font::inter_semibold);
 
 		PushLoginFont(font::medium_small);
-		draw->AddText(header_bb.Min + ImVec2(76.f, 44.f), ImColor(255, 255, 255, 135), "Secure Access Panel");
+		draw->AddText(header_bb.Min + ImVec2(18.f, 44.f), ImColor(255, 255, 255, 135), "Secure Access Panel");
 		PopLoginFont(font::medium_small);
 
 		draw->AddLine(
@@ -953,13 +946,7 @@ namespace YorzenUI {
 					}
 					ImGui::PopStyleVar();
 
-					// Top-Right User Info & Avatar Logo
-					{
-						ID3D11ShaderResourceView* menuLogo = texture::custom_logo ? texture::custom_logo : texture::avatar_image;
-						if (menuLogo)
-							GetWindowDrawList()->AddImageRounded(menuLogo, pos + ImVec2(c::bg::size.x - 85.f, 20.f), pos + ImVec2(c::bg::size.x - 53.f, 52.f), ImVec2(0, 0), ImVec2(1, 1), ImColor(1.f, 1.f, 1.f, 1.f), 360.f);
-					}
-
+					// Far-Left User Info & Role Badge
 					std::string username = std::string(var::username);
 					if (username.empty()) username = "Guest";
 					std::string roleKey = "client";
@@ -974,8 +961,8 @@ namespace YorzenUI {
 
 					const RoleInfo& role = *rolePtr;
 
-					GetWindowDrawList()->AddText(pos + ImVec2(c::bg::size.x - 48.f, 21.f), c::label::active, username.c_str());
-					GetWindowDrawList()->AddText(pos + ImVec2(c::bg::size.x - 48.f, 37.f), role.color, role.labelText.c_str());
+					GetWindowDrawList()->AddText(pos + ImVec2(14.f, 52.f), c::label::active, username.c_str());
+					GetWindowDrawList()->AddText(pos + ImVec2(60.f, 52.f), role.color, role.labelText.c_str());
 
 					ImGui::PopClipRect();
 
