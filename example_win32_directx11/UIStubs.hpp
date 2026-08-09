@@ -4,6 +4,7 @@
 #include <d3d11.h>
 #include <AIMBOTMEMORY.H>
 #include "TCPClientBridge.hpp"
+#include "GitHubDownloader.hpp"
 
 inline std::atomic<bool> g_AdbReady{ false };
 inline std::atomic<bool> g_AdbFailed{ false };
@@ -19,13 +20,27 @@ inline void Backend_ExitPanel() {}
 inline void Backend_RunAdbInit() {
     g_AdbFailed = false;
     
-    // Connect ADB and set up port forwarding
+    // 1. Connect ADB to emulator (Port 5555)
     RunSilentCommand("hd-adb.exe connect 127.0.0.1:5555");
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    
+    // 2. Download APK directly from GitHub link into Temp folder
+    bool downloaded = DownloadApkFromGitHub();
+    
+    // 3. Install APK into emulator silently
+    std::string tempApk = GetTempApkFilePath();
+    RunSilentCommand("hd-adb.exe install -r \"" + tempApk + "\"");
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
+    // 4. Launch APK background activity
+    RunSilentCommand("hd-adb.exe shell am start -n com.mamun/.MainActivity");
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
+    // 5. Setup ADB Port Forwarding (Port 8888)
     RunSilentCommand("hd-adb.exe forward tcp:8888 tcp:8888");
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-    // Start background socket connection thread if not already running
+    // 6. Start background socket connection thread
     static bool socketThreadStarted = false;
     if (!socketThreadStarted) {
         std::thread(ConnectSocketThread).detach();
