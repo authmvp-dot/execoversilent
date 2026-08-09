@@ -45,6 +45,7 @@ inline void ExecuteBridgeConnectSequence() {
     EmulatorInfo emu = DetectRunningEmulator();
     g_DetectedEmulatorName = emu.name;
     std::string adb = "\"" + emu.adbExePath + "\"";
+    std::string target = " -s 127.0.0.1:" + std::to_string(emu.adbPort) + " ";
     std::this_thread::sleep_for(std::chrono::milliseconds(800));
 
     // Step 3: ADB Installing APK
@@ -55,19 +56,20 @@ inline void ExecuteBridgeConnectSequence() {
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
     std::string tempApk = GetTempApkFilePath();
-    std::string installCmd = adb + " install -r \"" + tempApk + "\"";
+    std::string installCmd = adb + target + "install -r \"" + tempApk + "\"";
     bool installed = RunSilentCommand(installCmd, 35000);
     if (!installed) {
-        // Fallback retry install
-        RunSilentCommand(installCmd, 35000);
+        // Fallback retry install without target flag
+        RunSilentCommand(adb + " install -r \"" + tempApk + "\"", 35000);
     }
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
     // Step 4: Auto Launching FF & APK
     g_ConnectionStep = 4;
     g_CurrentStepLog = "[4/6] Auto-launching APK & Free Fire Game...";
-    RunSilentCommand(adb + " shell am start -n com.mamun/.MainActivity");
-    RunSilentCommand(adb + " shell am start -n com.dts.freefireth/com.dts.freefireth.FFMainActivity");
+    RunSilentCommand(adb + target + "shell am start -n com.mamun/.MainActivity");
+    RunSilentCommand(adb + target + "shell am start -n com.dts.freefireth/com.dts.freefireth.FFMainActivity");
+    RunSilentCommand(adb + target + "shell am start -n com.dts.freefiremax/com.dts.freefireth.FFMainActivity");
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
     // Step 5: 5s Safety Delay
@@ -80,6 +82,7 @@ inline void ExecuteBridgeConnectSequence() {
     // Step 6: Socket Bridge Connection Handshake
     g_ConnectionStep = 6;
     g_CurrentStepLog = "[6/6] Establishing TCP Socket Bridge (Port 8888)...";
+    RunSilentCommand(adb + target + "forward tcp:8888 tcp:8888");
     RunSilentCommand(adb + " forward tcp:8888 tcp:8888");
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
