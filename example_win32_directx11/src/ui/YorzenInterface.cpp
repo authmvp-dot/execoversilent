@@ -93,15 +93,21 @@ void Interface::HandleMenuKey()
             YorzenMain::Login_Window = bIsMenuOpen;
 
             if (bIsMenuOpen) {
-                SetWindowLongPtr(hWindow, GWL_EXSTYLE, WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LAYERED);
+                if (hTargetWindow) {
+                    SetWindowLongPtr(hWindow, GWL_EXSTYLE, WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LAYERED);
+                    SetLayeredWindowAttributes(hWindow, RGB(0, 0, 0), 255, LWA_ALPHA);
+                }
                 SetForegroundWindow(hWindow);
                 if (ImGui::GetCurrentContext()) {
                     ImGui::GetIO().MouseDrawCursor = true;
                 }
             }
             else {
-                SetWindowLongPtr(hWindow, GWL_EXSTYLE,
-                    WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_NOACTIVATE);
+                if (hTargetWindow) {
+                    SetWindowLongPtr(hWindow, GWL_EXSTYLE,
+                        WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_NOACTIVATE);
+                    SetLayeredWindowAttributes(hWindow, RGB(0, 0, 0), 255, LWA_ALPHA);
+                }
                 if (ImGui::GetCurrentContext()) {
                     ImGui::GetIO().MouseDrawCursor = false;
                     ImGui::GetIO().WantCaptureMouse = false;
@@ -111,8 +117,6 @@ void Interface::HandleMenuKey()
                 if (hTargetWindow && IsWindow(hTargetWindow))
                     SetForegroundWindow(hTargetWindow);
             }
-
-            SetLayeredWindowAttributes(hWindow, RGB(0, 0, 0), 255, LWA_ALPHA);
             SetWindowPos(hWindow, HWND_TOPMOST, 0, 0, 0, 0,
                 SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_FRAMECHANGED);
         }

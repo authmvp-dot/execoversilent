@@ -95,10 +95,15 @@ namespace FWork {
 void Overlay::Setup(HWND TargetHWND) {
   hTargetWindow = TargetHWND;
   if (hTargetWindow) {
-
     GetClientRect(hTargetWindow, &wTargetWindowRect);
     MapWindowPoints(hTargetWindow, nullptr,
                     reinterpret_cast<LPPOINT>(&wTargetWindowRect), 2);
+    bSettuped = true;
+  } else {
+    wTargetWindowRect.left = 100;
+    wTargetWindowRect.top = 100;
+    wTargetWindowRect.right = 100 + 1280;
+    wTargetWindowRect.bottom = 100 + 720;
     bSettuped = true;
   }
 }
@@ -127,9 +132,7 @@ void Overlay::Initialize() {
     WindowClass.hInstance = GetModuleHandle(NULL);
     WindowClass.hIcon = NULL;
     WindowClass.hCursor = LoadCursor(NULL, IDC_ARROW);
-
-    WindowClass.hbrBackground = CreateSolidBrush(RGB(0, 0, 0));
-
+    WindowClass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
     WindowClass.lpszMenuName = NULL;
     WindowClass.hIconSm = NULL;
 
@@ -143,11 +146,13 @@ void Overlay::Initialize() {
         return;
     }
 
+    DWORD dwStyle = hTargetWindow ? (WS_POPUP | WS_VISIBLE) : (WS_OVERLAPPEDWINDOW | WS_VISIBLE);
+    DWORD dwExStyle = hTargetWindow ? (WS_EX_TOPMOST | WS_EX_TOOLWINDOW) : 0;
+
     hWindow = CreateWindowExA(
-        WS_EX_TOPMOST | WS_EX_LAYERED | WS_EX_TRANSPARENT |
-        WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE,
-        WindowClass.lpszClassName, "",
-        WS_POPUP | WS_VISIBLE, wTargetWindowRect.left,
+        dwExStyle,
+        WindowClass.lpszClassName, "Blaze Xiters",
+        dwStyle, wTargetWindowRect.left,
         wTargetWindowRect.top, wTargetWindowRect.Width(),
         wTargetWindowRect.Height(), NULL, NULL,
         GetModuleHandle(NULL), NULL);
@@ -160,11 +165,12 @@ void Overlay::Initialize() {
         return;
     }
 
-    MARGINS Margins = { wTargetWindowRect.left, wTargetWindowRect.top,
-                       wTargetWindowRect.Width(), wTargetWindowRect.Height() };
-    DwmExtendFrameIntoClientArea(hWindow, &Margins);
-
-    SetLayeredWindowAttributes(hWindow, RGB(0, 0, 0), 255, LWA_ALPHA);
+    if (hTargetWindow) {
+        MARGINS Margins = { wTargetWindowRect.left, wTargetWindowRect.top,
+                           wTargetWindowRect.Width(), wTargetWindowRect.Height() };
+        DwmExtendFrameIntoClientArea(hWindow, &Margins);
+        SetLayeredWindowAttributes(hWindow, RGB(0, 0, 0), 255, LWA_ALPHA);
+    }
 
     ShowWindow(hWindow, SW_SHOWDEFAULT);
     UpdateWindow(hWindow);
@@ -189,29 +195,37 @@ void Overlay::ShutDown() {
 }
 
 void Overlay::UpdateWindowPos() {
-  if (!hTargetWindow || !hWindow)
+  if (!hWindow)
     return;
 
-  WndRECT TargetWindowRect;
-  GetClientRect(hTargetWindow, &TargetWindowRect);
-  MapWindowPoints(hTargetWindow, nullptr,
-                  reinterpret_cast<LPPOINT>(&TargetWindowRect), 2);
+  if (hTargetWindow) {
+    WndRECT TargetWindowRect;
+    GetClientRect(hTargetWindow, &TargetWindowRect);
+    MapWindowPoints(hTargetWindow, nullptr,
+                    reinterpret_cast<LPPOINT>(&TargetWindowRect), 2);
 
-  g_Globals.EspConfig.Width = TargetWindowRect.Width();
-  g_Globals.EspConfig.Height = TargetWindowRect.Height();
+    g_Globals.EspConfig.Width = TargetWindowRect.Width();
+    g_Globals.EspConfig.Height = TargetWindowRect.Height();
 
-  // Overlay matches emulator only Ã¢â‚¬â€ keybind HUD uses a separate desktop window.
-  RECT currentRect;
-  GetWindowRect(hWindow, &currentRect);
-  int currentWidth = currentRect.right - currentRect.left;
-  int currentHeight = currentRect.bottom - currentRect.top;
+    RECT currentRect;
+    GetWindowRect(hWindow, &currentRect);
+    int currentWidth = currentRect.right - currentRect.left;
+    int currentHeight = currentRect.bottom - currentRect.top;
 
-  if (currentRect.left != TargetWindowRect.left ||
-      currentRect.top != TargetWindowRect.top ||
-      currentWidth != TargetWindowRect.Width() ||
-      currentHeight != TargetWindowRect.Height()) {
-    MoveWindow(hWindow, TargetWindowRect.left, TargetWindowRect.top,
-               TargetWindowRect.Width(), TargetWindowRect.Height(), FALSE);
+    if (currentRect.left != TargetWindowRect.left ||
+        currentRect.top != TargetWindowRect.top ||
+        currentWidth != TargetWindowRect.Width() ||
+        currentHeight != TargetWindowRect.Height()) {
+      MoveWindow(hWindow, TargetWindowRect.left, TargetWindowRect.top,
+                 TargetWindowRect.Width(), TargetWindowRect.Height(), FALSE);
+    }
+  } else {
+    RECT currentRect;
+    GetClientRect(hWindow, &currentRect);
+    g_Globals.EspConfig.Width = currentRect.right - currentRect.left;
+    g_Globals.EspConfig.Height = currentRect.bottom - currentRect.top;
+  }
+}SE);
   }
 }
 
