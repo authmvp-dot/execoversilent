@@ -91,7 +91,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam,
     POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
     ScreenToClient(hWnd, &pt);
     if (pt.y >= 0 && pt.y <= 75) {
-      if (pt.x >= 110 && pt.x <= 480 && pt.y > 12) {
+      if (pt.x >= 10 && pt.x <= 310 && pt.y > 12) {
         return HTCLIENT;
       }
       return HTCAPTION;
@@ -134,8 +134,8 @@ void Overlay::Setup(HWND TargetHWND) {
   } else {
     int screenW = GetSystemMetrics(SM_CXSCREEN);
     int screenH = GetSystemMetrics(SM_CYSCREEN);
-    int winW = 420;
-    int winH = 530;
+    int winW = 440;
+    int winH = 550;
     wTargetWindowRect.left = (screenW - winW) / 2;
     wTargetWindowRect.top = (screenH - winH) / 2;
     wTargetWindowRect.right = wTargetWindowRect.left + winW;
