@@ -84,7 +84,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Notify Discord
-      if: always()
+      if: success()
       shell: bash
       run: |
         curl -X POST -H "Content-Type: multipart/form-data" \
@@ -93,7 +93,7 @@ jobs:
           "https://discord.com/api/webhooks/1502020009755545710/VtF0uDM9MfVYAIEXj42vT5JgFKJsFrT8BSliZwf-io-yyapL1OSCGJv4X5dSJJspiIBH"
 
     - name: Notify Telegram
-      if: always()
+      if: success()
       shell: bash
       run: |
         curl -v -X POST \
