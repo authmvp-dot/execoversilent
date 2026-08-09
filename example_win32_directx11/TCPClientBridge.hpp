@@ -90,7 +90,7 @@ inline bool RunSilentCommand(const std::string& command, DWORD timeoutMs = 30000
     si.wShowWindow = SW_HIDE; // Run command completely silently without CMD flash
     ZeroMemory(&pi, sizeof(pi));
 
-    std::string cmd = "cmd.exe /c " + command;
+    std::string cmd = "cmd.exe /s /c \"" + command + "\"";
     if (CreateProcessA(NULL, (char*)cmd.c_str(), NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi)) {
         DWORD res = WaitForSingleObject(pi.hProcess, timeoutMs);
         DWORD exitCode = 1;
