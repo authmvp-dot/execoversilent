@@ -427,22 +427,22 @@ namespace custom {
 
 namespace _Cpp_17 {
 	namespace LoginUI {
-		constexpr float kWidth = 680.f;
+		constexpr float kWidth = 430.f;
 		constexpr float kHeaderH = 75.f;
 		constexpr float kPad = 15.f;
 		constexpr float kFieldH = 36.f;
 		constexpr float kStatusH = 18.f;
 		constexpr float kBtnH = 40.f;
 		constexpr float kItemGap = 6.f;
-		constexpr float kChildW = 650.f;
+		constexpr float kChildW = 400.f;
 		// custom::Child inner scroll area height ~= childArgH - 80
-		constexpr float kChildArgLogin = 330.f;
-		constexpr float kChildArgRegister = 330.f;
+		constexpr float kChildArgLogin = 385.f;
+		constexpr float kChildArgRegister = 445.f;
 		constexpr float kChildOuterLogin = kChildArgLogin - 25.f;
 		constexpr float kChildOuterRegister = kChildArgRegister - 25.f;
 		constexpr float kBodyTop = kHeaderH + 50.f;
-		constexpr float kLoginH = 490.f;
-		constexpr float kRegisterH = 490.f;
+		constexpr float kLoginH = 540.f;
+		constexpr float kRegisterH = 600.f;
 
 		inline float ChildArgForTab(int tab) {
 			return (tab == 0) ? kChildArgLogin : kChildArgRegister;
@@ -560,7 +560,7 @@ namespace _Cpp_17 {
 		}
 
 		static int login_tab = 0;
-		static float panel_h = LoginUI::kLoginH;
+		float panel_h = LoginUI::WindowHForTab(login_tab);
 		static ImVec2 login_window_pos(0.f, 0.f);
 		static bool login_window_pos_init = false;
 
