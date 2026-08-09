@@ -193,7 +193,7 @@ void ToggleClickability(bool clickable)
 	if (!hwnd || !IsWindow(hwnd))
 		return;
 
-	if (hTargetWindow) {
+	if (FWork::Overlay::GetTargetWindow()) {
 		if (clickable) {
 			SetWindowLongPtr(hwnd, GWL_EXSTYLE, WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LAYERED);
 			SetForegroundWindow(hwnd);
