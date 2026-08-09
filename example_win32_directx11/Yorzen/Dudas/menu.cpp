@@ -81,7 +81,7 @@ void YorzenRenderMenuTabs(float fTabOffset)
 	if (iTabs == 0)
 	{
 		ImGui::SetCursorPos(ImVec2(15, 85 + fTabOffset));
-		custom::Child("Aim", ICON_AIMBOT_INTERNAL, "Aimbot & Trigger Settings", ImVec2(650, 390), true, 0);
+		custom::Child("Aim", ICON_AIMBOT_INTERNAL, "Aimbot & Trigger Settings", ImVec2(510, 395), true, 0);
 		{
 			FeatureCheckbox("Aimbot", "Enable Aim Assist", &ui.esp.AimbotEnabled);
 			if (ui.esp.AimbotEnabled)
@@ -143,7 +143,7 @@ void YorzenRenderMenuTabs(float fTabOffset)
 	if (iTabs == 1)
 	{
 		ImGui::SetCursorPos(ImVec2(15, 85 + fTabOffset));
-		custom::Child("Esp", ICON_BRUSH_LINE, "Player Esp & Options", ImVec2(650, 390), true, 0);
+		custom::Child("Esp", ICON_BRUSH_LINE, "Player Esp & Options", ImVec2(510, 395), true, 0);
 		{
 			FeatureCheckbox("Enable Esp", "Master Esp Toggle", &ui.esp.ESPMasterEnabled);
 
@@ -204,7 +204,7 @@ void YorzenRenderMenuTabs(float fTabOffset)
 	if (iTabs == 2)
 	{
 		ImGui::SetCursorPos(ImVec2(15, 85 + fTabOffset));
-		custom::Child("Brutal", ICON_COMPONENTS_LINE, "Movement, Wall Hacks & Exploits", ImVec2(650, 390), true, 0);
+		custom::Child("Brutal", ICON_COMPONENTS_LINE, "Movement, Wall Hacks & Exploits", ImVec2(510, 395), true, 0);
 		{
 			FeatureCheckbox("Speed Timer", "Faster Sprint", &ui.esp.SpeedTimerEnabled);
 
@@ -264,7 +264,7 @@ void YorzenRenderMenuTabs(float fTabOffset)
 	if (iTabs == 3)
 	{
 		ImGui::SetCursorPos(ImVec2(15, 85 + fTabOffset));
-		custom::Child("Settings", ICON_SETTINGS_2_LINE, "General Settings", ImVec2(650, 390), true, 0);
+		custom::Child("Settings", ICON_SETTINGS_2_LINE, "General Settings", ImVec2(510, 395), true, 0);
 		{
 			std::string button_name = std::string(bTheme ? ICON_MOON_FILL : ICON_SUN_FILL) + " Change Color Theme" + std::string(bTheme ? ICON_MOON_FILL : ICON_SUN_FILL);
 			if (custom::Button(button_name.c_str(), ImVec2(ImGui::GetContentRegionAvail().x, 35))) {

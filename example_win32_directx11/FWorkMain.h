@@ -427,22 +427,22 @@ namespace custom {
 
 namespace _Cpp_17 {
 	namespace LoginUI {
-		constexpr float kWidth = 430.f;
+		constexpr float kWidth = 540.f;
 		constexpr float kHeaderH = 75.f;
 		constexpr float kPad = 15.f;
 		constexpr float kFieldH = 36.f;
 		constexpr float kStatusH = 18.f;
 		constexpr float kBtnH = 40.f;
 		constexpr float kItemGap = 6.f;
-		constexpr float kChildW = 400.f;
+		constexpr float kChildW = 510.f;
 		// custom::Child inner scroll area height ~= childArgH - 80
-		constexpr float kChildArgLogin = 385.f;
-		constexpr float kChildArgRegister = 445.f;
+		constexpr float kChildArgLogin = 360.f;
+		constexpr float kChildArgRegister = 360.f;
 		constexpr float kChildOuterLogin = kChildArgLogin - 25.f;
 		constexpr float kChildOuterRegister = kChildArgRegister - 25.f;
 		constexpr float kBodyTop = kHeaderH + 50.f;
-		constexpr float kLoginH = 540.f;
-		constexpr float kRegisterH = 600.f;
+		constexpr float kLoginH = 500.f;
+		constexpr float kRegisterH = 500.f;
 
 		inline float ChildArgForTab(int tab) {
 			return (tab == 0) ? kChildArgLogin : kChildArgRegister;
@@ -630,8 +630,7 @@ namespace _Cpp_17 {
 			const char* panelDesc = login_tab == 0 ? "Account Credentials" : "Membership Details";
 			const char* panelIcon = login_tab == 0 ? ICON_ENTER_DOOR_LINE : ICON_INVITE_LINE;
 
-			custom::Child(panelTitle, panelIcon, panelDesc, ImVec2(LoginUI::kChildW, child_arg_h), true,
-				ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+			custom::Child(panelTitle, panelIcon, panelDesc, ImVec2(LoginUI::kChildW, child_arg_h), true, 0);
 			{
 				ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.f, LoginUI::kItemGap));
 
