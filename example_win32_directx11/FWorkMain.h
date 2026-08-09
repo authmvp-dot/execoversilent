@@ -917,17 +917,12 @@ namespace YorzenUI {
 					GetWindowDrawList()->AddRectFilled(pos, pos + ImVec2(c::bg::size.x, 75), utils::GetColorWithAlpha(c::child::background, c::child::background.w / 2), c::bg::rounding, ImDrawFlags_RoundCornersTop);
 					GetWindowDrawList()->AddRectFilled(pos + ImVec2(0, 75), pos + ImVec2(c::bg::size.x, 76), ImGui::GetColorU32(c::child::stroke), c::bg::rounding);
 
-					// Top-Left Header Navigation Tabs (Icons + Label)
-					ImGui::SetCursorPos(ImVec2(14.f, 17.5f));
-					ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(5.f, 0.f));
-					for (int i = 0; i < IM_ARRAYSIZE(tab_list); i++) {
-						if (i > 0) ImGui::SameLine();
-						std::string tab_label = std::string(tab_ico_list[i]) + " " + tab_list[i];
-						custom::SubTab(tab_label.c_str(), &iTabs, i);
-					}
-					ImGui::PopStyleVar();
+					// Top-Left Header Title (GFF PARTNERSHIP style)
+					PushLoginFont(font::inter_semibold);
+					GetWindowDrawList()->AddText(pos + ImVec2(20.f, 24.f), (ImU32)c::main_color, YorzenName::cheat_name);
+					PopLoginFont(font::inter_semibold);
 
-					// Far-Right User Info & Role Badge
+					// Top-Right User Info & Role Badge
 					std::string username = std::string(var::username);
 					if (username.empty()) username = "Guest";
 					std::string roleKey = "client";
@@ -942,8 +937,8 @@ namespace YorzenUI {
 
 					const RoleInfo& role = *rolePtr;
 
-					GetWindowDrawList()->AddText(pos + ImVec2(c::bg::size.x - 65.f, 24.f), c::label::active, username.c_str());
-					GetWindowDrawList()->AddText(pos + ImVec2(c::bg::size.x - 65.f, 40.f), role.color, role.labelText.c_str());
+					GetWindowDrawList()->AddText(pos + ImVec2(c::bg::size.x - 70.f, 20.f), c::label::active, username.c_str());
+					GetWindowDrawList()->AddText(pos + ImVec2(c::bg::size.x - 70.f, 38.f), role.color, role.labelText.c_str());
 
 					ImGui::PopClipRect();
 
@@ -955,9 +950,23 @@ namespace YorzenUI {
 					custom::chroma rainbow;
 					ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 10));
 
-					// Full-width Tab Content Blocks (Aim / Visual / Brutal / Keybinds / Settings)
+					// Full-width Tab Content Blocks (Aim / Visual / Brutal / Settings)
 					YorzenRenderMenuTabs(fTabOffset);
 
+					ImGui::PopStyleVar();
+
+					// Bottom Navigation Bar Background & Line
+					GetWindowDrawList()->AddRectFilled(pos + ImVec2(0, c::bg::size.y - 65), pos + c::bg::size, utils::GetColorWithAlpha(c::child::background, c::child::background.w / 2), c::bg::rounding, ImDrawFlags_RoundCornersBottom);
+					GetWindowDrawList()->AddRectFilled(pos + ImVec2(0, c::bg::size.y - 65), pos + ImVec2(c::bg::size.x, c::bg::size.y - 64), ImGui::GetColorU32(c::child::stroke));
+
+					// Bottom Navigation Tabs (Aim / Visual / Brutal / Settings)
+					ImGui::SetCursorPos(ImVec2((c::bg::size.x - 410.f) / 2.f, c::bg::size.y - 52.f));
+					ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(6.f, 0.f));
+					for (int i = 0; i < IM_ARRAYSIZE(tab_list); i++) {
+						if (i > 0) ImGui::SameLine();
+						std::string tab_label = std::string(tab_ico_list[i]) + " " + tab_list[i];
+						custom::SubTab(tab_label.c_str(), &iTabs, i);
+					}
 					ImGui::PopStyleVar();
 
 					window_draw = ImGui::GetWindowDrawList();

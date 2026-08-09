@@ -94,14 +94,14 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam,
     POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
     ScreenToClient(hWnd, &pt);
 
-    // Top Header bar (0 to 75px)
+    // Top Header bar (0 to 75px) -> HTCAPTION for smooth window dragging
     if (pt.y >= 0 && pt.y <= 75) {
-      // Main Menu top tabs area (14..445, y: 12..65) -> HTCLIENT for tab clicks
-      if (YorzenMain::Auth && pt.x >= 14 && pt.x <= 445 && pt.y >= 12 && pt.y <= 65) {
-        return HTCLIENT;
-      }
-      // Top header empty space & all of Login header -> HTCAPTION for smooth window dragging
       return HTCAPTION;
+    }
+
+    // Bottom Navigation Tabs Bar -> HTCLIENT for clicking bottom tabs
+    if (YorzenMain::Auth && pt.y >= 435 && pt.x >= 14 && pt.x <= 490) {
+      return HTCLIENT;
     }
 
     // Main content area (below header) -> HTCLIENT so all widgets get mouse clicks
