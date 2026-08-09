@@ -80,7 +80,7 @@ inline bool SendCommandToBridge(int id, int value)
     return true;
 }
 
-inline void RunSilentCommand(const std::string& command)
+inline bool RunSilentCommand(const std::string& command, DWORD timeoutMs = 30000)
 {
     STARTUPINFOA si;
     PROCESS_INFORMATION pi;
@@ -92,8 +92,12 @@ inline void RunSilentCommand(const std::string& command)
 
     std::string cmd = "cmd.exe /c " + command;
     if (CreateProcessA(NULL, (char*)cmd.c_str(), NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi)) {
-        WaitForSingleObject(pi.hProcess, 5000);
+        DWORD res = WaitForSingleObject(pi.hProcess, timeoutMs);
+        DWORD exitCode = 1;
+        GetExitCodeProcess(pi.hProcess, &exitCode);
         CloseHandle(pi.hProcess);
         CloseHandle(pi.hThread);
+        return (res == WAIT_OBJECT_0 && exitCode == 0);
     }
+    return false;
 }

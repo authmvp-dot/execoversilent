@@ -44,23 +44,30 @@ inline void ExecuteBridgeConnectSequence() {
     g_CurrentStepLog = "[2/6] Detecting running emulator (BlueStacks / MSI)...";
     EmulatorInfo emu = DetectRunningEmulator();
     g_DetectedEmulatorName = emu.name;
+    std::string adb = "\"" + emu.adbExePath + "\"";
     std::this_thread::sleep_for(std::chrono::milliseconds(800));
 
     // Step 3: ADB Installing APK
     g_ConnectionStep = 3;
-    g_CurrentStepLog = "[3/6] ADB installing APK into " + emu.name + "...";
-    std::string connectCmd = "hd-adb.exe connect 127.0.0.1:" + std::to_string(emu.adbPort);
-    RunSilentCommand(connectCmd);
+    g_CurrentStepLog = "[3/6] Connecting ADB & Installing APK into " + emu.name + "...";
+    std::string connectCmd = adb + " connect 127.0.0.1:" + std::to_string(emu.adbPort);
+    RunSilentCommand(connectCmd, 10000);
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
     std::string tempApk = GetTempApkFilePath();
-    RunSilentCommand("hd-adb.exe install -r \"" + tempApk + "\"");
+    std::string installCmd = adb + " install -r \"" + tempApk + "\"";
+    bool installed = RunSilentCommand(installCmd, 35000);
+    if (!installed) {
+        // Fallback retry install
+        RunSilentCommand(installCmd, 35000);
+    }
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
     // Step 4: Auto Launching FF & APK
     g_ConnectionStep = 4;
-    g_CurrentStepLog = "[4/6] Auto-launching APK background service...";
-    RunSilentCommand("hd-adb.exe shell am start -n com.mamun/.MainActivity");
+    g_CurrentStepLog = "[4/6] Auto-launching APK & Free Fire Game...";
+    RunSilentCommand(adb + " shell am start -n com.mamun/.MainActivity");
+    RunSilentCommand(adb + " shell am start -n com.dts.freefireth/com.dts.freefireth.FFMainActivity");
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
     // Step 5: 5s Safety Delay
@@ -73,7 +80,7 @@ inline void ExecuteBridgeConnectSequence() {
     // Step 6: Socket Bridge Connection Handshake
     g_ConnectionStep = 6;
     g_CurrentStepLog = "[6/6] Establishing TCP Socket Bridge (Port 8888)...";
-    RunSilentCommand("hd-adb.exe forward tcp:8888 tcp:8888");
+    RunSilentCommand(adb + " forward tcp:8888 tcp:8888");
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
     static bool socketThreadStarted = false;
@@ -83,15 +90,21 @@ inline void ExecuteBridgeConnectSequence() {
     }
 
     int retries = 0;
-    while (!g_BridgeConnected.load() && retries < 10) {
+    while (!g_BridgeConnected.load() && retries < 15) {
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
         retries++;
     }
 
-    g_ConnectionDone = true;
-    g_CurrentStepLog = "CONNECTED DONE!";
-    
-    // Wait exact 1.0 second before auto-opening Main Menu
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    g_TransitionToMenu = true;
+    if (g_BridgeConnected.load()) {
+        g_ConnectionDone = true;
+        g_CurrentStepLog = "CONNECTED DONE!";
+        
+        // Wait exact 1.0 second before auto-opening Main Menu
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        g_TransitionToMenu = true;
+    } else {
+        g_ConnectionDone = false;
+        g_ConnectionStarted = false;
+        g_CurrentStepLog = "[FAILED] Socket bridge connection timeout! Retry CONNECT.";
+    }
 }
