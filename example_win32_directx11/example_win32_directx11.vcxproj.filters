@@ -9,22 +9,22 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\imconfig.h">
+    <ClInclude Include="..\imconfig.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\imgui.h">
+    <ClInclude Include="..\imgui.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\imgui_internal.h">
+    <ClInclude Include="..\imgui_internal.h">
       <Filter>imgui</Filter>
     </ClInclude>
     <ClInclude Include="FWorkMain.h">
       <Filter>sources</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\imgui_freetype.h">
+    <ClInclude Include="..\imgui_freetype.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\imgui_settings.h">
+    <ClInclude Include="..\imgui_settings.h">
       <Filter>imgui</Filter>
     </ClInclude>
     <ClInclude Include="ImAnim\AbstractAnimation.h" />
@@ -37,8 +37,8 @@
     <ClInclude Include="ImAnim\PauseAnimation.h" />
     <ClInclude Include="ImAnim\SequentialAnimationGroup.h" />
     <ClInclude Include="ImAnim\Utils.h" />
-    <ClInclude Include="..\..\backends\imgui_impl_dx11.h" />
-    <ClInclude Include="..\..\backends\imgui_impl_win32.h" />
+    <ClInclude Include="..\backends\imgui_impl_dx11.h" />
+    <ClInclude Include="..\backends\imgui_impl_win32.h" />
     <ClInclude Include="ImGui\blur.hpp" />
     <ClInclude Include="ImGui\custom_popup.hpp" />
     <ClInclude Include="ImGui\custom_widgets.hpp" />
@@ -60,22 +60,22 @@
     <ClInclude Include="ImGui\avatar.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\imgui.cpp">
+    <ClCompile Include="..\imgui.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
     <ClCompile Include="Main.cpp">
       <Filter>sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\imgui_draw.cpp">
+    <ClCompile Include="..\imgui_draw.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\imgui_widgets.cpp">
+    <ClCompile Include="..\imgui_widgets.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\imgui_tables.cpp">
+    <ClCompile Include="..\imgui_tables.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\imgui_freetype.cpp">
+    <ClCompile Include="..\imgui_freetype.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
     <ClCompile Include="ImAnim\AbstractAnimation.cpp" />
@@ -88,17 +88,17 @@
     <ClCompile Include="ImAnim\PauseAnimation.cpp" />
     <ClCompile Include="ImAnim\SequentialAnimationGroup.cpp" />
     <ClCompile Include="ImAnim\Utils.cpp" />
-    <ClCompile Include="..\..\backends\imgui_impl_dx11.cpp" />
-    <ClCompile Include="..\..\backends\imgui_impl_win32.cpp" />
+    <ClCompile Include="..\backends\imgui_impl_dx11.cpp" />
+    <ClCompile Include="..\backends\imgui_impl_win32.cpp" />
     <ClCompile Include="ImGui\custom_widgets.cpp" />
     <ClCompile Include="ImGui\TextEditor.cpp" />
     <ClCompile Include="Yorzen\Dudas\menu.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\misc\debuggers\imgui.natvis">
+    <None Include="..\misc\debuggers\imgui.natvis">
       <Filter>imgui</Filter>
     </None>
-    <None Include="..\..\misc\debuggers\imgui.natstepfilter">
+    <None Include="..\misc\debuggers\imgui.natstepfilter">
       <Filter>imgui</Filter>
     </None>
   </ItemGroup>
