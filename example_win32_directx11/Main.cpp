@@ -32,7 +32,7 @@
 #include <src/adb/adb.hpp>
 #include <src/Overlay/Overlay.hpp>
 #include <src/ui/YorzenInterface.hpp>
-#include <src/Backend/SyncGlobals.hpp>
+#include <UIStubs.hpp>
 #include <src/Globals.hpp>
 #include <src/Globals.hpp>
 #include "src/Overlay/Render.hpp"

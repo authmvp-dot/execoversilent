@@ -4,7 +4,7 @@
 #include <custom_logo.hpp>
 #include <src/Fonts/Fonts.hpp>
 #include <src/Fonts/icon.h>
-#include <src/Backend/SyncGlobals.hpp>
+#include <UIStubs.hpp>
 #include <imgui_settings.h>
 #include <ImGui/font_defines.h>
 #include <imgui_freetype.h>

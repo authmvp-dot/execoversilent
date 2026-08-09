@@ -3,9 +3,7 @@
 #include <Yorzen/Dudas/yorzen.h>
 #include <src/Overlay/Overlay.hpp>
 #include <src/Globals.hpp>
-#include <src/Backend/SyncGlobals.hpp>
-#include <src/Backend/BackendBridge.hpp>
-#include <src/Backend/BackendConfig.hpp>
+#include <UIStubs.hpp>
 #include <Keyauth.h>
 
 #include <imgui_impl_dx11.h>

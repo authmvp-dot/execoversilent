@@ -2,8 +2,7 @@
 #include "menu_widgets.hpp"
 
 #include <Yorzen/Dudas/ui_settings.hpp>
-#include <src/Backend/BackendBridge.hpp>
-#include <src/Backend/BackendConfig.hpp>
+#include <UIStubs.hpp>
 #include <src/Globals.hpp>
 #include <src/Overlay/Overlay.hpp>
 #include <BlazeMem.h>

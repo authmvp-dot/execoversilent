@@ -214,9 +214,7 @@
     <ClInclude Include="auth\auth.hpp" />
     <ClInclude Include="auth\json.hpp" />
     <ClInclude Include="auth\skStr.h" />
-    <ClInclude Include="src\Backend\BackendConfig.hpp" />
-    <ClInclude Include="src\Backend\BackendBridge.hpp" />
-    <ClInclude Include="src\Backend\SyncGlobals.hpp" />
+    <ClInclude Include="UIStubs.hpp" />
     <ClInclude Include="src\Fonts\Fonts.hpp" />
     <ClInclude Include="src\Fonts\FontsBytes.h" />
     <ClInclude Include="src\Fonts\FontInter.hpp" />
@@ -249,15 +247,11 @@
     <ClCompile Include="ImGui\custom_widgets.cpp" />
     <ClCompile Include="ImGui\TextEditor.cpp" />
     <ClCompile Include="src\ui\EclipseFontInit.cpp" />
-    <ClCompile Include="src\Backend\BackendConfig.cpp" />
-    <ClCompile Include="src\Backend\BackendBridge.cpp" />
-    <ClCompile Include="src\Backend\SyncGlobals.cpp" />
     <ClCompile Include="src\Fonts\Fonts.cpp" />
     <ClCompile Include="src\Overlay\Overlay.cpp" />
     <ClCompile Include="src\Overlay\Render.cpp" />
     <ClCompile Include="src\ui\YorzenInterface.cpp" />
     <ClCompile Include="Yorzen\Dudas\menu.cpp" />
-    <ClCompile Include="src\Backend\BackendStubs.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\misc\debuggers\imgui.natstepfilter" />
