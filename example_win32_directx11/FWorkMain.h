@@ -946,11 +946,15 @@ namespace YorzenUI {
 					GetWindowDrawList()->AddRectFilled(pos, pos + ImVec2(c::bg::size.x, 75), utils::GetColorWithAlpha(c::child::background, c::child::background.w / 2), c::bg::rounding, ImDrawFlags_RoundCornersTop);
 					GetWindowDrawList()->AddRectFilled(pos + ImVec2(0, 75), pos + ImVec2(c::bg::size.x, 76), ImGui::GetColorU32(c::child::stroke), c::bg::rounding);
 
-					// Top-Left Brand Logo Title
-					custom::chroma rainbow;
-					PushFont(font::inter_semibold);
-					rainbow.RenderText(pos + ImVec2(18.f, 24.f), YorzenName::cheat_name, 1.f, 1.f, bg_draw);
-					PopFont();
+					// Top-Left Header Navigation Tabs (Aligned to Left)
+					ImGui::SetCursorPos(ImVec2(18.f, 17.5f));
+					ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(8.f, 0.f));
+					for (int i = 0; i < IM_ARRAYSIZE(tab_list); i++) {
+						if (i > 0) ImGui::SameLine();
+						std::string tab_label = std::string(tab_ico_list[i]) + "  " + tab_list[i];
+						custom::SubTab(tab_label.c_str(), &iTabs, i);
+					}
+					ImGui::PopStyleVar();
 
 					// Top-Right User Info & Avatar Logo
 					{
@@ -983,15 +987,7 @@ namespace YorzenUI {
 
 					ImGui::SetScrollFromPosY(0);
 
-					// Horizontal Top Header Navigation Tabs
-					ImGui::SetCursorPos(ImVec2(120.f, 17.5f));
-					ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(6.f, 0.f));
-					for (int i = 0; i < IM_ARRAYSIZE(tab_list); i++) {
-						if (i > 0) ImGui::SameLine();
-						custom::SubTab(tab_list[i], &iTabs, i);
-					}
-					ImGui::PopStyleVar();
-
+					custom::chroma rainbow;
 					ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 10));
 
 					// Full-width Tab Content Blocks (Aim / Visual / Brutal / Keybinds / Settings)
