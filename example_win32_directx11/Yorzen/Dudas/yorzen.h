@@ -182,7 +182,7 @@ inline namespace YorzenCheck
 	bool AimSilentHookX;
 
 	bool g3siedkcheroesp = true;
-}
+extern HWND hTargetWindow;
 
 HWND hdPlayerWindow;
 HWND hwnd;
@@ -193,7 +193,7 @@ void ToggleClickability(bool clickable)
 	if (!hwnd || !IsWindow(hwnd))
 		return;
 
-	if (FWork::Overlay::GetTargetWindow()) {
+	if (hTargetWindow) {
 		if (clickable) {
 			SetWindowLongPtr(hwnd, GWL_EXSTYLE, WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LAYERED);
 			SetForegroundWindow(hwnd);
