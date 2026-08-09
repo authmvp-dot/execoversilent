@@ -96,8 +96,8 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam,
 
     // Top Header bar (0 to 75px)
     if (pt.y >= 0 && pt.y <= 75) {
-      // Main Menu top tabs area (18..360, y: 12..65) -> HTCLIENT for tab clicks
-      if (YorzenMain::Auth && pt.x >= 18 && pt.x <= 360 && pt.y >= 12 && pt.y <= 65) {
+      // Main Menu top tabs area (14..445, y: 12..65) -> HTCLIENT for tab clicks
+      if (YorzenMain::Auth && pt.x >= 14 && pt.x <= 445 && pt.y >= 12 && pt.y <= 65) {
         return HTCLIENT;
       }
       // Top header empty space & all of Login header -> HTCAPTION for smooth window dragging

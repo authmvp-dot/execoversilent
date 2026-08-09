@@ -933,7 +933,7 @@ namespace YorzenUI {
 					}
 					ImGui::PopStyleVar();
 
-					// Far-Left User Info & Role Badge
+					// Far-Right User Info & Role Badge
 					std::string username = std::string(var::username);
 					if (username.empty()) username = "Guest";
 					std::string roleKey = "client";
@@ -948,8 +948,8 @@ namespace YorzenUI {
 
 					const RoleInfo& role = *rolePtr;
 
-					GetWindowDrawList()->AddText(pos + ImVec2(14.f, 52.f), c::label::active, username.c_str());
-					GetWindowDrawList()->AddText(pos + ImVec2(60.f, 52.f), role.color, role.labelText.c_str());
+					GetWindowDrawList()->AddText(pos + ImVec2(c::bg::size.x - 65.f, 24.f), c::label::active, username.c_str());
+					GetWindowDrawList()->AddText(pos + ImVec2(c::bg::size.x - 65.f, 40.f), role.color, role.labelText.c_str());
 
 					ImGui::PopClipRect();
 
