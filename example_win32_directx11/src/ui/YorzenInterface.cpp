@@ -40,8 +40,14 @@ void Interface::Initialize(HWND Window, HWND TargetWindow, ID3D11Device* Device,
     Backend_StartUtilityThread();
 
     bInitialized = true;
-    bIsMenuOpen = YorzenMain::Login_Window;
-    YorzenMain::Login_Window = bIsMenuOpen;
+    bIsMenuOpen = true;
+    YorzenMain::Login_Window = true;
+    
+    // Ensure overlay window receives mouse events when open by default
+    if (hWindow && IsWindow(hWindow)) {
+        SetWindowLongPtr(hWindow, GWL_EXSTYLE, WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LAYERED);
+        SetForegroundWindow(hWindow);
+    }
 }
 
 void Interface::RenderGui()

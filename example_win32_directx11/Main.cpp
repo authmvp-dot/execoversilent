@@ -120,11 +120,43 @@ void Initialize()
 
     std::thread([] { authInit(); }).detach();
 
-    FWork::Overlay::Setup(Render::FindRenderWindow());
+    HWND targetWindow = Render::FindRenderWindow();
+    bool isStandalone = false;
+
+    // If no emulator found, create a standalone target window for the UI
+    if (!targetWindow) {
+        isStandalone = true;
+        WNDCLASSEXA wc = {};
+        wc.cbSize = sizeof(WNDCLASSEXA);
+        wc.style = CS_HREDRAW | CS_VREDRAW;
+        wc.lpfnWndProc = DefWindowProcA;
+        wc.hInstance = GetModuleHandle(NULL);
+        wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+        wc.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
+        wc.lpszClassName = "BlazeStandaloneTarget";
+        RegisterClassExA(&wc);
+        targetWindow = CreateWindowExA(
+            0, "BlazeStandaloneTarget", "Blaze Xiters - UI",
+            WS_OVERLAPPEDWINDOW | WS_VISIBLE,
+            100, 100, 1280, 720,
+            NULL, NULL, GetModuleHandle(NULL), NULL);
+        ShowWindow(targetWindow, SW_SHOW);
+        UpdateWindow(targetWindow);
+    }
+
+    FWork::Overlay::Setup(targetWindow);
     FWork::Overlay::Initialize();
 
     if (!FWork::Overlay::IsInitialized())
         return;
+
+    // If standalone, ensure overlay window is interactable and top level
+    if (isStandalone) {
+        HWND hOverlay = FWork::Overlay::GetOverlayWindow();
+        SetWindowLongPtr(hOverlay, GWL_EXSTYLE, WS_EX_TOPMOST | WS_EX_LAYERED);
+        SetWindowLongPtr(hOverlay, GWL_STYLE, WS_POPUP | WS_VISIBLE);
+        SetLayeredWindowAttributes(hOverlay, RGB(0, 0, 0), 255, LWA_ALPHA);
+    }
 
     if (!FWork::Overlay::dxGetDevice() || !FWork::Overlay::GetOverlayWindow())
         return;
