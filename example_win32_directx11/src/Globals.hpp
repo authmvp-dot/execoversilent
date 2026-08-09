@@ -4,9 +4,9 @@
 #define IMGUI_DEFINE_MATH_OPERATORS
 #endif
 #include <imgui.h>
-#include <examples/example_win32_directx11/EspLines/Player.h>
-#include <examples/example_win32_directx11/EspLines/Math/Matrix4v4.hpp>
-#include <examples/example_win32_directx11/EspLines/Loot/LootTypes.hpp>
+#include <example_win32_directx11/EspLines/Player.h>
+#include <example_win32_directx11/EspLines/Math/Matrix4v4.hpp>
+#include <example_win32_directx11/EspLines/Loot/LootTypes.hpp>
 #include <unordered_map>
 #include <string>
 
@@ -98,7 +98,7 @@ public:
 		int KeyBind = VK_LBUTTON;
 		int AimPosition = 0;
 		bool SilentAimCheckbox = false;
-		bool SilentAimReworked = false; // legacy alias — prefer SilentAimMax
+		bool SilentAimReworked = false; // legacy alias â€” prefer SilentAimMax
 		bool SilentAimMax = false;      // Max (Head)
 		bool SilentAimBody = false;     // Body (Hip)
 		int SilentAimTargetMode = 0; // unused (kept for config layout)
@@ -114,8 +114,8 @@ public:
 
 		bool ExternalEnabled = false;
 		bool ExternalAlwaysOn = false;
-		bool ExternalUseAimAssist = false; // 🔥 new (aimassist mode toggle)
-		int ExternalWriteDelayMs = 0; // 0 → 3000 ms
+		bool ExternalUseAimAssist = false; // ðŸ”¥ new (aimassist mode toggle)
+		int ExternalWriteDelayMs = 0; // 0 â†’ 3000 ms
 
 		int ExternalKey = 0;
 		int ExternalBind = VK_LBUTTON;
@@ -247,7 +247,7 @@ public:
 		bool OffsetSpeed = false; // Sync flag
 		float SpeedValue = 1.0f; // Speed multiplier (1x to 10x) - applies to all movement types
 
-		// Speed Timer — fixed delta on/off (0.055 / 0.033)
+		// Speed Timer â€” fixed delta on/off (0.055 / 0.033)
 		bool SpeedTimerEnabled = false;
 		float SpeedTimerMultiplier = 1.0f; // legacy config field (unused)
 
@@ -276,7 +276,7 @@ public:
 
 		// Enemy Pull (FOV pull onto fire line) + legacy magnet aliases
 		bool EnemyPullEnabled = false;
-		bool PullEnemy360Enabled = false; // legacy alias — prefer EnemyPullEnabled
+		bool PullEnemy360Enabled = false; // legacy alias â€” prefer EnemyPullEnabled
 		int PullEnemy360Mode = 0; // unused (kept for config layout)
 		int EnemyPullTickMs = 6;
 		float EnemyPullMaxDistance = 250.0f;
@@ -304,13 +304,13 @@ public:
 		Vector3 teleport_coordinates[20];  // Array of 20 teleport coordinates
 		char teleport_locations[20][64];  // Array of 20 location names
 
-		// Spin player multiplier 1x–15x (see SpinPlayer::DegreesPerTickFromMultiplier)
+		// Spin player multiplier 1xâ€“15x (see SpinPlayer::DegreesPerTickFromMultiplier)
 		bool SpinPlayer = false;
 		float SpinPlayerSpeed = 5.0f;
 
 		bool UnlimitedAmmo = false;
 
-		// No gravity fly (WASD + Space/Ctrl) — movement 0x139C, grounded 0x13F0
+		// No gravity fly (WASD + Space/Ctrl) â€” movement 0x139C, grounded 0x13F0
 		bool NoGravityFlyEnabled = false;
 
 	} Misc;
@@ -323,8 +323,8 @@ public:
 		bool Capture = false;
 		bool AutoColorChange = true;
 		bool AutoSaveConfig = false;
-		bool DisableAllEffects = false; // Performance mode — disables glow, shaders & heavy visuals
-		bool MenuOpen = false; // synced from overlay UI — blocks game input hacks while menu is open
+		bool DisableAllEffects = false; // Performance mode â€” disables glow, shaders & heavy visuals
+		bool MenuOpen = false; // synced from overlay UI â€” blocks game input hacks while menu is open
 		int Delay = 1;
 		char Username[64] = "";
 		char PassWord[64] = "";

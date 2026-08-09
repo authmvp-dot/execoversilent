@@ -7,8 +7,8 @@
 #include <algorithm>
 #include "imgui.h"
 #include "imgui_internal.h"
-#include <examples/example_win32_directx11/src/Globals.hpp>
-#include <examples/example_win32_directx11/src/Fonts/Fonts.hpp>
+#include <example_win32_directx11/src/Globals.hpp>
+#include <example_win32_directx11/src/Fonts/Fonts.hpp>
 #include <cmath>
 
 static int esp_scale = 19;

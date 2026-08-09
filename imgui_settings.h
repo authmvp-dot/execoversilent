@@ -2,14 +2,14 @@
 
 
 #include "imgui.h"
-#include "./examples/example_win32_directx11/ImAnim/ImVec2Anim.h"
-#include "./examples/example_win32_directx11/ImAnim/ImVec4Anim.h"
+#include "./example_win32_directx11/ImAnim/ImVec2Anim.h"
+#include "./example_win32_directx11/ImAnim/ImVec4Anim.h"
 #include <map>
 #include <vector>
 #include <string>
 
-#include "./examples/example_win32_directx11/ImGui/stt.hpp"
-#include "./examples/example_win32_directx11/ImGui/blur.hpp"
+#include "./example_win32_directx11/ImGui/stt.hpp"
+#include "./example_win32_directx11/ImGui/blur.hpp"
 
 
 namespace font
@@ -102,20 +102,20 @@ inline namespace c
 	inline std::vector<glow_draws> glow_context;
 	inline ImDrawList* glow_text_drawlist;
 
-	// Основные цвета
+	// ÐžÑÐ½Ð¾Ð²Ð½Ñ‹Ðµ Ñ†Ð²ÐµÑ‚Ð°
 	inline ImColor main_color(255, 0, 0);
 	inline ImColor accent_color(255, 0, 0);
-	inline ImColor dark_color(28, 30, 34); // Основной темный фон
-	inline ImColor second_color(23, 23, 31); // Вторичный фон
-	inline ImColor background_color(24, 24, 29, 240); // Фон окна
-	inline ImColor stroke_color(48, 48, 58, 65); // Границы и линии
-	inline ImColor window_bg_color(12, 10, 21, 245); // Основной фон окна
+	inline ImColor dark_color(28, 30, 34); // ÐžÑÐ½Ð¾Ð²Ð½Ð¾Ð¹ Ñ‚ÐµÐ¼Ð½Ñ‹Ð¹ Ñ„Ð¾Ð½
+	inline ImColor second_color(23, 23, 31); // Ð’Ñ‚Ð¾Ñ€Ð¸Ñ‡Ð½Ñ‹Ð¹ Ñ„Ð¾Ð½
+	inline ImColor background_color(24, 24, 29, 240); // Ð¤Ð¾Ð½ Ð¾ÐºÐ½Ð°
+	inline ImColor stroke_color(48, 48, 58, 65); // Ð“Ñ€Ð°Ð½Ð¸Ñ†Ñ‹ Ð¸ Ð»Ð¸Ð½Ð¸Ð¸
+	inline ImColor window_bg_color(12, 10, 21, 245); // ÐžÑÐ½Ð¾Ð²Ð½Ð¾Ð¹ Ñ„Ð¾Ð½ Ð¾ÐºÐ½Ð°
 
 	inline ImColor black_color(0, 0, 0, 200);
 
-	// Акценты и разделители
+	// ÐÐºÑ†ÐµÐ½Ñ‚Ñ‹ Ð¸ Ñ€Ð°Ð·Ð´ÐµÐ»Ð¸Ñ‚ÐµÐ»Ð¸
 	inline ImVec4 accent = (ImVec4)main_color;
-	inline ImVec4 separator = ImColor(45, 45, 50); // Линии между секциями
+	inline ImVec4 separator = ImColor(45, 45, 50); // Ð›Ð¸Ð½Ð¸Ð¸ Ð¼ÐµÐ¶Ð´Ñƒ ÑÐµÐºÑ†Ð¸ÑÐ¼Ð¸
 	inline float fTabOffset = 0.f;
 	inline bool bTabState = false;
 	inline int iTabTarget = 0;
@@ -127,31 +127,31 @@ inline namespace c
 
 	inline namespace bg
 	{
-		inline ImVec4 background = ImColor(24, 24, 29); // Темный фон
+		inline ImVec4 background = ImColor(24, 24, 29); // Ð¢ÐµÐ¼Ð½Ñ‹Ð¹ Ñ„Ð¾Ð½
 		inline ImVec2 size = ImVec2(750, 525);
-		inline float rounding = 16.f; // Скругление
+		inline float rounding = 16.f; // Ð¡ÐºÑ€ÑƒÐ³Ð»ÐµÐ½Ð¸Ðµ
 	}
 
 	inline namespace child
 	{
-		inline ImVec4 title = ImColor(32, 32, 40); // Заголовок темный
-		inline ImVec4 background = ImColor(13, 13, 16, 210); // Фон ребенка
-		inline ImVec4 stroke = ImColor(45, 45, 50); // Границы
-		inline float rounding = 5.f; // Скругление
+		inline ImVec4 title = ImColor(32, 32, 40); // Ð—Ð°Ð³Ð¾Ð»Ð¾Ð²Ð¾Ðº Ñ‚ÐµÐ¼Ð½Ñ‹Ð¹
+		inline ImVec4 background = ImColor(13, 13, 16, 210); // Ð¤Ð¾Ð½ Ñ€ÐµÐ±ÐµÐ½ÐºÐ°
+		inline ImVec4 stroke = ImColor(45, 45, 50); // Ð“Ñ€Ð°Ð½Ð¸Ñ†Ñ‹
+		inline float rounding = 5.f; // Ð¡ÐºÑ€ÑƒÐ³Ð»ÐµÐ½Ð¸Ðµ
 
-		inline ImVec4 outline = ImColor(75, 75, 95, 140);              // ↓
-		inline ImVec4 background2 = ImColor(20, 20, 25, 195);          // ↓
+		inline ImVec4 outline = ImColor(75, 75, 95, 140);              // â†“
+		inline ImVec4 background2 = ImColor(20, 20, 25, 195);          // â†“
 	}
 
 	namespace page
 	{
-		inline ImVec4 background_active = ImColor(36, 36, 46); // Активная страница
-		inline ImVec4 background = ImColor(28, 30, 34); // Фон страницы
+		inline ImVec4 background_active = ImColor(36, 36, 46); // ÐÐºÑ‚Ð¸Ð²Ð½Ð°Ñ ÑÑ‚Ñ€Ð°Ð½Ð¸Ñ†Ð°
+		inline ImVec4 background = ImColor(28, 30, 34); // Ð¤Ð¾Ð½ ÑÑ‚Ñ€Ð°Ð½Ð¸Ñ†Ñ‹
 
-		inline ImVec4 text_hov = ImColor(255, 255, 255); // Белый при наведении
-		inline ImVec4 text = ImColor(200, 200, 200); // Основной текст
+		inline ImVec4 text_hov = ImColor(255, 255, 255); // Ð‘ÐµÐ»Ñ‹Ð¹ Ð¿Ñ€Ð¸ Ð½Ð°Ð²ÐµÐ´ÐµÐ½Ð¸Ð¸
+		inline ImVec4 text = ImColor(200, 200, 200); // ÐžÑÐ½Ð¾Ð²Ð½Ð¾Ð¹ Ñ‚ÐµÐºÑÑ‚
 
-		inline float rounding = 4.f; // Скругление секции
+		inline float rounding = 4.f; // Ð¡ÐºÑ€ÑƒÐ³Ð»ÐµÐ½Ð¸Ðµ ÑÐµÐºÑ†Ð¸Ð¸
 	}
 
 	inline namespace elements
@@ -161,16 +161,16 @@ inline namespace c
 
 	inline namespace checkbox
 	{
-		inline ImVec4 mark = ImColor(255, 69, 0); // Красная галочка
+		inline ImVec4 mark = ImColor(255, 69, 0); // ÐšÑ€Ð°ÑÐ½Ð°Ñ Ð³Ð°Ð»Ð¾Ñ‡ÐºÐ°
 	}
 
 	inline namespace text
 	{
 		inline namespace label
 		{
-			inline ImColor active = ImColor(255, 255, 255); // Активный белый текст
-			inline ImColor hovered = ImColor(200, 200, 200); // При наведении
-			inline ImColor regular = ImColor(111, 111, 111); // По умолчанию
+			inline ImColor active = ImColor(255, 255, 255); // ÐÐºÑ‚Ð¸Ð²Ð½Ñ‹Ð¹ Ð±ÐµÐ»Ñ‹Ð¹ Ñ‚ÐµÐºÑÑ‚
+			inline ImColor hovered = ImColor(200, 200, 200); // ÐŸÑ€Ð¸ Ð½Ð°Ð²ÐµÐ´ÐµÐ½Ð¸Ð¸
+			inline ImColor regular = ImColor(111, 111, 111); // ÐŸÐ¾ ÑƒÐ¼Ð¾Ð»Ñ‡Ð°Ð½Ð¸ÑŽ
 		}
 
 		inline namespace description
@@ -181,12 +181,12 @@ inline namespace c
 		}
 
 		inline ImVec4 text_active = ImColor(255, 255, 255);
-		inline ImVec4 text_hov = ImColor(255, 69, 0); // Красный акцент при наведении
+		inline ImVec4 text_hov = ImColor(255, 69, 0); // ÐšÑ€Ð°ÑÐ½Ñ‹Ð¹ Ð°ÐºÑ†ÐµÐ½Ñ‚ Ð¿Ñ€Ð¸ Ð½Ð°Ð²ÐµÐ´ÐµÐ½Ð¸Ð¸
 		inline ImVec4 text = ImColor(200, 200, 200);
 	}
 }
 
-// Тема (переключение)
+// Ð¢ÐµÐ¼Ð° (Ð¿ÐµÑ€ÐµÐºÐ»ÑŽÑ‡ÐµÐ½Ð¸Ðµ)
 inline bool bTheme = true;
 inline float themeTransition = 0.0f;
 inline float transitionSpeed = 0.05f;
@@ -200,7 +200,7 @@ inline ImColor ImLerpColor(const ImColor& col1, const ImColor& col2, float t) {
 	);
 }
 
-// Обновление темы
+// ÐžÐ±Ð½Ð¾Ð²Ð»ÐµÐ½Ð¸Ðµ Ñ‚ÐµÐ¼Ñ‹
 inline void UpdateTheme()
 {
 
@@ -210,7 +210,7 @@ inline void UpdateTheme()
 
 	c::accent_color = utils::GetDarkColor(c::main_color);
 
-	if (bTheme) { // Тёмная тема
+	if (bTheme) { // Ð¢Ñ‘Ð¼Ð½Ð°Ñ Ñ‚ÐµÐ¼Ð°
 
 		ImGui::GetStyle().Colors[ImGuiCol_Separator] = c::stroke_color;
 
@@ -243,12 +243,12 @@ inline void UpdateTheme()
 	else {
 		ImGui::GetStyle().Colors[ImGuiCol_Separator] = c::stroke_color;
 
-		//c::main_color = ImLerpColor(c::main_color, ImColor(0, 110, 200), change_anim_speed); // Более мягкий синий акцент
-		c::dark_color = ImLerpColor(c::dark_color, ImColor(230, 230, 230), change_anim_speed); // Серый фон вместо резкого белого
+		//c::main_color = ImLerpColor(c::main_color, ImColor(0, 110, 200), change_anim_speed); // Ð‘Ð¾Ð»ÐµÐµ Ð¼ÑÐ³ÐºÐ¸Ð¹ ÑÐ¸Ð½Ð¸Ð¹ Ð°ÐºÑ†ÐµÐ½Ñ‚
+		c::dark_color = ImLerpColor(c::dark_color, ImColor(230, 230, 230), change_anim_speed); // Ð¡ÐµÑ€Ñ‹Ð¹ Ñ„Ð¾Ð½ Ð²Ð¼ÐµÑÑ‚Ð¾ Ñ€ÐµÐ·ÐºÐ¾Ð³Ð¾ Ð±ÐµÐ»Ð¾Ð³Ð¾
 		c::second_color = ImLerpColor(c::second_color, ImColor(190, 190, 190, 70), change_anim_speed);
-		c::background_color = ImLerpColor(c::background_color, ImColor(245, 245, 245, 220), change_anim_speed); // Мягкий фон вместо яркого белого
+		c::background_color = ImLerpColor(c::background_color, ImColor(245, 245, 245, 220), change_anim_speed); // ÐœÑÐ³ÐºÐ¸Ð¹ Ñ„Ð¾Ð½ Ð²Ð¼ÐµÑÑ‚Ð¾ ÑÑ€ÐºÐ¾Ð³Ð¾ Ð±ÐµÐ»Ð¾Ð³Ð¾
 		c::stroke_color = ImLerpColor(c::stroke_color, ImColor(0, 0, 0, 50), change_anim_speed);
-		c::window_bg_color = ImLerpColor(c::window_bg_color, ImColor(250, 250, 250, 160), change_anim_speed); // Уменьшена прозрачность
+		c::window_bg_color = ImLerpColor(c::window_bg_color, ImColor(250, 250, 250, 160), change_anim_speed); // Ð£Ð¼ÐµÐ½ÑŒÑˆÐµÐ½Ð° Ð¿Ñ€Ð¾Ð·Ñ€Ð°Ñ‡Ð½Ð¾ÑÑ‚ÑŒ
 
 		c::bg::background = ImLerpColor(c::bg::background, ImColor(235, 235, 235), change_anim_speed);
 		c::child::title = ImLerpColor(c::child::title, ImColor(200, 200, 200), change_anim_speed);
@@ -258,7 +258,7 @@ inline void UpdateTheme()
 		c::page::background_active = ImLerpColor(c::page::background_active, ImColor(210, 210, 210), change_anim_speed);
 		c::page::background = ImLerpColor(c::page::background, ImColor(240, 240, 240), change_anim_speed);
 
-		c::text::label::active = ImLerpColor(c::text::label::active, ImColor(255, 255, 255), change_anim_speed); // Более мягкий чёрный
+		c::text::label::active = ImLerpColor(c::text::label::active, ImColor(255, 255, 255), change_anim_speed); // Ð‘Ð¾Ð»ÐµÐµ Ð¼ÑÐ³ÐºÐ¸Ð¹ Ñ‡Ñ‘Ñ€Ð½Ñ‹Ð¹
 		c::text::label::hovered = ImLerpColor(c::text::label::hovered, ImColor(45, 45, 45), change_anim_speed);
 		c::text::label::regular = ImLerpColor(c::text::label::regular, ImColor(75, 75, 75), change_anim_speed);
 
@@ -267,7 +267,7 @@ inline void UpdateTheme()
 		c::text::description::regular = ImLerpColor(c::text::description::regular, ImColor(100, 100, 100, 45), change_anim_speed);
 
 		c::text::text_active = ImLerpColor(c::text::text_active, ImColor(20, 20, 20), change_anim_speed);
-		c::text::text_hov = ImLerpColor(c::text::text_hov, ImColor(0, 100, 190), change_anim_speed); // Более мягкий синий акцент
+		c::text::text_hov = ImLerpColor(c::text::text_hov, ImColor(0, 100, 190), change_anim_speed); // Ð‘Ð¾Ð»ÐµÐµ Ð¼ÑÐ³ÐºÐ¸Ð¹ ÑÐ¸Ð½Ð¸Ð¹ Ð°ÐºÑ†ÐµÐ½Ñ‚
 		c::text::text = ImLerpColor(c::text::text, ImColor(80, 80, 80), change_anim_speed);
 	}
 

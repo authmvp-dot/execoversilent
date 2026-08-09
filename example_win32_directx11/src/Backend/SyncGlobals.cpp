@@ -1,7 +1,7 @@
-#include <examples/example_win32_directx11/src/Backend/SyncGlobals.hpp>
-#include <examples/example_win32_directx11/src/Backend/BackendBridge.hpp>
-#include <examples/example_win32_directx11/src/Globals.hpp>
-#include <examples/example_win32_directx11/Yorzen/Dudas/ui_settings.hpp>
+#include <example_win32_directx11/src/Backend/SyncGlobals.hpp>
+#include <example_win32_directx11/src/Backend/BackendBridge.hpp>
+#include <example_win32_directx11/src/Globals.hpp>
+#include <example_win32_directx11/Yorzen/Dudas/ui_settings.hpp>
 #include <algorithm>
 #include <d3d11.h>
 #include <imgui.h>

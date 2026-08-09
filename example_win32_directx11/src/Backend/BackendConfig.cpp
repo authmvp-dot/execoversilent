@@ -1,8 +1,8 @@
 #include "BackendConfig.hpp"
 #include "BackendBridge.hpp"
 #include "SyncGlobals.hpp"
-#include <examples/example_win32_directx11/src/Globals.hpp>
-#include <examples/example_win32_directx11/Yorzen/Dudas/ui_settings.hpp>
+#include <example_win32_directx11/src/Globals.hpp>
+#include <example_win32_directx11/Yorzen/Dudas/ui_settings.hpp>
 
 #include <algorithm>
 #include <ShlObj.h>

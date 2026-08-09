@@ -1,12 +1,12 @@
 #include "YorzenInterface.hpp"
-#include <examples/example_win32_directx11/FWorkMain.h>
-#include <examples/example_win32_directx11/Yorzen/Dudas/yorzen.h>
-#include <examples/example_win32_directx11/src/Overlay/Overlay.hpp>
-#include <examples/example_win32_directx11/src/Globals.hpp>
-#include <examples/example_win32_directx11/src/Backend/SyncGlobals.hpp>
-#include <examples/example_win32_directx11/src/Backend/BackendBridge.hpp>
-#include <examples/example_win32_directx11/src/Backend/BackendConfig.hpp>
-#include <examples/example_win32_directx11/Keyauth.h>
+#include <example_win32_directx11/FWorkMain.h>
+#include <example_win32_directx11/Yorzen/Dudas/yorzen.h>
+#include <example_win32_directx11/src/Overlay/Overlay.hpp>
+#include <example_win32_directx11/src/Globals.hpp>
+#include <example_win32_directx11/src/Backend/SyncGlobals.hpp>
+#include <example_win32_directx11/src/Backend/BackendBridge.hpp>
+#include <example_win32_directx11/src/Backend/BackendConfig.hpp>
+#include <example_win32_directx11/Keyauth.h>
 
 #include <imgui_impl_dx11.h>
 #include <imgui_impl_win32.h>

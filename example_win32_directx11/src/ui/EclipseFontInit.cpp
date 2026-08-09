@@ -1,12 +1,12 @@
 #include "EclipseFontInit.hpp"
 
-#include <examples/example_win32_directx11/EclipseFontPack.h>
-#include <examples/example_win32_directx11/custom_logo.hpp>
-#include <examples/example_win32_directx11/src/Fonts/Fonts.hpp>
-#include <examples/example_win32_directx11/src/Fonts/icon.h>
-#include <examples/example_win32_directx11/src/Backend/SyncGlobals.hpp>
+#include <example_win32_directx11/EclipseFontPack.h>
+#include <example_win32_directx11/custom_logo.hpp>
+#include <example_win32_directx11/src/Fonts/Fonts.hpp>
+#include <example_win32_directx11/src/Fonts/icon.h>
+#include <example_win32_directx11/src/Backend/SyncGlobals.hpp>
 #include <imgui_settings.h>
-#include <examples/example_win32_directx11/ImGui/font_defines.h>
+#include <example_win32_directx11/ImGui/font_defines.h>
 #include <imgui_freetype.h>
 #include <D3DX11tex.h>
 

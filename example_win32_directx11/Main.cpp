@@ -13,7 +13,7 @@
 #include <string>
 #include <iostream>
 
-#include "examples/example_win32_directx11/ext/MinHook/include/MinHook.h"
+#include "example_win32_directx11/ext/MinHook/include/MinHook.h"
 #include <TlHelp32.h>
 #include <Psapi.h>
 #pragma comment(lib, "Psapi.lib")
@@ -29,14 +29,14 @@
 #include <sddl.h>
 #pragma comment(lib, "advapi32.lib")
 
-#include <examples/example_win32_directx11/src/adb/adb.hpp>
-#include <examples/example_win32_directx11/src/Overlay/Overlay.hpp>
-#include <examples/example_win32_directx11/src/ui/YorzenInterface.hpp>
-#include <examples/example_win32_directx11/src/Backend/SyncGlobals.hpp>
-#include <examples/example_win32_directx11/src/Globals.hpp>
-#include <examples/example_win32_directx11/src/Globals.hpp>
+#include <example_win32_directx11/src/adb/adb.hpp>
+#include <example_win32_directx11/src/Overlay/Overlay.hpp>
+#include <example_win32_directx11/src/ui/YorzenInterface.hpp>
+#include <example_win32_directx11/src/Backend/SyncGlobals.hpp>
+#include <example_win32_directx11/src/Globals.hpp>
+#include <example_win32_directx11/src/Globals.hpp>
 #include "src/Overlay/Render.hpp"
-#include <examples/example_win32_directx11/src/Fonts/Fonts.hpp>
+#include <example_win32_directx11/src/Fonts/Fonts.hpp>
 #include <imgui_settings.h>
 
 using namespace adb;
