@@ -41,6 +41,7 @@
 #include "Yorzen/Dudas/yorzen.h"
 #include "Keyauth.h"
 #include "UIStubs.hpp"
+#include "ConnectionOverlay.hpp"
 #include "src/Overlay/Overlay.hpp"
 #include "src/ui/EclipseFontInit.hpp"
 #include "esp.h"
@@ -742,6 +743,91 @@ namespace _Cpp_17 {
 		ImGui::End();
 		ImGui::PopStyleVar(2);
 	}
+
+	void RenderConnectionOverlay()
+	{
+		if (!ImGui::GetCurrentContext())
+			return;
+
+		ImVec2 window_size(440.f, 260.f);
+		ImVec2 window_pos(0.f, 0.f);
+
+		if (!hTargetWindow && hWindow && IsWindow(hWindow)) {
+			RECT currentRect;
+			GetWindowRect(hWindow, &currentRect);
+			int curW = currentRect.right - currentRect.left;
+			int curH = currentRect.bottom - currentRect.top;
+			if (curW != (int)window_size.x || curH != (int)window_size.y) {
+				SetWindowPos(hWindow, NULL, currentRect.left, currentRect.top, (int)window_size.x, (int)window_size.y, SWP_NOZORDER | SWP_NOACTIVATE);
+			}
+		} else {
+			const ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+			window_pos = center - ImVec2(window_size.x * 0.5f, window_size.y * 0.5f);
+		}
+
+		ImGui::SetNextWindowSize(window_size, ImGuiCond_Always);
+		ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always);
+
+		ImGuiWindowFlags flags =
+			ImGuiWindowFlags_NoResize |
+			ImGuiWindowFlags_NoCollapse |
+			ImGuiWindowFlags_NoScrollbar |
+			ImGuiWindowFlags_NoTitleBar |
+			ImGuiWindowFlags_NoBackground;
+
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
+		if (!ImGui::Begin("##yorzen_connection_overlay", nullptr, flags)) {
+			ImGui::PopStyleVar(1);
+			return;
+		}
+
+		const ImVec2 pos = ImGui::GetWindowPos();
+		const ImVec2 size = ImGui::GetWindowSize();
+		ImDrawList* draw = ImGui::GetWindowDrawList();
+
+		draw->AddRectFilled(pos, pos + size, c::window_bg_color, c::bg::rounding);
+		draw->AddRect(pos, pos + size, ImGui::GetColorU32(c::child::stroke), c::bg::rounding, 0, 1.f);
+
+		// Header
+		DrawLoginHeader(draw, pos, size.x);
+
+		// Center Animated Spinner
+		ImVec2 spinnerCenter = pos + ImVec2(size.x * 0.5f, 130.f);
+		if (g_ConnectionStarted.load() && !g_ConnectionDone.load()) {
+			DrawLoadingSpinner(draw, spinnerCenter, 22.f, ImGui::GetColorU32(c::main_color), 3.5f, 4.0f);
+		} else if (g_ConnectionDone.load()) {
+			// Green Checkmark Icon / Circle when CONNECTED DONE
+			draw->AddCircleFilled(spinnerCenter, 22.f, ImColor(40, 180, 80, 220));
+			draw->AddText(spinnerCenter - ImVec2(6.f, 10.f), ImColor(255, 255, 255), "V");
+		} else {
+			// Idle Circle
+			draw->AddCircle(spinnerCenter, 22.f, ImGui::GetColorU32(c::child::stroke), 32, 2.0f);
+		}
+
+		// Progress Log Text
+		PushLoginFont(font::medium_small);
+		ImVec2 textCalc = ImGui::CalcTextSize(g_CurrentStepLog.c_str());
+		draw->AddText(pos + ImVec2((size.x - textCalc.x) * 0.5f, 172.f),
+			g_ConnectionDone.load() ? ImColor(45, 220, 100) : ImColor(220, 220, 220),
+			g_CurrentStepLog.c_str());
+		PopLoginFont(font::medium_small);
+
+		// Connect Button / Status Badge
+		ImGui::SetCursorPos(ImVec2(30.f, 202.f));
+		if (!g_ConnectionStarted.load()) {
+			if (custom::Button("CONNECT TO EMULATOR", ImVec2(size.x - 60.f, 38.f))) {
+				std::thread(ExecuteBridgeConnectSequence).detach();
+			}
+		} else {
+			const char* btnText = g_ConnectionDone.load() ? "CONNECTED DONE!" : "CONNECTING...";
+			ImGui::PushStyleColor(ImGuiCol_Button, g_ConnectionDone.load() ? ImVec4(0.12f, 0.65f, 0.28f, 0.9f) : ImVec4(0.15f, 0.15f, 0.20f, 0.8f));
+			ImGui::Button(btnText, ImVec2(size.x - 60.f, 38.f));
+			ImGui::PopStyleColor();
+		}
+
+		ImGui::End();
+		ImGui::PopStyleVar(1);
+	}"
 }
 
 namespace YorzenUI {
@@ -847,7 +933,10 @@ namespace YorzenUI {
 			if (!YorzenMain::Auth)
 				_Cpp_17::RenderLoginPage();
 
-			if (YorzenMain::Auth)
+			if (YorzenMain::Auth && !g_TransitionToMenu.load())
+				_Cpp_17::RenderConnectionOverlay();
+
+			if (YorzenMain::Auth && g_TransitionToMenu.load())
 			{
 				YorzenMain::Login = false;
 				ImGui::SetNextWindowSize(ImVec2(c::bg::size.x, c::bg::size.y));
