@@ -100,10 +100,14 @@ void Overlay::Setup(HWND TargetHWND) {
                     reinterpret_cast<LPPOINT>(&wTargetWindowRect), 2);
     bSettuped = true;
   } else {
-    wTargetWindowRect.left = 100;
-    wTargetWindowRect.top = 100;
-    wTargetWindowRect.right = 100 + 1280;
-    wTargetWindowRect.bottom = 100 + 720;
+    int screenW = GetSystemMetrics(SM_CXSCREEN);
+    int screenH = GetSystemMetrics(SM_CYSCREEN);
+    int winW = 760;
+    int winH = 545;
+    wTargetWindowRect.left = (screenW - winW) / 2;
+    wTargetWindowRect.top = (screenH - winH) / 2;
+    wTargetWindowRect.right = wTargetWindowRect.left + winW;
+    wTargetWindowRect.bottom = wTargetWindowRect.top + winH;
     bSettuped = true;
   }
 }
@@ -146,15 +150,23 @@ void Overlay::Initialize() {
         return;
     }
 
-    DWORD dwStyle = hTargetWindow ? (WS_POPUP | WS_VISIBLE) : (WS_OVERLAPPEDWINDOW | WS_VISIBLE);
+    DWORD dwStyle = hTargetWindow ? (WS_POPUP | WS_VISIBLE) : (WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_VISIBLE);
     DWORD dwExStyle = hTargetWindow ? (WS_EX_TOPMOST | WS_EX_TOOLWINDOW) : 0;
+
+    RECT rect = { 0, 0, wTargetWindowRect.Width(), wTargetWindowRect.Height() };
+    if (!hTargetWindow) {
+        AdjustWindowRect(&rect, dwStyle, FALSE);
+    }
+
+    int winWidth = rect.right - rect.left;
+    int winHeight = rect.bottom - rect.top;
 
     hWindow = CreateWindowExA(
         dwExStyle,
         WindowClass.lpszClassName, "Blaze Xiters",
         dwStyle, wTargetWindowRect.left,
-        wTargetWindowRect.top, wTargetWindowRect.Width(),
-        wTargetWindowRect.Height(), NULL, NULL,
+        wTargetWindowRect.top, winWidth,
+        winHeight, NULL, NULL,
         GetModuleHandle(NULL), NULL);
 
     if (!hWindow) {

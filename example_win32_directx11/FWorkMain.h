@@ -569,11 +569,8 @@ namespace _Cpp_17 {
 		if (ImFabs(panel_h - target_h) < 0.5f)
 			panel_h = target_h;
 
-		if (!login_window_pos_init) {
-			const ImVec2 center = ImGui::GetMainViewport()->GetCenter();
-			login_window_pos = center - ImVec2(LoginUI::kWidth * 0.5f, panel_h * 0.5f);
-			login_window_pos_init = true;
-		}
+		const ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+		login_window_pos = center - ImVec2(LoginUI::kWidth * 0.5f, panel_h * 0.5f);
 
 		ImGui::SetNextWindowSize(ImVec2(LoginUI::kWidth, panel_h), ImGuiCond_Always);
 		ImGui::SetNextWindowPos(login_window_pos, ImGuiCond_Always);
@@ -878,8 +875,8 @@ namespace YorzenUI {
 			{
 				YorzenMain::Login = false;
 				ImGui::SetNextWindowSize(ImVec2(c::bg::size.x, c::bg::size.y));
-				if (next_window_pos.x != 0 && next_window_pos.y != 0)
-					ImGui::SetNextWindowPos(next_window_pos, ImGuiCond_Appearing);
+				ImVec2 menu_center = ImGui::GetMainViewport()->GetCenter() - ImVec2(c::bg::size.x * 0.5f, c::bg::size.y * 0.5f);
+				ImGui::SetNextWindowPos(menu_center, ImGuiCond_Always);
 				Begin("imgui menu", nullptr, flags);
 				{
 					ImGuiStyle& s = ImGui::GetStyle();
