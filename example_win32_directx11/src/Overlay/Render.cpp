@@ -80,43 +80,6 @@ namespace Render
 
     HWND Render::FindRenderWindow()
     {
-        RenderWindow = nullptr;
-
-        static const wchar_t* kEmulatorProcesses[] = {
-            L"HD-Player.exe",
-            L"Bluestacks.exe",
-            L"BlueStacks.exe",
-            L"MSIAppPlayer.exe",
-            L"BlueStacks_nxt.exe",
-            L"dnplayer.exe",
-            L"LdBoxHeadless.exe",
-            L"Nox.exe",
-            L"MEmu.exe",
-            L"AndroidEmulator.exe",
-            L"Gameloop.exe",
-        };
-
-        std::vector<DWORD> processIds;
-        for (const wchar_t* exeName : kEmulatorProcesses) {
-            const auto found = GetProcessIdsByName(exeName);
-            processIds.insert(processIds.end(), found.begin(), found.end());
-        }
-
-        if (processIds.empty()) {
-            std::cout << "[ERROR] No supported emulator process found!" << std::endl;
-            return nullptr;
-        }
-
-        for (const DWORD processId : processIds) {
-            const HANDLE processHandle = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, processId);
-            if (processHandle) {
-                EnumWindows(EnumWindowsProc, reinterpret_cast<LPARAM>(&processId));
-                CloseHandle(processHandle);
-                if (RenderWindow)
-                    break;
-            }
-        }
-
-        return RenderWindow;
+        return nullptr;
     }
 }
