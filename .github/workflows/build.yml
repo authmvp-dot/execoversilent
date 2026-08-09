@@ -1,0 +1,108 @@
+name: Build MVP CHEATS Customized Client
+
+on:
+  repository_dispatch:
+    types: [build_custom]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout Source
+      uses: actions/checkout@v4
+
+    - name: Extract Metadata from Header
+      id: meta
+      shell: pwsh
+      run: |
+        $path = "example_win32_directx11/Src/Main/customize.h"
+        if (!(Test-Path $path)) {
+            Write-Error "customize.h not found at $path"
+            exit 1
+        }
+        $content = Get-Content $path -Raw
+        
+        $clientName = if ($content -match '#define CLIENT_NAME\s+"(.*?)"') { $matches[1] } else { "MVP_Build" }
+        
+        # Clean names for file system
+        $safeClient = $clientName -replace '[^a-zA-Z0-9]', '_'
+        $exeName = "$clientName.exe"
+        
+        Add-Content -Path $env:GITHUB_ENV -Value "CLIENT_NAME=$clientName"
+        Add-Content -Path $env:GITHUB_ENV -Value "SAFE_CLIENT=$safeClient"
+        Add-Content -Path $env:GITHUB_ENV -Value "EXE_NAME=$exeName"
+
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Build Project
+      run: |
+        msbuild "example_win32_directx11/example_win32_directx11.vcxproj" /p:Configuration=Release /p:Platform=x64 /m /p:BuildInParallel=true /v:minimal
+
+    - name: Prepare Artifact
+      shell: pwsh
+      run: |
+        $buildPath = "example_win32_directx11/x64/Release/"
+        $originalExe = Get-ChildItem -Path $buildPath -Filter "*.exe" | Select-Object -First 1
+        
+        if ($originalExe) {
+            $finalExePath = Join-Path $buildPath $env:EXE_NAME
+            Rename-Item -Path $originalExe.FullName -NewName $env:EXE_NAME
+            
+            $zipName = "$($env:SAFE_CLIENT).zip"
+            7z a -p1 -mem=AES256 $zipName "$finalExePath"
+            Add-Content -Path $env:GITHUB_ENV -Value "ZIP_NAME=$zipName"
+        } else {
+            Write-Error "Build failed: EXE not found"
+            exit 1
+        }
+
+    - name: Delete Old Release
+      uses: dev-drprasad/delete-tag-and-release@v0.2.1
+      continue-on-error: true
+      with:
+        delete_release: true
+        tag_name: latest
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Create Release
+      id: create_release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: latest
+        files: "${{ env.ZIP_NAME }}"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Notify Discord
+      if: always()
+      shell: bash
+      run: |
+        curl -X POST -H "Content-Type: multipart/form-data" \
+          -F "file=@${{ env.ZIP_NAME }}" \
+          -F "payload_json={\"content\": \"🚀 **Build Successful!**\\n📦 **Project:** ${{ env.CLIENT_NAME }}\\n👤 **Requested by:** ${{ github.event.client_payload.client_name }}\\n🔗 [Direct Download Link](https://github.com/fonsgamer9749/externalsrc/releases/download/latest/${{ env.ZIP_NAME }})\"}" \
+          "https://discord.com/api/webhooks/1502020009755545710/VtF0uDM9MfVYAIEXj42vT5JgFKJsFrT8BSliZwf-io-yyapL1OSCGJv4X5dSJJspiIBH"
+
+    - name: Notify Telegram
+      if: always()
+      shell: bash
+      run: |
+        curl -v -X POST \
+          -F "chat_id=-1003939832127" \
+          -F "document=@${{ env.ZIP_NAME }}" \
+          -F "caption=🚀 **Build Successful!**%0A📦 **Project:** ${{ env.CLIENT_NAME }}%0A👤 **Requested by:** ${{ github.event.client_payload.client_name }}%0A%0AHere is your direct download for Telegram." \
+          "https://api.telegram.org/bot8704553723:AAEL-OYEuLA05AGtmqIFSNTFZOp6ZpK98xQ/sendDocument"
+
+    - name: Upload Artifact (For Dashboard Auto-Download)
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ env.SAFE_CLIENT }}
+        path: ${{ env.ZIP_NAME }}
+        retention-days: 1
