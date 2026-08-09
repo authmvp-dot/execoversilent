@@ -632,8 +632,10 @@ namespace custom
 	{
 		ImGuiWindow* window = GetCurrentWindow();
 
-		PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(13, 13));
-		PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(5, 5));
+		if (cap) {
+			PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(13, 13));
+			PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(5, 5));
+		}
 		return ChildEx(str_id, icon, description, window->GetID(str_id), size_arg, cap, extra_flags | ImGuiWindowFlags_AlwaysUseWindowPadding);
 	}
 

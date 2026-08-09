@@ -77,13 +77,11 @@ bool FeatureCheckbox(const char* label, const char* tip, bool* v, std::function<
 
 void YorzenRenderMenuTabs(float fTabOffset)
 {
-	ImGui::SetCursorPos(ImVec2(15, 85 + fTabOffset));
-	ImGui::BeginChild("MainContentScroll", ImVec2(410, 450), false, ImGuiWindowFlags_NoBackground);
-
 	// Tab 0 — Aim
 	if (iTabs == 0)
 	{
-		custom::Child("Aim", ICON_AIMBOT_INTERNAL, "Aimbot Settings", ImVec2(390, 0), true, ImGuiWindowFlags_AlwaysAutoResize);
+		ImGui::SetCursorPos(ImVec2(15, 85 + fTabOffset));
+		custom::Child("Aim", ICON_AIMBOT_INTERNAL, "Aimbot Settings", ImVec2(720, 205), true, 0);
 		{
 			FeatureCheckbox("Aimbot", "Enable Aim Assist", &ui.esp.AimbotEnabled);
 			if (ui.esp.AimbotEnabled)
@@ -123,9 +121,8 @@ void YorzenRenderMenuTabs(float fTabOffset)
 		}
 		custom::EndChild();
 
-		ImGui::Dummy(ImVec2(0, 10));
-
-		custom::Child("Trigger Module", ICON_AIMBOT_EXTERNAL, "Fov & Trigger", ImVec2(390, 0), true, ImGuiWindowFlags_AlwaysAutoResize);
+		ImGui::SetCursorPos(ImVec2(15, 300 + fTabOffset));
+		custom::Child("Trigger Module", ICON_AIMBOT_EXTERNAL, "Fov & Trigger", ImVec2(720, 210), true, 0);
 		{
 			edited::SliderFloat("Fov Radius", "Aim Search Radius", &ui.esp.AimFovValue, 0.f, 1200.f, "%.1f");
 			edited::SliderInt("Aim Distance", "Max Aim Range (m)", &ui.esp.AimbotDistance, 0, 200, "%d m");
@@ -150,7 +147,8 @@ void YorzenRenderMenuTabs(float fTabOffset)
 	// Tab 1 — Visual
 	if (iTabs == 1)
 	{
-		custom::Child("Esp", ICON_BRUSH_LINE, "Player Esp", ImVec2(390, 0), true, ImGuiWindowFlags_AlwaysAutoResize);
+		ImGui::SetCursorPos(ImVec2(15, 85 + fTabOffset));
+		custom::Child("Esp", ICON_BRUSH_LINE, "Player Esp", ImVec2(720, 205), true, 0);
 		{
 			FeatureCheckbox("Enable Esp", "Master Esp Toggle", &ui.esp.ESPMasterEnabled);
 
@@ -190,9 +188,8 @@ void YorzenRenderMenuTabs(float fTabOffset)
 		}
 		custom::EndChild();
 
-		ImGui::Dummy(ImVec2(0, 10));
-
-		custom::Child("Esp Extra", ICON_EYE_2_LINE, "Extra & Options", ImVec2(390, 0), true, ImGuiWindowFlags_AlwaysAutoResize);
+		ImGui::SetCursorPos(ImVec2(15, 300 + fTabOffset));
+		custom::Child("Esp Extra", ICON_EYE_2_LINE, "Extra & Options", ImVec2(720, 210), true, 0);
 		{
 			FeatureCheckbox("Esp Rank", "Rank Tag", &ui.esp.RankEnabled, []() {
 				edited::ColorEdit4("Rank Color", NULL, ui.esp.RankColor);
@@ -216,7 +213,8 @@ void YorzenRenderMenuTabs(float fTabOffset)
 	// Tab 2 — Brutal + Machine
 	if (iTabs == 2)
 	{
-		custom::Child("Brutal", ICON_COMPONENTS_LINE, "Movement & Wall Hacks", ImVec2(390, 0), true, ImGuiWindowFlags_AlwaysAutoResize);
+		ImGui::SetCursorPos(ImVec2(15, 85 + fTabOffset));
+		custom::Child("Brutal", ICON_COMPONENTS_LINE, "Movement & Wall Hacks", ImVec2(720, 205), true, 0);
 		{
 			FeatureCheckbox("Speed Timer", "Faster Sprint", &ui.esp.SpeedTimerEnabled);
 
@@ -246,9 +244,8 @@ void YorzenRenderMenuTabs(float fTabOffset)
 		}
 		custom::EndChild();
 
-		ImGui::Dummy(ImVec2(0, 10));
-
-		custom::Child("Machine", ICON_COMPONENTS_LINE, "Extra Exploits", ImVec2(390, 0), true, ImGuiWindowFlags_AlwaysAutoResize);
+		ImGui::SetCursorPos(ImVec2(15, 300 + fTabOffset));
+		custom::Child("Machine", ICON_COMPONENTS_LINE, "Extra Exploits", ImVec2(720, 210), true, 0);
 		{
 			FeatureCheckbox("Burst Fire", "Rapid Burst", &ui.esp.BurstFire);
 			FeatureCheckbox("Vision Hack", "See Farther", &ui.esp.VisionHackEnabled);
@@ -281,7 +278,8 @@ void YorzenRenderMenuTabs(float fTabOffset)
 	// Tab 3 — Settings
 	if (iTabs == 3)
 	{
-		custom::Child("Settings", ICON_SETTINGS_2_LINE, "General Settings", ImVec2(390, 0), true, ImGuiWindowFlags_AlwaysAutoResize);
+		ImGui::SetCursorPos(ImVec2(15, 85 + fTabOffset));
+		custom::Child("Settings", ICON_SETTINGS_2_LINE, "General Settings", ImVec2(720, 425), true, 0);
 		{
 			std::string button_name = std::string(bTheme ? ICON_MOON_FILL : ICON_SUN_FILL) + " Change Color Theme" + std::string(bTheme ? ICON_MOON_FILL : ICON_SUN_FILL);
 			if (custom::Button(button_name.c_str(), ImVec2(ImGui::GetContentRegionAvail().x, 35))) {
@@ -334,6 +332,4 @@ void YorzenRenderMenuTabs(float fTabOffset)
 		}
 		custom::EndChild();
 	}
-
-	ImGui::EndChild();
 }

@@ -565,6 +565,15 @@ namespace _Cpp_17 {
 		static bool login_window_pos_init = false;
 
 		if (!hTargetWindow && hWindow && IsWindow(hWindow)) {
+			RECT currentRect;
+			GetWindowRect(hWindow, &currentRect);
+			int curW = currentRect.right - currentRect.left;
+			int curH = currentRect.bottom - currentRect.top;
+			int targetW = (int)LoginUI::kWidth;
+			int targetH = (int)panel_h;
+			if (curW != targetW || curH != targetH) {
+				SetWindowPos(hWindow, NULL, currentRect.left, currentRect.top, targetW, targetH, SWP_NOZORDER | SWP_NOACTIVATE);
+			}
 			login_window_pos = ImVec2(0.f, 0.f);
 		} else {
 			const ImVec2 center = ImGui::GetMainViewport()->GetCenter();
@@ -868,9 +877,17 @@ namespace YorzenUI {
 			if (YorzenMain::Auth)
 			{
 				YorzenMain::Login = false;
-				c::bg::size = ImVec2(440.f, 550.f);
 				ImGui::SetNextWindowSize(ImVec2(c::bg::size.x, c::bg::size.y));
 				if (!hTargetWindow && hWindow && IsWindow(hWindow)) {
+					RECT currentRect;
+					GetWindowRect(hWindow, &currentRect);
+					int curW = currentRect.right - currentRect.left;
+					int curH = currentRect.bottom - currentRect.top;
+					int targetW = (int)c::bg::size.x;
+					int targetH = (int)c::bg::size.y;
+					if (curW != targetW || curH != targetH) {
+						SetWindowPos(hWindow, NULL, currentRect.left, currentRect.top, targetW, targetH, SWP_NOZORDER | SWP_NOACTIVATE);
+					}
 					ImGui::SetNextWindowPos(ImVec2(0.f, 0.f), ImGuiCond_Always);
 				} else {
 					ImVec2 menu_center = ImGui::GetMainViewport()->GetCenter() - ImVec2(c::bg::size.x * 0.5f, c::bg::size.y * 0.5f);
@@ -912,6 +929,10 @@ namespace YorzenUI {
 						bg_draw->AddShadowRect(pos, pos + c::bg::size, ImColor(0.f, 0.f, 0.f, 1.f), 250.f, ImVec2(0, 0), ImDrawFlags_RoundCornersAll | ImDrawFlags_ShadowCutOutShapeBackground, c::bg::rounding);
 					ImGui::PopClipRect();
 
+					PushFont(font::inter_semibold);
+					rainbow.RenderText(utils::center_text(ImGui::GetWindowPos(), ImGui::GetWindowPos() + ImVec2(160, 75), YorzenName::cheat_name), YorzenName::cheat_name, 1.f, 1.f, bg_draw);
+					PopFont();
+
 					glow_text_drawlist = GetWindowDrawList();
 
 					static DWORD t = GetTickCount();
@@ -925,11 +946,17 @@ namespace YorzenUI {
 					GetWindowDrawList()->AddRectFilled(pos, pos + ImVec2(c::bg::size.x, 75), utils::GetColorWithAlpha(c::child::background, c::child::background.w / 2), c::bg::rounding, ImDrawFlags_RoundCornersTop);
 					GetWindowDrawList()->AddRectFilled(pos + ImVec2(0, 75), pos + ImVec2(c::bg::size.x, 76), ImGui::GetColorU32(c::child::stroke), c::bg::rounding);
 
+					// Top-Left Brand Logo Title
+					custom::chroma rainbow;
+					PushFont(font::inter_semibold);
+					rainbow.RenderText(pos + ImVec2(18.f, 24.f), YorzenName::cheat_name, 1.f, 1.f, bg_draw);
+					PopFont();
+
 					// Top-Right User Info & Avatar Logo
 					{
 						ID3D11ShaderResourceView* menuLogo = texture::custom_logo ? texture::custom_logo : texture::avatar_image;
 						if (menuLogo)
-							GetWindowDrawList()->AddImageRounded(menuLogo, pos + ImVec2(c::bg::size.x - 120.f, 15.f), pos + ImVec2(c::bg::size.x - 80.f, 55.f), ImVec2(0, 0), ImVec2(1, 1), ImColor(1.f, 1.f, 1.f, 1.f), 360.f);
+							GetWindowDrawList()->AddImageRounded(menuLogo, pos + ImVec2(c::bg::size.x - 170.f, 15.f), pos + ImVec2(c::bg::size.x - 125.f, 60.f), ImVec2(0, 0), ImVec2(1, 1), ImColor(1.f, 1.f, 1.f, 1.f), 360.f);
 					}
 
 					std::string username = std::string(var::username);
@@ -941,19 +968,13 @@ namespace YorzenUI {
 
 					const RoleInfo* rolePtr = nullptr;
 					auto roleIt = roleDefinitions.find(roleKey);
-					if (roleIt != roleDefinitions.end()) {
-						rolePtr = &roleIt->second;
-					} else {
-						auto clientIt = roleDefinitions.find("client");
-						if (clientIt != roleDefinitions.end())
-							rolePtr = &clientIt->second;
-					}
+					if (roleIt != roleDefinitions.end()) rolePtr = &roleIt->second;
+					else rolePtr = &roleDefinitions.at("client");
 
-					static RoleInfo defaultRole = { "Internal", ImColor(111, 111, 111), true };
-					const RoleInfo& role = rolePtr ? *rolePtr : defaultRole;
+					const RoleInfo& role = *rolePtr;
 
-					GetWindowDrawList()->AddText(pos + ImVec2(c::bg::size.x - 75.f, 20.f), c::label::active, username.c_str());
-					GetWindowDrawList()->AddText(pos + ImVec2(c::bg::size.x - 75.f, 38.f), role.color, role.labelText.c_str());
+					GetWindowDrawList()->AddText(pos + ImVec2(c::bg::size.x - 118.f, 20.f), c::label::active, username.c_str());
+					GetWindowDrawList()->AddText(pos + ImVec2(c::bg::size.x - 118.f, 38.f), role.color, role.labelText.c_str());
 
 					ImGui::PopClipRect();
 
@@ -962,9 +983,9 @@ namespace YorzenUI {
 
 					ImGui::SetScrollFromPosY(0);
 
-					// Horizontal Top Header Navigation Tabs with Icons
-					ImGui::SetCursorPos(ImVec2(10.f, 17.5f));
-					ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4.f, 0.f));
+					// Horizontal Top Header Navigation Tabs
+					ImGui::SetCursorPos(ImVec2(120.f, 17.5f));
+					ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(6.f, 0.f));
 					for (int i = 0; i < IM_ARRAYSIZE(tab_list); i++) {
 						if (i > 0) ImGui::SameLine();
 						custom::SubTab(tab_list[i], &iTabs, i);
@@ -973,7 +994,7 @@ namespace YorzenUI {
 
 					ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 10));
 
-					// Single-Column Stacked Vertical Content Blocks (440px width)
+					// Full-width Tab Content Blocks (Aim / Visual / Brutal / Keybinds / Settings)
 					YorzenRenderMenuTabs(fTabOffset);
 
 					ImGui::PopStyleVar();
