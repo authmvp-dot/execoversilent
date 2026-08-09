@@ -225,8 +225,6 @@ void Overlay::UpdateWindowPos() {
     g_Globals.EspConfig.Width = currentRect.right - currentRect.left;
     g_Globals.EspConfig.Height = currentRect.bottom - currentRect.top;
   }
-}SE);
-  }
 }
 
 void Overlay::SetupWindowProcHook(
