@@ -32,16 +32,30 @@ inline EmulatorInfo DetectRunningEmulator() {
     if (Process32FirstW(hSnapshot, &pe)) {
         do {
             std::wstring procName(pe.szExeFile);
-            if (procName == L"HD-Player.exe") {
-                info.type = EmulatorType::BlueStacks;
-                info.name = "BlueStacks App Player";
-                info.adbPort = 5555;
-                break;
-            } else if (procName == L"MSIAppPlayer.exe" || procName == L"MSI-Player.exe") {
-                info.type = EmulatorType::MSIAppPlayer;
-                info.name = "MSI App Player";
-                info.adbPort = 5554;
-                break;
+            if (procName == L"HD-Player.exe" || procName == L"MSIAppPlayer.exe" || procName == L"MSI-Player.exe") {
+                std::wstring exePath = L"";
+                HANDLE hProc = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pe.th32ProcessID);
+                if (hProc) {
+                    wchar_t pathBuf[MAX_PATH] = { 0 };
+                    DWORD pathSize = MAX_PATH;
+                    if (QueryFullProcessImageNameW(hProc, 0, pathBuf, &pathSize)) {
+                        exePath = pathBuf;
+                    }
+                    CloseHandle(hProc);
+                }
+
+                // Check path for MSI vs BlueStacks
+                if (exePath.find(L"BlueStacks_msi5") != std::wstring::npos || exePath.find(L"MSI") != std::wstring::npos) {
+                    info.type = EmulatorType::MSIAppPlayer;
+                    info.name = "MSI App Player 5";
+                    info.adbPort = 5555; // ADB default port for MSI 5
+                    break;
+                } else {
+                    info.type = EmulatorType::BlueStacks;
+                    info.name = "BlueStacks 5";
+                    info.adbPort = 5555; // ADB default port for BlueStacks 5
+                    break;
+                }
             }
         } while (Process32NextW(hSnapshot, &pe));
     }
