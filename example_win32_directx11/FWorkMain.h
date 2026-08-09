@@ -918,9 +918,9 @@ namespace YorzenUI {
 					GetWindowDrawList()->AddRectFilled(pos + ImVec2(0, 75), pos + ImVec2(c::bg::size.x, 76), ImGui::GetColorU32(c::child::stroke), c::bg::rounding);
 
 					// Top-Left Header Title (GFF PARTNERSHIP style)
-					PushLoginFont(font::inter_semibold);
+					_Cpp_17::PushLoginFont(font::inter_semibold);
 					GetWindowDrawList()->AddText(pos + ImVec2(20.f, 24.f), (ImU32)c::main_color, YorzenName::cheat_name);
-					PopLoginFont(font::inter_semibold);
+					_Cpp_17::PopLoginFont(font::inter_semibold);
 
 					// Top-Right User Info & Role Badge
 					std::string username = std::string(var::username);
