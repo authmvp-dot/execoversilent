@@ -114,7 +114,9 @@ void YorzenRenderMenuTabs(float fTabOffset)
 		ImGui::SetCursorPos(ImVec2(15, 80 + fTabOffset));
 		custom::Child("Esp", ICON_BRUSH_LINE, "Player Esp & Options", ImVec2(510, 350), true, 0);
 		{
-			FeatureCheckbox("Enable Esp", "Master Esp Toggle", &ui.esp.ESPMasterEnabled);
+			if (FeatureCheckbox("Enable Esp", "Master Esp Toggle", &ui.esp.ESPMasterEnabled)) {
+				SendCommandToBridge(102, ui.esp.ESPMasterEnabled ? 1 : 0);
+			}
 
 			FeatureCheckbox("Esp Line", "Tracer To Enemies", &ui.esp.ESPLineEnabled, []() {
 				edited::ColorEdit4("Line Color", NULL, ui.esp.ESPLineColor);
