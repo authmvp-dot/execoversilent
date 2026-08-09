@@ -565,15 +565,6 @@ namespace _Cpp_17 {
 		static bool login_window_pos_init = false;
 
 		if (!hTargetWindow && hWindow && IsWindow(hWindow)) {
-			RECT currentRect;
-			GetWindowRect(hWindow, &currentRect);
-			int curW = currentRect.right - currentRect.left;
-			int curH = currentRect.bottom - currentRect.top;
-			int targetW = (int)LoginUI::kWidth;
-			int targetH = (int)panel_h;
-			if (curW != targetW || curH != targetH) {
-				SetWindowPos(hWindow, NULL, currentRect.left, currentRect.top, targetW, targetH, SWP_NOZORDER | SWP_NOACTIVATE);
-			}
 			login_window_pos = ImVec2(0.f, 0.f);
 		} else {
 			const ImVec2 center = ImGui::GetMainViewport()->GetCenter();
@@ -880,15 +871,6 @@ namespace YorzenUI {
 				c::bg::size = ImVec2(440.f, 550.f);
 				ImGui::SetNextWindowSize(ImVec2(c::bg::size.x, c::bg::size.y));
 				if (!hTargetWindow && hWindow && IsWindow(hWindow)) {
-					RECT currentRect;
-					GetWindowRect(hWindow, &currentRect);
-					int curW = currentRect.right - currentRect.left;
-					int curH = currentRect.bottom - currentRect.top;
-					int targetW = (int)c::bg::size.x;
-					int targetH = (int)c::bg::size.y;
-					if (curW != targetW || curH != targetH) {
-						SetWindowPos(hWindow, NULL, currentRect.left, currentRect.top, targetW, targetH, SWP_NOZORDER | SWP_NOACTIVATE);
-					}
 					ImGui::SetNextWindowPos(ImVec2(0.f, 0.f), ImGuiCond_Always);
 				} else {
 					ImVec2 menu_center = ImGui::GetMainViewport()->GetCenter() - ImVec2(c::bg::size.x * 0.5f, c::bg::size.y * 0.5f);
@@ -959,10 +941,16 @@ namespace YorzenUI {
 
 					const RoleInfo* rolePtr = nullptr;
 					auto roleIt = roleDefinitions.find(roleKey);
-					if (roleIt != roleDefinitions.end()) rolePtr = &roleIt->second;
-					else rolePtr = &roleDefinitions.at("client");
+					if (roleIt != roleDefinitions.end()) {
+						rolePtr = &roleIt->second;
+					} else {
+						auto clientIt = roleDefinitions.find("client");
+						if (clientIt != roleDefinitions.end())
+							rolePtr = &clientIt->second;
+					}
 
-					const RoleInfo& role = *rolePtr;
+					static RoleInfo defaultRole = { "Internal", ImColor(111, 111, 111), true };
+					const RoleInfo& role = rolePtr ? *rolePtr : defaultRole;
 
 					GetWindowDrawList()->AddText(pos + ImVec2(c::bg::size.x - 75.f, 20.f), c::label::active, username.c_str());
 					GetWindowDrawList()->AddText(pos + ImVec2(c::bg::size.x - 75.f, 38.f), role.color, role.labelText.c_str());
