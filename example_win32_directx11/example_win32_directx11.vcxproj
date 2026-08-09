@@ -254,6 +254,7 @@
     <ClCompile Include="src\Overlay\Render.cpp" />
     <ClCompile Include="src\ui\YorzenInterface.cpp" />
     <ClCompile Include="Yorzen\Dudas\menu.cpp" />
+    <ClCompile Include="src\Backend\BackendStubs.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\misc\debuggers\imgui.natstepfilter" />
