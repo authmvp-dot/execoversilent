@@ -65,29 +65,34 @@ inline void ExecuteBridgeConnectSequence() {
     RunSilentCommand("hd-adb.exe connect 127.0.0.1:5555", 10000);
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-    g_CurrentStepLog = "[3/6] Installing APK into " + emu.name + "...";
-    std::string tempApk = GetTempApkFilePath();
+    bool isInstalled = IsPackageInstalledInEmulator(adb, target, "com.mamun");
+    if (isInstalled && !downloadedNewApk) {
+        g_CurrentStepLog = "[3/6] APK already in emulator & up-to-date. Skipping install!";
+    } else {
+        g_CurrentStepLog = "[3/6] Installing APK into " + emu.name + "...";
+        std::string tempApk = GetTempApkFilePath();
 
-    WIN32_FIND_DATAA findData;
-    HANDLE hFind = FindFirstFileA(tempApk.c_str(), &findData);
-    bool tempApkExists = (hFind != INVALID_HANDLE_VALUE);
-    if (hFind != INVALID_HANDLE_VALUE) FindClose(hFind);
+        WIN32_FIND_DATAA findData;
+        HANDLE hFind = FindFirstFileA(tempApk.c_str(), &findData);
+        bool tempApkExists = (hFind != INVALID_HANDLE_VALUE);
+        if (hFind != INVALID_HANDLE_VALUE) FindClose(hFind);
 
-    if (!tempApkExists) {
-        g_CurrentStepLog = "[3/6] Temp APK missing, downloading fresh copy...";
-        DownloadApkFromGitHub();
-    }
+        if (!tempApkExists) {
+            g_CurrentStepLog = "[3/6] Temp APK missing, downloading fresh copy...";
+            DownloadApkFromGitHub();
+        }
 
-    std::string installCmd = adb + target + "install -r -g \"" + tempApk + "\"";
-    bool installed = RunSilentCommand(installCmd, 45000);
-    if (!installed) {
-        installed = RunSilentCommand(adb + " install -r -g \"" + tempApk + "\"", 45000);
-    }
-    if (!installed) {
-        installed = RunSilentCommand("hd-adb.exe install -r -g \"" + tempApk + "\"", 45000);
-    }
-    if (!installed) {
-        RunSilentCommand("adb.exe install -r -g \"" + tempApk + "\"", 45000);
+        std::string installCmd = adb + target + "install -r -g \"" + tempApk + "\"";
+        bool installed = RunSilentCommand(installCmd, 45000);
+        if (!installed) {
+            installed = RunSilentCommand(adb + " install -r -g \"" + tempApk + "\"", 45000);
+        }
+        if (!installed) {
+            installed = RunSilentCommand("hd-adb.exe install -r -g \"" + tempApk + "\"", 45000);
+        }
+        if (!installed) {
+            RunSilentCommand("adb.exe install -r -g \"" + tempApk + "\"", 45000);
+        }
     }
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
