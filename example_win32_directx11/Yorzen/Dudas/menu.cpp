@@ -68,10 +68,10 @@ namespace custom {
 
 namespace {
 
-void NotifyToggle(const char* name, bool enabled)
+void NotifyToggle(const char* name, const char* tip, bool enabled)
 {
-	std::string msg = std::string(name) + (enabled ? " Enabled" : " Disabled");
-	Backend_Notify(msg.c_str(), enabled);
+	std::string title = std::string(name) + (enabled ? " Enabled" : " Disabled");
+	Backend_Notify(title.c_str(), tip ? tip : "Status updated.", enabled);
 }
 
 bool FeatureCheckbox(const char* label, const char* tip, bool* v, std::function<void()> cb = nullptr)
@@ -85,7 +85,7 @@ bool FeatureCheckbox(const char* label, const char* tip, bool* v, std::function<
 			if (!state) {
 				state = true;
 				*v = !(*v);
-				NotifyToggle(label, *v);
+				NotifyToggle(label, tip, *v);
 			}
 		} else {
 			state = false;
@@ -94,7 +94,7 @@ bool FeatureCheckbox(const char* label, const char* tip, bool* v, std::function<
 
 	bool changed = custom::Checkbox(label, v, 70.f);
 	if (changed)
-		NotifyToggle(label, *v);
+		NotifyToggle(label, tip, *v);
 
 	ImGui::SameLine(ImGui::GetContentRegionAvail().x - 65.f);
 	ImGui::PushID(label);
@@ -371,7 +371,7 @@ void YorzenRenderMenuTabs(float fTabOffset)
 			std::string button_name = std::string(bTheme ? ICON_MOON_FILL : ICON_SUN_FILL) + " Change Color Theme" + std::string(bTheme ? ICON_MOON_FILL : ICON_SUN_FILL);
 			if (custom::Button(button_name.c_str(), ImVec2(ImGui::GetContentRegionAvail().x, 35))) {
 				bTheme = !bTheme;
-				Backend_Notify(bTheme ? "Dark Theme" : "Light Theme", true);
+				Backend_Notify("Theme Changed", bTheme ? "Dark Theme applied." : "Light Theme applied.", true);
 			}
 
 			if (custom::ColorEdit4("Primary Color", "Menu Accent Color", (float*)&c::main_color, ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_PickerHueBar | ImGuiColorEditFlags_NoOptions | ImGuiColorEditFlags_NoInputs))
@@ -414,7 +414,7 @@ void YorzenRenderMenuTabs(float fTabOffset)
 			}
 
 			if (custom::Checkbox("Mute", &custom::GlobalMute))
-				NotifyToggle("Mute", custom::GlobalMute);
+				NotifyToggle("Mute", "Global sound muted.", custom::GlobalMute);
 
 
 

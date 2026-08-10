@@ -298,111 +298,82 @@ namespace ImGui
 
             PushStyleVar(ImGuiStyleVar_Alpha, opacity);
 
-            ImVec2 work_pos(0.0f, 0.0f);
-            ImVec2 work_size((float)GetSystemMetrics(SM_CXSCREEN), (float)GetSystemMetrics(SM_CYSCREEN));
+            ImVec2 title_size = CalcTextSize(title);
+            ImVec2 desc_size = CalcTextSize(content);
+            float required_width = 50.f + ImMax(title_size.x, desc_size.x) + 20.f;
+            float required_height = 55.f;
 
-            HWND targetHwnd = (::hwnd && IsWindow(::hwnd)) ? ::hwnd : GetForegroundWindow();
-            HMONITOR hMon = MonitorFromWindow(targetHwnd, MONITOR_DEFAULTTONEAREST);
-            MONITORINFO mi = { sizeof(MONITORINFO) };
-            if (GetMonitorInfoA(hMon, &mi)) {
-                work_pos = ImVec2((float)mi.rcWork.left, (float)mi.rcWork.top);
-                work_size = ImVec2((float)(mi.rcWork.right - mi.rcWork.left), (float)(mi.rcWork.bottom - mi.rcWork.top));
+            ImVec2 final_pos(0, 0);
+            ImGuiWindow* main_window = ImGui::FindWindowByName("##Main");
+            if (main_window && !main_window->Hidden) {
+                // Attach to the bottom-right of the menu, positioned outside to the right
+                final_pos.x = main_window->Pos.x + main_window->Size.x + required_width + 10.f;
+                final_pos.y = main_window->Pos.y + main_window->Size.y;
             } else {
-                RECT wa;
-                if (SystemParametersInfoA(SPI_GETWORKAREA, 0, &wa, 0)) {
-                    work_pos = ImVec2((float)wa.left, (float)wa.top);
-                    work_size = ImVec2((float)(wa.right - wa.left), (float)(wa.bottom - wa.top));
+                HWND targetHwnd = (::hwnd && IsWindow(::hwnd)) ? ::hwnd : GetForegroundWindow();
+                HMONITOR hMon = MonitorFromWindow(targetHwnd, MONITOR_DEFAULTTONEAREST);
+                MONITORINFO mi = { sizeof(MONITORINFO) };
+                if (GetMonitorInfoA(hMon, &mi)) {
+                    final_pos.x = mi.rcWork.right - 15.f;
+                    final_pos.y = mi.rcWork.bottom - 15.f;
                 }
             }
 
             SetNextWindowPos(
-                ImVec2(
-                    work_pos.x + work_size.x - NOTIFY_PADDING_X,
-                    work_pos.y + work_size.y - NOTIFY_PADDING_Y - height
-                ),
+                ImVec2(final_pos.x, final_pos.y - height),
                 ImGuiCond_Always,
                 ImVec2(1.f, 1.f)
             );
 
+            PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+            PushStyleVar(ImGuiStyleVar_WindowRounding, 8.f);
+            PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.f);
 
-            PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(20, 10));
-            PushStyleVar(ImGuiStyleVar_WindowRounding, 6.f);
-            PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 10));
-            PushStyleVar(ImGuiStyleVar_WindowBorderSize, 1.f);
-
-            PushStyleColor(ImGuiCol_WindowBg, GetColorU32(c::child::background2));
-            PushStyleColor(ImGuiCol_Border, GetColorU32(c::child::outline));
-
-            auto backgroud_list = ImGui::GetBackgroundDrawList();
+            PushStyleColor(ImGuiCol_WindowBg, 0);
 
             Begin(window_name, NULL, NOTIFY_TOAST_FLAGS);
             {
+                ImGui::Dummy(ImVec2(required_width, required_height));
+
                 const ImVec2& pos = GetWindowPos();
-                const ImVec2& region = GetContentRegionMax();
+                const ImVec2& size = GetWindowSize();
 
-                // Fondo de la barra
-                GetForegroundDrawList()->AddRectFilled(
-                    pos + ImVec2(20, region.y - 16),
-                    pos + ImVec2(region.x, region.y - 10),
-                    GetColorU32(c::child::outline),
-                    30.f
-                );
+                // Draw Background
+                GetForegroundDrawList()->AddRectFilled(pos, pos + size, ImColor(18, 18, 18, (int)(opacity * 255)), 8.f);
+                GetForegroundDrawList()->AddRect(pos, pos + size, ImColor(40, 40, 40, (int)(opacity * 255)), 8.f);
 
-                // Barra animada de progreso
-                float bar_width = (region.x - 20) * progress;
-                GetForegroundDrawList()->AddShadowRect(
-                    pos + ImVec2(20, region.y - 16),
-                    pos + ImVec2(20 + bar_width, region.y - 10),
-                    GetColorU32(text_color),
-                    10.f, ImVec2(0, 0), 30.f
-                );
-                GetForegroundDrawList()->AddRectFilled(
-                    pos + ImVec2(20, region.y - 16),
-                    pos + ImVec2(20 + bar_width, region.y - 10),
-                    GetColorU32(text_color),
-                    30.f
-                );
+                // Draw Left Icon
+                ImVec2 icon_center = pos + ImVec2(28, size.y / 2.f);
+                float icon_radius = 11.f;
+                bool is_success = (strcmp(default_title, "Success") == 0);
+                ImColor icon_color = is_success ? ImColor(40, 200, 80, (int)(opacity * 255)) : ImColor(200, 40, 40, (int)(opacity * 255));
+                
+                GetForegroundDrawList()->AddCircle(icon_center, icon_radius, icon_color, 0, 1.5f);
+                
+                if (is_success) {
+                    GetForegroundDrawList()->AddLine(icon_center + ImVec2(-4, 1), icon_center + ImVec2(-1, 4), icon_color, 1.5f);
+                    GetForegroundDrawList()->AddLine(icon_center + ImVec2(-1, 4), icon_center + ImVec2(5, -4), icon_color, 1.5f);
+                } else {
+                    GetForegroundDrawList()->AddLine(icon_center + ImVec2(-3, -3), icon_center + ImVec2(3, 3), icon_color, 1.5f);
+                    GetForegroundDrawList()->AddLine(icon_center + ImVec2(3, -3), icon_center + ImVec2(-3, 3), icon_color, 1.5f);
+                }
 
-                // Fondo decorativo (sombra global)
-                backgroud_list->AddShadowRect(
-                    pos + ImVec2(10, 10),
-                    pos + ImVec2(region.x - 10, region.y - 10),
-                    ImColor(c::accent),
-                    150.f, ImVec2(0, 0)
-                );
+                // Draw Texts
+                ImVec2 text_pos = pos + ImVec2(52, 10);
+                
+                if (font::inter_bold) PushFont(font::inter_bold);
+                GetForegroundDrawList()->AddText(text_pos, ImColor(255, 255, 255, (int)(opacity * 255)), title);
+                if (font::inter_bold) PopFont();
 
-                SetCursorPosY(GetCursorPosY() + 10);
-                PushTextWrapPos(vp_size.x / 3.f);
-
-                if (font::iconuwu) PushFont(font::iconuwu);
-                ImGui::SetWindowFontScale(1.3f);
-                if (default_title == "Success") TextColored(text_color, "f");
-                if (default_title == "Warning") TextColored(text_color, "d");
-                if (default_title == "Error") TextColored(text_color, "e");
-                if (default_title == "Info") TextColored(text_color, "g");
-                if (default_title == "Config") TextColored(text_color, "b");
-                ImGui::SetWindowFontScale(1.0f);
-                if (font::iconuwu) PopFont();
-
-                SameLine();
-                if (font::bold_small) PushFont(font::bold_small);
-                ImGui::SetWindowFontScale(1.3f);
-                TextColored(text_color, "Notification");
-                ImGui::SetWindowFontScale(1.0f);
-                if (font::bold_small) PopFont();
-
-                if (!NOTIFY_NULL_OR_EMPTY(content))
-                    TextColored(ImColor(GetColorU32(c::text::text_active)), content);
-
-                PopTextWrapPos();
+                ImVec2 desc_pos = text_pos + ImVec2(0, 18);
+                GetForegroundDrawList()->AddText(desc_pos, ImColor(150, 150, 150, (int)(opacity * 255)), content);
             }
 
-            height += GetWindowHeight() + NOTIFY_PADDING_MESSAGE_Y;
+            height += GetWindowHeight() + 10.f; // 10px spacing between toasts
 
-            SetCursorPosY(GetCursorPosY() + 21);
             End();
-            PopStyleVar(5);
-            PopStyleColor(2);
+            PopStyleVar(3);
+            PopStyleColor(1);
         }
     }
 

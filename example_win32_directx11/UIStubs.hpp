@@ -18,9 +18,9 @@ inline void Backend_StartUtilityThread() {}
 inline void Backend_SyncKeybindsFromYorzen() {}
 inline void Backend_SyncEspPreview() {}
 inline void Backend_RenderNotifications() { ImGui::RenderNotifications(); }
-inline void Backend_Notify(const char* text, bool status = true) {
+inline void Backend_Notify(const char* title, const char* text, bool status = true) {
     ImGuiToast toast(status ? ImGuiToastType_Success : ImGuiToastType_Error, 2500);
-    toast.set_title(status ? "Success" : "Info");
+    toast.set_title(title);
     toast.set_content("%s", text);
     ImGui::Notification(toast);
 }
@@ -113,7 +113,7 @@ inline void Backend_SaveConfig() {
         auto& map = Backend_BlazeCheckbox(0);
         (void)map;
         fclose(f);
-        Backend_Notify("Config Saved Successfully!", true);
+        Backend_Notify("Success", "Config Saved Successfully!", true);
     }
 }
 
@@ -123,14 +123,14 @@ inline void Backend_LoadConfig() {
     if (f) {
         fread(&ui.esp, sizeof(ui.esp), 1, f);
         fclose(f);
-        Backend_Notify("Config Loaded!", true);
+        Backend_Notify("Success", "Config Loaded!", true);
     }
 }
 
 inline void Backend_ResetConfig() {
     ui.esp = ESPData();
     remove("yorzen_config.bin");
-    Backend_Notify("Config Reset to Default!", true);
+    Backend_Notify("Success", "Config Reset to Default!", true);
 }
 
 // Global AimbotMemory instance
