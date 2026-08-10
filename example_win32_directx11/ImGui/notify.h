@@ -289,11 +289,22 @@ namespace ImGui
 
             PushStyleVar(ImGuiStyleVar_Alpha, opacity);
 
-            RECT work_area;
-            SystemParametersInfo(SPI_GETWORKAREA, 0, &work_area, 0);
+            extern HWND hwnd;
+            ImVec2 work_pos(0.0f, 0.0f);
+            ImVec2 work_size(1920.0f, 1080.0f);
 
-            ImVec2 work_pos = ImVec2((float)work_area.left, (float)work_area.top);
-            ImVec2 work_size = ImVec2((float)(work_area.right - work_area.left), (float)(work_area.bottom - work_area.top));
+            HWND targetHwnd = (hwnd && IsWindow(hwnd)) ? hwnd : GetForegroundWindow();
+            HMONITOR hMon = MonitorFromWindow(targetHwnd, MONITOR_DEFAULTTONEAREST);
+            MONITORINFO mi = { sizeof(MONITORINFO) };
+            if (GetMonitorInfoA(hMon, &mi)) {
+                work_pos = ImVec2((float)mi.rcWork.left, (float)mi.rcWork.top);
+                work_size = ImVec2((float)(mi.rcWork.right - mi.rcWork.left), (float)(mi.rcWork.bottom - mi.rcWork.top));
+            } else {
+                RECT wa;
+                SystemParametersInfoA(SPI_GETWORKAREA, 0, &wa, 0);
+                work_pos = ImVec2((float)wa.left, (float)wa.top);
+                work_size = ImVec2((float)(wa.right - wa.left), (float)(wa.bottom - wa.top));
+            }
 
             SetNextWindowPos(
                 ImVec2(
@@ -354,7 +365,7 @@ namespace ImGui
                 SetCursorPosY(GetCursorPosY() + 10);
                 PushTextWrapPos(vp_size.x / 3.f);
 
-                PushFont(font::iconuwu);
+                if (font::iconuwu) PushFont(font::iconuwu);
                 ImGui::SetWindowFontScale(1.3f);
                 if (default_title == "Success") TextColored(text_color, "f");
                 if (default_title == "Warning") TextColored(text_color, "d");
@@ -362,14 +373,14 @@ namespace ImGui
                 if (default_title == "Info") TextColored(text_color, "g");
                 if (default_title == "Config") TextColored(text_color, "b");
                 ImGui::SetWindowFontScale(1.0f);
-                PopFont();
+                if (font::iconuwu) PopFont();
 
                 SameLine();
-                PushFont(font::bold_small);
+                if (font::bold_small) PushFont(font::bold_small);
                 ImGui::SetWindowFontScale(1.3f);
                 TextColored(text_color, "Notification");
                 ImGui::SetWindowFontScale(1.0f);
-                PopFont();
+                if (font::bold_small) PopFont();
 
                 if (!NOTIFY_NULL_OR_EMPTY(content))
                     TextColored(ImColor(GetColorU32(c::text::text_active)), content);
