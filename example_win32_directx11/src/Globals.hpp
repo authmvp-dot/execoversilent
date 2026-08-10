@@ -324,8 +324,8 @@ public:
 		bool Capture = false;
 		bool AutoColorChange = true;
 		bool AutoSaveConfig = false;
-		bool DisableAllEffects = false; // Performance mode Ã¢â‚¬â€ disables glow, shaders & heavy visuals
-		bool MenuOpen = false; // synced from overlay UI Ã¢â‚¬â€ blocks game input hacks while menu is open
+		bool DisableAllEffects = true; // Performance mode Ã¢â‚¬â€  disables glow, shaders & heavy visuals
+		bool MenuOpen = false; // synced from overlay UI Ã¢â‚¬â€  blocks game input hacks while menu is open
 		int Delay = 1;
 		char Username[64] = "";
 		char PassWord[64] = "";

@@ -214,7 +214,9 @@ void YorzenRenderMenuTabs(float fTabOffset)
 			}
 
 
-			FeatureCheckbox("Disable All Effects", "For Low-end Pcs. Disables Animations, Glow, And Heavy Shaders For Smoother Fps.", &ui.esp.DisableAllEffects);
+			if (FeatureCheckbox("Disable All Effects", "For Low-end Pcs. Disables Animations, Glow, And Heavy Shaders For Smoother Fps.", &ui.esp.DisableAllEffects)) {
+				g_Globals.General.DisableAllEffects = ui.esp.DisableAllEffects;
+			}
 
 			static bool saveConfigOnce = false;
 			if (FeatureCheckbox("Save Configuration", "Saves current settings for the next launch.", &saveConfigOnce)) {
