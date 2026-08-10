@@ -2,7 +2,7 @@
 #include "imgui.h"
 
 struct ESPData {
-	bool ESPMasterEnabled = true;
+	bool ESPMasterEnabled = false;
 	bool PlayerWeaponIcon = false;
 	bool PlayerHealthBar = false;
 	int espmaxdis = 160;
@@ -91,6 +91,9 @@ struct ESPData {
 	float AimExternalFov = 120.f;
 	int AimExternalDistance = 150;
 	int AimExternalKey = 0;
+
+	bool EnableKeybinds = false;
+	bool ShowKeybindStatus = true;
 };
 
 struct ChamsData {
