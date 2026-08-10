@@ -12,7 +12,7 @@ struct ESPData {
 	bool FastReload = false;
 	bool BurstFire = false;
 	bool EspStreamerMode = false;
-	bool DisableAllEffects = true;
+	bool DisableAllEffects = false;
 	int AimbotDistance = 150;
 
 	bool AimFovEnabled = false;
