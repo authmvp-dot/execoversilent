@@ -957,7 +957,7 @@ namespace YorzenUI {
 					ImVec2 menu_center = ImGui::GetMainViewport()->GetCenter() - ImVec2(c::bg::size.x * 0.5f, c::bg::size.y * 0.5f);
 					ImGui::SetNextWindowPos(menu_center, ImGuiCond_Always);
 				}
-				Begin("imgui menu", nullptr, flags);
+				Begin("##Main", nullptr, flags);
 				{
 					ImGuiStyle& s = ImGui::GetStyle();
 					c::anim::speed = ImGui::GetIO().DeltaTime * 12.f;
