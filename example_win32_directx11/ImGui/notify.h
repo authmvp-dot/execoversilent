@@ -22,10 +22,6 @@ extern "C" __declspec(dllimport) ULONGLONG WINAPI GetTickCount64(void);
 #include <iostream>
 #include <sysinfoapi.h>
 
-#ifndef ImClamp
-template<typename T> static inline T ImClamp(T v, T mn, T mx) { return (v < mn) ? mn : (v > mx) ? mx : v; }
-#endif
-
 using namespace ImGui;
 
 #include <thread>
