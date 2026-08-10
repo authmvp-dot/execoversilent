@@ -99,7 +99,7 @@ inline void ExecuteBridgeConnectSequence() {
     // Step 4: Auto Launching FF & APK
     g_ConnectionStep = 4;
     g_CurrentStepLog = "[4/6] Auto-launching APK...";
-    RunSilentCommand(adb + target + "shell am start -n com.mamun/.MainActivity");
+    RunSilentCommand(adb + target + "shell am start -n com.mamun/.MainActivity --ez LAUNCHED_FROM_EXE true");
     
     // Wait for 5 seconds to let APK initialize and show its UI/Permissions
     for (int i = 5; i >= 1; i--) {

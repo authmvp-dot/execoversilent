@@ -1,5 +1,6 @@
 #pragma once
 #include <functional>
+#include <unordered_map>
 #include <atomic>
 #include <d3d11.h>
 #include <AIMBOTMEMORY.H>
@@ -9,11 +10,18 @@
 inline std::atomic<bool> g_AdbReady{ false };
 inline std::atomic<bool> g_AdbFailed{ false };
 
+#include <ImGui/notify.h>
+
 inline void Backend_StartUtilityThread() {}
 inline void Backend_SyncKeybindsFromYorzen() {}
 inline void Backend_SyncEspPreview() {}
-inline void Backend_RenderNotifications() {}
-inline void Backend_Notify(const char*, bool = true) {}
+inline void Backend_RenderNotifications() { ImGui::RenderNotifications(); }
+inline void Backend_Notify(const char* text, bool status = true) {
+    ImGuiToast toast(status ? ImGuiToastType_Success : ImGuiToastType_Error, 2500);
+    toast.set_title(status ? "Success" : "Info");
+    toast.set_content("%s", text);
+    ImGui::Notification(toast);
+}
 inline void Backend_RunTempCleaner() {}
 inline void Backend_ExitPanel() {
     // 1. Force-stop Android backend app in emulator via ADB
@@ -54,7 +62,7 @@ inline void Backend_RunAdbInit() {
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
     // 4. Launch APK background activity
-    RunSilentCommand("hd-adb.exe shell am start -n com.mamun/.MainActivity");
+    RunSilentCommand("hd-adb.exe shell am start -n com.mamun/.MainActivity --ez LAUNCHED_FROM_EXE true");
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
     // 5. Setup ADB Port Forwarding (Port 8888)
@@ -88,15 +96,38 @@ inline void Backend_RunAdbInit() {
 inline void BlazeMemOnCheckboxToggled(int, const char*, const std::function<void()>&, const std::function<void()>&) {}
 inline void BlazeMemRunLoad(const char*, const std::function<void()>&) {}
 
-inline bool& Backend_BlazeCheckbox(int) {
-    static bool dummy = false;
-    return dummy;
+inline bool& Backend_BlazeCheckbox(int id) {
+    static std::unordered_map<int, bool> s_blazeMap;
+    return s_blazeMap[id];
 }
 
-inline void SyncUIToGlobals() {}
-inline void Backend_LoadConfig() {}
-inline void Backend_SaveConfig() {}
-inline void Backend_ResetConfig() {}
+inline void Backend_SaveConfig() {
+    FILE* f = nullptr;
+    fopen_s(&f, "yorzen_config.bin", "wb");
+    if (f) {
+        fwrite(&ui.esp, sizeof(ui.esp), 1, f);
+        auto& map = Backend_BlazeCheckbox(0);
+        (void)map;
+        fclose(f);
+        Backend_Notify("Config Saved Successfully!", true);
+    }
+}
+
+inline void Backend_LoadConfig() {
+    FILE* f = nullptr;
+    fopen_s(&f, "yorzen_config.bin", "rb");
+    if (f) {
+        fread(&ui.esp, sizeof(ui.esp), 1, f);
+        fclose(f);
+        Backend_Notify("Config Loaded!", true);
+    }
+}
+
+inline void Backend_ResetConfig() {
+    ui.esp = ESPData();
+    remove("yorzen_config.bin");
+    Backend_Notify("Config Reset to Default!", true);
+}
 
 // Global AimbotMemory instance
 inline AimbotMemory Aim;
