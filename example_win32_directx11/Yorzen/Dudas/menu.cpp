@@ -258,9 +258,6 @@ void YorzenRenderMenuTabs(float fTabOffset)
 			if (edited::SliderFloat("Fov Radius", "Aim Search Radius", &ui.esp.AimFovValue, 0.f, 1200.f, "%.1f")) {
 				SendCommandToBridge(104, (int)ui.esp.AimFovValue);
 			}
-			if (edited::SliderInt("Esp Distance", "Draw Distance (m)", &ui.esp.espmaxdis, 0, 500, "%d m")) {
-				SendCommandToBridge(240, ui.esp.espmaxdis);
-			}
 		}
 		custom::EndChild();
 	}

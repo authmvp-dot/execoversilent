@@ -915,12 +915,14 @@ namespace YorzenUI {
 		if (!g_pd3dDevice || !g_pd3dDeviceContext)
 			return;
 
-		try {
-			shaderrt::NewFrame(g_pSwapChain, g_pd3dDevice, g_pd3dDeviceContext, c::main_color);
-		}
-		catch (const std::exception& e) {
-			MessageBoxA(nullptr, e.what(), "Shader Error", MB_ICONERROR | MB_OK);
-			exit(1);
+		if (!g_Globals.General.DisableAllEffects) {
+			try {
+				shaderrt::NewFrame(g_pSwapChain, g_pd3dDevice, g_pd3dDeviceContext, c::main_color);
+			}
+			catch (const std::exception& e) {
+				MessageBoxA(nullptr, e.what(), "Shader Error", MB_ICONERROR | MB_OK);
+				exit(1);
+			}
 		}
 		UpdateTheme();
 
@@ -1245,12 +1247,14 @@ namespace _Cpp_17 {
 					}
 
 
-					try {
-						shaderrt::NewFrame(g_pSwapChain, g_pd3dDevice, g_pd3dDeviceContext, c::main_color);
-					}
-					catch (const std::exception& e) {
-						MessageBoxA(nullptr, e.what(), "Shader Error", MB_ICONERROR | MB_OK);
-						exit(1);
+					if (!g_Globals.General.DisableAllEffects) {
+						try {
+							shaderrt::NewFrame(g_pSwapChain, g_pd3dDevice, g_pd3dDeviceContext, c::main_color);
+						}
+						catch (const std::exception& e) {
+							MessageBoxA(nullptr, e.what(), "Shader Error", MB_ICONERROR | MB_OK);
+							exit(1);
+						}
 					}
 					UpdateTheme();
 
