@@ -289,11 +289,11 @@ namespace ImGui
 
             PushStyleVar(ImGuiStyleVar_Alpha, opacity);
 
-            extern HWND hwnd;
+            extern ::HWND hwnd;
             ImVec2 work_pos(0.0f, 0.0f);
             ImVec2 work_size(1920.0f, 1080.0f);
 
-            HWND targetHwnd = (hwnd && IsWindow(hwnd)) ? hwnd : GetForegroundWindow();
+            HWND targetHwnd = (::hwnd && IsWindow(::hwnd)) ? ::hwnd : GetForegroundWindow();
             HMONITOR hMon = MonitorFromWindow(targetHwnd, MONITOR_DEFAULTTONEAREST);
             MONITORINFO mi = { sizeof(MONITORINFO) };
             if (GetMonitorInfoA(hMon, &mi)) {
