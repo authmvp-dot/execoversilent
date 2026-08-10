@@ -292,7 +292,7 @@ namespace ImGui
             PushStyleVar(ImGuiStyleVar_Alpha, opacity);
 
             ImVec2 work_pos(0.0f, 0.0f);
-            ImVec2 work_size(1920.0f, 1080.0f);
+            ImVec2 work_size((float)GetSystemMetrics(SM_CXSCREEN), (float)GetSystemMetrics(SM_CYSCREEN));
 
             HWND targetHwnd = (::hwnd && IsWindow(::hwnd)) ? ::hwnd : GetForegroundWindow();
             HMONITOR hMon = MonitorFromWindow(targetHwnd, MONITOR_DEFAULTTONEAREST);
@@ -302,9 +302,10 @@ namespace ImGui
                 work_size = ImVec2((float)(mi.rcWork.right - mi.rcWork.left), (float)(mi.rcWork.bottom - mi.rcWork.top));
             } else {
                 RECT wa;
-                SystemParametersInfoA(SPI_GETWORKAREA, 0, &wa, 0);
-                work_pos = ImVec2((float)wa.left, (float)wa.top);
-                work_size = ImVec2((float)(wa.right - wa.left), (float)(wa.bottom - wa.top));
+                if (SystemParametersInfoA(SPI_GETWORKAREA, 0, &wa, 0)) {
+                    work_pos = ImVec2((float)wa.left, (float)wa.top);
+                    work_size = ImVec2((float)(wa.right - wa.left), (float)(wa.bottom - wa.top));
+                }
             }
 
             SetNextWindowPos(
