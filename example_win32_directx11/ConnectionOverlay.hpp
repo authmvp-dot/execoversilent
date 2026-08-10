@@ -66,8 +66,16 @@ inline void ExecuteBridgeConnectSequence() {
 
     // Step 4: Auto Launching FF & APK
     g_ConnectionStep = 4;
-    g_CurrentStepLog = "[4/6] Auto-launching APK & Free Fire Game...";
+    g_CurrentStepLog = "[4/6] Auto-launching APK...";
     RunSilentCommand(adb + target + "shell am start -n com.mamun/.MainActivity");
+    
+    // Wait for 5 seconds to let APK initialize and show its UI/Permissions
+    for (int i = 5; i >= 1; i--) {
+        g_CurrentStepLog = "[4/6] Waiting for APK " + std::to_string(i) + "s...";
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    }
+
+    g_CurrentStepLog = "[4/6] Auto-launching Free Fire Game...";
     RunSilentCommand(adb + target + "shell am start -n com.dts.freefireth/com.dts.freefireth.FFMainActivity");
     RunSilentCommand(adb + target + "shell am start -n com.dts.freefiremax/com.dts.freefireth.FFMainActivity");
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
