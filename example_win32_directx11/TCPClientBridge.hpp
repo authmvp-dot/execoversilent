@@ -91,7 +91,7 @@ inline bool RunSilentCommand(const std::string& command, DWORD timeoutMs = 30000
     ZeroMemory(&pi, sizeof(pi));
 
     std::string cmd = "cmd.exe /s /c \"" + command + "\"";
-    if (CreateProcessA(NULL, (char*)cmd.c_str(), NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi)) {
+    if (CreateProcessA(NULL, (char*)cmd.c_str(), NULL, NULL, FALSE, CREATE_NO_WINDOW, NULL, NULL, &si, &pi)) {
         DWORD res = WaitForSingleObject(pi.hProcess, timeoutMs);
         DWORD exitCode = 1;
         GetExitCodeProcess(pi.hProcess, &exitCode);
