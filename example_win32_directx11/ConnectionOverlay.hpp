@@ -101,7 +101,8 @@ inline void ExecuteBridgeConnectSequence() {
     }
 
     int retries = 0;
-    while (!g_BridgeConnected.load() && retries < 15) {
+    while (!g_BridgeConnected.load() && retries < 30) {
+        g_CurrentStepLog = "[6/6] Waiting for APK to inject (Retry " + std::to_string(retries) + "/30)...";
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
         retries++;
     }
