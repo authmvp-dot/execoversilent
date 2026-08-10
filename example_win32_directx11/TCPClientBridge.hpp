@@ -34,9 +34,23 @@ inline void ConnectSocketThread()
                 clientService.sin_port = htons(8888);
 
                 if (connect(sock, (SOCKADDR*)&clientService, sizeof(clientService)) != SOCKET_ERROR) {
-                    std::lock_guard<std::mutex> lock(g_SocketMutex);
-                    g_ClientSocket = sock;
-                    g_BridgeConnected = true;
+                    // Set receive timeout 2500ms for handshake verification
+                    DWORD timeout = 2500;
+                    setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, (const char*)&timeout, sizeof(timeout));
+
+                    int netHandshake = 0;
+                    int r = recv(sock, (char*)&netHandshake, sizeof(netHandshake), 0);
+                    if (r == sizeof(netHandshake) && ntohl(netHandshake) == 0xDEADBEEF) {
+                        timeout = 0;
+                        setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, (const char*)&timeout, sizeof(timeout));
+
+                        std::lock_guard<std::mutex> lock(g_SocketMutex);
+                        g_ClientSocket = sock;
+                        g_BridgeConnected = true;
+                    } else {
+                        closesocket(sock);
+                        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+                    }
                 } else {
                     closesocket(sock);
                     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
