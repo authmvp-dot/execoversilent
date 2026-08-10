@@ -1069,8 +1069,8 @@ namespace YorzenUI {
 			}
 		}
 
-		ImGui::RenderNotifications();
-		Backend_RenderNotifications();
+		//ImGui::RenderNotifications();
+		//Backend_RenderNotifications();
 		YorzenRenderPostUI();
 	}
 }
@@ -1402,8 +1402,8 @@ namespace _Cpp_17 {
 
 				}
 
-				ImGui::RenderNotifications();
-				Backend_RenderNotifications();
+				//ImGui::RenderNotifications();
+				//Backend_RenderNotifications();
 				//SrDudas();
 
 				YorzenRenderPostUI();

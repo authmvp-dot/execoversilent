@@ -59,6 +59,13 @@ inline namespace YorzenKey {
 	extern int SniperScopeKey;
 }
 
+#include <map>
+namespace custom {
+    inline std::map<std::string, int> FeatureKeys;
+    inline std::map<std::string, int> FeatureKeyModes;
+    inline std::map<std::string, bool> FeatureKeyStates;
+}
+
 namespace {
 
 void NotifyToggle(const char* name, bool enabled)
@@ -69,9 +76,41 @@ void NotifyToggle(const char* name, bool enabled)
 
 bool FeatureCheckbox(const char* label, const char* tip, bool* v, std::function<void()> cb = nullptr)
 {
-	bool changed = edited::Checkbox(label, tip, v, std::move(cb));
+	int& key = custom::FeatureKeys[label];
+	int& mode = custom::FeatureKeyModes[label];
+	bool& state = custom::FeatureKeyStates[label];
+
+	if (key != 0 && mode == 0) {
+		if (GetAsyncKeyState(key) & 0x8000) {
+			if (!state) {
+				state = true;
+				*v = !(*v);
+				NotifyToggle(label, *v);
+			}
+		} else {
+			state = false;
+		}
+	}
+
+	bool changed = custom::Checkbox(label, v);
 	if (changed)
 		NotifyToggle(label, *v);
+
+	ImGui::SameLine(ImGui::GetContentRegionAvail().x - 70.f);
+	ImGui::PushID(label);
+	ImGui::PushItemWidth(70.f);
+	custom::Keybind("##kb", &key, &mode);
+	ImGui::PopItemWidth();
+	ImGui::PopID();
+
+	if (*v) {
+		ImGui::Indent(10.0f);
+		ImGui::PushID(label);
+		if (cb) cb();
+		ImGui::PopID();
+		ImGui::Unindent(10.0f);
+	}
+
 	return changed;
 }
 
@@ -377,21 +416,7 @@ void YorzenRenderMenuTabs(float fTabOffset)
 			if (custom::Checkbox("Mute", &custom::GlobalMute))
 				NotifyToggle("Mute", custom::GlobalMute);
 
-			ImGui::Spacing();
-			ImGui::Separator();
-			ImGui::Spacing();
-			ImGui::Text("HOTKEY KEYBINDS");
 
-			ImGui::Keybox("AimKill Hotkey", &YorzenKey::AimbotToggleCheck, &YorzenKey::AimbotToggleKey);
-			ImGui::Keybox("Silent Aim Hotkey", &YorzenKey::SilentAimCheck, &YorzenKey::SilentAimKey);
-			ImGui::Keybox("Enemy Pull Hotkey", &YorzenKey::EnemyPullCheck, &YorzenKey::EnemyPullKey);
-			ImGui::Keybox("Teleport Kill Hotkey", &YorzenKey::TeleportKillCheck, &YorzenKey::TeleportKillKey);
-			ImGui::Keybox("WallHack Hotkey", &YorzenKey::WallHack1Check, &YorzenKey::WallHack1Key);
-			ImGui::Keybox("Refresh ESP Hotkey", &YorzenKey::RefreshEspCheck, &YorzenKey::RefreshEspKey);
-			ImGui::Keybox("Streamer Mode Hotkey", &YorzenKey::StreamerModeCheck, &YorzenKey::StreamerModeKey);
-			ImGui::Keybox("Hide Menu Hotkey", &YorzenKey::HideMenuCheck, &YorzenKey::HideMenuKey);
-
-			ImGui::Spacing();
 
 			if (custom::Button("Exit Panel", ImVec2(ImGui::GetContentRegionAvail().x, 40))) {
 				Backend_ExitPanel();
