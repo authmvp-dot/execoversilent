@@ -377,6 +377,22 @@ void YorzenRenderMenuTabs(float fTabOffset)
 			if (custom::Checkbox("Mute", &custom::GlobalMute))
 				NotifyToggle("Mute", custom::GlobalMute);
 
+			ImGui::Spacing();
+			ImGui::Separator();
+			ImGui::Spacing();
+			ImGui::Text("HOTKEY KEYBINDS");
+
+			ImGui::Keybox("AimKill Hotkey", &YorzenKey::AimbotToggleCheck, &YorzenKey::AimbotToggleKey);
+			ImGui::Keybox("Silent Aim Hotkey", &YorzenKey::SilentAimCheck, &YorzenKey::SilentAimKey);
+			ImGui::Keybox("Enemy Pull Hotkey", &YorzenKey::EnemyPullCheck, &YorzenKey::EnemyPullKey);
+			ImGui::Keybox("Teleport Kill Hotkey", &YorzenKey::TeleportKillCheck, &YorzenKey::TeleportKillKey);
+			ImGui::Keybox("WallHack Hotkey", &YorzenKey::WallHack1Check, &YorzenKey::WallHack1Key);
+			ImGui::Keybox("Refresh ESP Hotkey", &YorzenKey::RefreshEspCheck, &YorzenKey::RefreshEspKey);
+			ImGui::Keybox("Streamer Mode Hotkey", &YorzenKey::StreamerModeCheck, &YorzenKey::StreamerModeKey);
+			ImGui::Keybox("Hide Menu Hotkey", &YorzenKey::HideMenuCheck, &YorzenKey::HideMenuKey);
+
+			ImGui::Spacing();
+
 			if (custom::Button("Exit Panel", ImVec2(ImGui::GetContentRegionAvail().x, 40))) {
 				Backend_ExitPanel();
 			}
