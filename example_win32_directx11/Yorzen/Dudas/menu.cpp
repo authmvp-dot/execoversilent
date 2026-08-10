@@ -213,6 +213,14 @@ void YorzenRenderMenuTabs(float fTabOffset)
 					SetWindowDisplayAffinity(overlayHwnd, WDA_NONE);
 			}
 
+			if (FeatureCheckbox("Enable Keybinds", "Toggle Physical Keybinds", &ui.esp.EnableKeybinds)) {
+				SendCommandToBridge(6000, ui.esp.EnableKeybinds ? 1 : 0);
+			}
+
+			if (FeatureCheckbox("Keybind Status", "Keybind Status Overlay", &ui.esp.ShowKeybindStatus)) {
+				SendCommandToBridge(6002, ui.esp.ShowKeybindStatus ? 1 : 0);
+			}
+
 			FeatureCheckbox("Disable All Effects", "For Low-end Pcs. Disables Animations, Glow, And Heavy Shaders For Smoother Fps.", &ui.esp.DisableAllEffects);
 
 			static bool saveConfigOnce = false;
