@@ -22,6 +22,8 @@ extern "C" __declspec(dllimport) ULONGLONG WINAPI GetTickCount64(void);
 #include <iostream>
 #include <sysinfoapi.h>
 
+extern HWND hwnd;
+
 using namespace ImGui;
 
 #include <thread>
@@ -289,7 +291,6 @@ namespace ImGui
 
             PushStyleVar(ImGuiStyleVar_Alpha, opacity);
 
-            extern ::HWND hwnd;
             ImVec2 work_pos(0.0f, 0.0f);
             ImVec2 work_size(1920.0f, 1080.0f);
 
