@@ -372,7 +372,7 @@ namespace ImGui
             height += GetWindowHeight() + 10.f; // 10px spacing between toasts
 
             End();
-            PopStyleVar(3);
+            PopStyleVar(4);
             PopStyleColor(1);
         }
     }
