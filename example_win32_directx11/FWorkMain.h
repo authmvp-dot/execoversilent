@@ -509,9 +509,11 @@ namespace _Cpp_17 {
 			ImColor(36, 8, 8, 255), ImColor(36, 8, 8, 255),
 			ImColor(12, 10, 14, 255), ImColor(12, 10, 14, 255));
 
-		draw->PushClipRect(header_bb.Min, header_bb.Max, true);
-		shaderrt::Draw(draw, header_bb.Min, header_bb.Max, c::bg::rounding, 0.32f, ImShaderTex_WindowBg);
-		draw->PopClipRect();
+		if (!g_Globals.General.DisableAllEffects) {
+			draw->PushClipRect(header_bb.Min, header_bb.Max, true);
+			shaderrt::Draw(draw, header_bb.Min, header_bb.Max, c::bg::rounding, 0.32f, ImShaderTex_WindowBg);
+			draw->PopClipRect();
+		}
 
 		PushLoginFont(font::inter_semibold);
 		draw->AddText(header_bb.Min + ImVec2(18.f, 16.f), (ImU32)c::main_color, YorzenName::cheat_name);
