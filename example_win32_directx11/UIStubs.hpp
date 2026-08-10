@@ -10,6 +10,8 @@
 inline std::atomic<bool> g_AdbReady{ false };
 inline std::atomic<bool> g_AdbFailed{ false };
 
+#include "Yorzen/Dudas/ui_settings.hpp"
+#include <imgui_settings.h>
 #include <ImGui/notify.h>
 
 inline void Backend_StartUtilityThread() {}
@@ -100,6 +102,8 @@ inline bool& Backend_BlazeCheckbox(int id) {
     static std::unordered_map<int, bool> s_blazeMap;
     return s_blazeMap[id];
 }
+
+inline void SyncUIToGlobals() {}
 
 inline void Backend_SaveConfig() {
     FILE* f = nullptr;

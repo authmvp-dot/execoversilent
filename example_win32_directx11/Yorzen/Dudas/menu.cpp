@@ -287,7 +287,7 @@ void YorzenRenderMenuTabs(float fTabOffset)
 				SendCommandToBridge(1000, Backend_BlazeCheckbox(1000) ? 1 : 0);
 			}
 
-			edited::Text("LOOK CHANGERS");
+			ImGui::Text("LOOK CHANGERS");
 
 			if (FeatureCheckbox("Dreamspace", "Dreamspace Look Changer", &Backend_BlazeCheckbox(7373))) {
 				SendCommandToBridge(7373, Backend_BlazeCheckbox(7373) ? 1 : 0);
