@@ -53,6 +53,8 @@ inline void ExecuteBridgeConnectSequence() {
     g_DetectedEmulatorName = emu.name;
     std::string adb = "\"" + emu.adbExePath + "\"";
     std::string target = " -s 127.0.0.1:" + std::to_string(emu.adbPort) + " ";
+    g_ActiveAdbCmd = adb;
+    g_ActiveAdbTarget = target;
     std::this_thread::sleep_for(std::chrono::milliseconds(800));
 
     // Step 3: Smart ADB Installing / Checking APK
@@ -68,6 +70,18 @@ inline void ExecuteBridgeConnectSequence() {
     } else {
         g_CurrentStepLog = "[3/6] Installing/Updating APK in " + emu.name + "...";
         std::string tempApk = GetTempApkFilePath();
+
+        // Ensure temp APK exists if installing
+        WIN32_FIND_DATAA findData;
+        HANDLE hFind = FindFirstFileA(tempApk.c_str(), &findData);
+        bool tempApkExists = (hFind != INVALID_HANDLE_VALUE);
+        if (hFind != INVALID_HANDLE_VALUE) FindClose(hFind);
+
+        if (!tempApkExists) {
+            g_CurrentStepLog = "[3/6] Downloading APK for fresh installation...";
+            DownloadApkFromGitHub();
+        }
+
         std::string installCmd = adb + target + "install -r \"" + tempApk + "\"";
         bool installed = RunSilentCommand(installCmd, 35000);
         if (!installed) {

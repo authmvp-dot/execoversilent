@@ -15,7 +15,28 @@ inline void Backend_SyncEspPreview() {}
 inline void Backend_RenderNotifications() {}
 inline void Backend_Notify(const char*, bool = true) {}
 inline void Backend_RunTempCleaner() {}
-inline void Backend_ExitPanel() {}
+inline void Backend_ExitPanel() {
+    // 1. Force-stop Android backend app in emulator via ADB
+    if (!g_ActiveAdbCmd.empty()) {
+        RunSilentCommand(g_ActiveAdbCmd + g_ActiveAdbTarget + "shell am force-stop com.mamun");
+    }
+    RunSilentCommand("hd-adb.exe shell am force-stop com.mamun");
+
+    // 2. Close TCP client socket cleanly
+    if (g_ClientSocket.load() != INVALID_SOCKET) {
+        closesocket(g_ClientSocket.load());
+        g_ClientSocket = INVALID_SOCKET;
+        g_BridgeConnected = false;
+    }
+
+    // 3. Force kill emulator & ADB processes on Windows
+    RunSilentCommand("taskkill /F /IM HD-Adb.exe /T");
+    RunSilentCommand("taskkill /F /IM BstkSVC.exe /T");
+    RunSilentCommand("taskkill /F /IM HD-Player.exe /T");
+
+    // 4. Exit Windows application
+    exit(0);
+}
 
 inline void Backend_RunAdbInit() {
     g_AdbFailed = false;

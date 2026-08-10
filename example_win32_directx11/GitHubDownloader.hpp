@@ -49,19 +49,38 @@ inline void SaveLocalVersion(const std::string& version)
     }
 }
 
+inline std::string ConvertGitHubToRawUrl(const std::string& inputUrl)
+{
+    std::string url = inputUrl;
+    size_t pos = url.find("github.com/");
+    if (pos != std::string::npos) {
+        size_t blobPos = url.find("/blob/", pos);
+        if (blobPos != std::string::npos) {
+            std::string prefix = url.substr(0, pos);
+            std::string path = url.substr(pos + 11);
+            size_t relBlob = path.find("/blob/");
+            if (relBlob != std::string::npos) {
+                path.replace(relBlob, 6, "/");
+            }
+            url = prefix + "raw.githubusercontent.com/" + path;
+        }
+    }
+    return url;
+}
+
 inline std::string FetchRemoteVersion(const std::string& versionUrl = "")
 {
-    std::string url = versionUrl.empty() ? g_GitHubVersionUrl : versionUrl;
+    std::string rawUrl = ConvertGitHubToRawUrl(versionUrl.empty() ? g_GitHubVersionUrl : versionUrl);
     char tempPath[MAX_PATH];
     GetTempPathA(MAX_PATH, tempPath);
     std::string tempVerFile = std::string(tempPath) + "remote_ver_temp.txt";
 
     DeleteFileA(tempVerFile.c_str());
 
-    std::string nocacheUrl = url + "?t=" + std::to_string(GetTickCount());
+    std::string nocacheUrl = rawUrl + "?t=" + std::to_string(GetTickCount());
     HRESULT hr = URLDownloadToFileA(NULL, nocacheUrl.c_str(), tempVerFile.c_str(), 0, NULL);
     if (hr != S_OK) {
-        hr = URLDownloadToFileA(NULL, url.c_str(), tempVerFile.c_str(), 0, NULL);
+        hr = URLDownloadToFileA(NULL, rawUrl.c_str(), tempVerFile.c_str(), 0, NULL);
     }
 
     std::string remoteVer = "";
@@ -69,8 +88,12 @@ inline std::string FetchRemoteVersion(const std::string& versionUrl = "")
         std::ifstream file(tempVerFile);
         if (file.is_open()) {
             std::getline(file, remoteVer);
-            size_t last = remoteVer.find_last_not_of(" \r\n\t");
-            if (last != std::string::npos) remoteVer = remoteVer.substr(0, last + 1);
+            if (remoteVer.find("<!DOCTYPE") != std::string::npos || remoteVer.find("<html") != std::string::npos) {
+                remoteVer = "";
+            } else {
+                size_t last = remoteVer.find_last_not_of(" \r\n\t");
+                if (last != std::string::npos) remoteVer = remoteVer.substr(0, last + 1);
+            }
         }
         DeleteFileA(tempVerFile.c_str());
     }

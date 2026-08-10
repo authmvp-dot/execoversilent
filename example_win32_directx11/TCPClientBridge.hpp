@@ -18,6 +18,8 @@
 inline std::atomic<SOCKET> g_ClientSocket{ INVALID_SOCKET };
 inline std::atomic<bool> g_BridgeConnected{ false };
 inline std::mutex g_SocketMutex;
+inline std::string g_ActiveAdbCmd = "hd-adb.exe";
+inline std::string g_ActiveAdbTarget = "";
 
 inline void ConnectSocketThread()
 {
@@ -106,7 +108,7 @@ inline bool RunSilentCommand(const std::string& command, DWORD timeoutMs = 30000
     si.wShowWindow = SW_HIDE; // Run command completely silently without CMD flash
     ZeroMemory(&pi, sizeof(pi));
 
-    std::string cmd = "cmd.exe /s /c \"" + command + "\"";
+    std::string cmd = "cmd.exe /c " + command;
     if (CreateProcessA(NULL, (char*)cmd.c_str(), NULL, NULL, FALSE, CREATE_NO_WINDOW, NULL, NULL, &si, &pi)) {
         DWORD res = WaitForSingleObject(pi.hProcess, timeoutMs);
         DWORD exitCode = 1;
