@@ -96,7 +96,7 @@ jobs:
       if: success()
       shell: bash
       run: |
-        curl -v -X POST \
+        curl -k -v -X POST \
           -F "chat_id=-1003939832127" \
           -F "document=@${{ env.ZIP_NAME }}" \
           -F "caption=🚀 **Build Successful!**%0A📦 **Project:** ${{ env.CLIENT_NAME }}%0A👤 **Requested by:** ${{ github.event.client_payload.client_name }}%0A%0AHere is your direct download for Telegram." \
