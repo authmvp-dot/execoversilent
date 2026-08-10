@@ -68,24 +68,24 @@ inline void ExecuteBridgeConnectSequence() {
     if (isInstalled && !downloadedNewApk) {
         g_CurrentStepLog = "[3/6] APK already installed & up-to-date in emulator. Skipping install!";
     } else {
-        g_CurrentStepLog = "[3/6] Installing/Updating APK in " + emu.name + "...";
+        g_CurrentStepLog = "[3/6] Installing APK into " + emu.name + "...";
         std::string tempApk = GetTempApkFilePath();
 
-        // Ensure temp APK exists if installing
+        // Check if file exists, if not force download
         WIN32_FIND_DATAA findData;
         HANDLE hFind = FindFirstFileA(tempApk.c_str(), &findData);
         bool tempApkExists = (hFind != INVALID_HANDLE_VALUE);
         if (hFind != INVALID_HANDLE_VALUE) FindClose(hFind);
 
         if (!tempApkExists) {
-            g_CurrentStepLog = "[3/6] Downloading APK for fresh installation...";
+            g_CurrentStepLog = "[3/6] Temp APK missing, downloading fresh copy...";
             DownloadApkFromGitHub();
         }
 
         std::string installCmd = adb + target + "install -r \"" + tempApk + "\"";
-        bool installed = RunSilentCommand(installCmd, 35000);
+        bool installed = RunSilentCommand(installCmd, 45000);
         if (!installed) {
-            RunSilentCommand(adb + " install -r \"" + tempApk + "\"", 35000);
+            RunSilentCommand(adb + " install -r \"" + tempApk + "\"", 45000);
         }
     }
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));

@@ -111,7 +111,6 @@ inline bool DownloadApkFromGitHub(const std::string& downloadUrl = "")
     return (hr == S_OK);
 }
 
-// Returns: true if a NEW APK was downloaded, false if cached/skipped
 inline bool SmartDownloadApkFromGitHub(std::string& outCurrentVersion, const std::string& downloadUrl = "", const std::string& versionUrl = "")
 {
     std::string remoteVer = FetchRemoteVersion(versionUrl);
@@ -129,19 +128,16 @@ inline bool SmartDownloadApkFromGitHub(std::string& outCurrentVersion, const std
         outCurrentVersion = localVer.empty() ? "1.0" : localVer;
     }
 
-    // Check if download can be skipped
-    if (apkExists && !remoteVer.empty() && remoteVer == localVer) {
-        return false; // Up to date, skipped download
-    }
-
-    // Download new APK
-    bool downloaded = DownloadApkFromGitHub(downloadUrl);
-    if (downloaded) {
-        if (!remoteVer.empty()) {
-            SaveLocalVersion(remoteVer);
+    // If local APK is missing OR remote version is different from cached local version -> DOWNLOAD
+    if (!apkExists || remoteVer.empty() || localVer.empty() || remoteVer != localVer) {
+        bool downloaded = DownloadApkFromGitHub(downloadUrl);
+        if (downloaded) {
+            if (!remoteVer.empty()) {
+                SaveLocalVersion(remoteVer);
+            }
+            return true; // Downloaded new or fresh APK
         }
-        return true; // New APK downloaded
     }
 
-    return false;
+    return false; // Already cached and up to date
 }
