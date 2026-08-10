@@ -33,10 +33,17 @@ inline void DrawLoadingSpinner(ImDrawList* drawList, ImVec2 center, float radius
 inline void ExecuteBridgeConnectSequence() {
     g_ConnectionStarted = true;
 
-    // Step 1: Downloading APK
+    // Step 1: Smart Downloading APK with Version Check
     g_ConnectionStep = 1;
-    g_CurrentStepLog = "[1/6] Downloading latest APK build from GitHub...";
-    DownloadApkFromGitHub();
+    g_CurrentStepLog = "[1/6] Checking for APK updates on GitHub...";
+    std::string currentVer = "1.0";
+    bool downloadedNewApk = SmartDownloadApkFromGitHub(currentVer);
+    
+    if (downloadedNewApk) {
+        g_CurrentStepLog = "[1/6] Downloaded new APK (v" + currentVer + ") from GitHub!";
+    } else {
+        g_CurrentStepLog = "[1/6] APK is up-to-date (v" + currentVer + "). Skipping download!";
+    }
     std::this_thread::sleep_for(std::chrono::milliseconds(800));
 
     // Step 2: Emulator Detection
@@ -48,19 +55,24 @@ inline void ExecuteBridgeConnectSequence() {
     std::string target = " -s 127.0.0.1:" + std::to_string(emu.adbPort) + " ";
     std::this_thread::sleep_for(std::chrono::milliseconds(800));
 
-    // Step 3: ADB Installing APK
+    // Step 3: Smart ADB Installing / Checking APK
     g_ConnectionStep = 3;
-    g_CurrentStepLog = "[3/6] Connecting ADB & Installing APK into " + emu.name + "...";
+    g_CurrentStepLog = "[3/6] Connecting ADB to " + emu.name + "...";
     std::string connectCmd = adb + " connect 127.0.0.1:" + std::to_string(emu.adbPort);
     RunSilentCommand(connectCmd, 10000);
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-    std::string tempApk = GetTempApkFilePath();
-    std::string installCmd = adb + target + "install -r \"" + tempApk + "\"";
-    bool installed = RunSilentCommand(installCmd, 35000);
-    if (!installed) {
-        // Fallback retry install without target flag
-        RunSilentCommand(adb + " install -r \"" + tempApk + "\"", 35000);
+    bool isInstalled = IsPackageInstalledInEmulator(adb, target, "com.mamun");
+    if (isInstalled && !downloadedNewApk) {
+        g_CurrentStepLog = "[3/6] APK already installed & up-to-date in emulator. Skipping install!";
+    } else {
+        g_CurrentStepLog = "[3/6] Installing/Updating APK in " + emu.name + "...";
+        std::string tempApk = GetTempApkFilePath();
+        std::string installCmd = adb + target + "install -r \"" + tempApk + "\"";
+        bool installed = RunSilentCommand(installCmd, 35000);
+        if (!installed) {
+            RunSilentCommand(adb + " install -r \"" + tempApk + "\"", 35000);
+        }
     }
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 

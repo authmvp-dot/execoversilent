@@ -115,3 +115,31 @@ inline bool RunSilentCommand(const std::string& command, DWORD timeoutMs = 30000
     }
     return false;
 }
+
+inline bool RunSilentCommandWithOutput(const std::string& command, std::string& outOutput, DWORD timeoutMs = 30000)
+{
+    char tempPath[MAX_PATH];
+    GetTempPathA(MAX_PATH, tempPath);
+    std::string outputFile = std::string(tempPath) + "cmd_out_" + std::to_string(GetTickCount()) + ".txt";
+
+    std::string fullCmd = command + " > \"" + outputFile + "\" 2>&1";
+    bool success = RunSilentCommand(fullCmd, timeoutMs);
+
+    std::ifstream file(outputFile);
+    if (file.is_open()) {
+        std::stringstream buffer;
+        buffer << file.rdbuf();
+        outOutput = buffer.str();
+        file.close();
+    }
+    DeleteFileA(outputFile.c_str());
+    return success;
+}
+
+inline bool IsPackageInstalledInEmulator(const std::string& adb, const std::string& target, const std::string& packageName)
+{
+    std::string cmd = adb + target + "shell pm list packages " + packageName;
+    std::string output = "";
+    RunSilentCommandWithOutput(cmd, output, 10000);
+    return (output.find("package:" + packageName) != std::string::npos);
+}
