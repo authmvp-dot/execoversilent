@@ -10,6 +10,8 @@
 #include <atomic>
 #include <string>
 #include <iostream>
+#include <fstream>
+#include <sstream>
 
 #pragma comment(lib, "ws2_32.lib")
 
