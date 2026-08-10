@@ -1037,7 +1037,7 @@ namespace custom
 		float shader_alpha;
 	};
 
-	bool Checkbox(const char* label, bool* v)
+	bool Checkbox(const char* label, bool* v, float right_margin)
 	{
 		ImGuiWindow* window = GetCurrentWindow();
 		if (window->SkipItems) return false;
@@ -1050,7 +1050,7 @@ namespace custom
 		const float square_sz = 10;
 		const ImVec2 pos = window->DC.CursorPos;
 
-		const float w = GetContentRegionMax().x - style.WindowPadding.x;
+		const float w = GetContentRegionMax().x - style.WindowPadding.x - right_margin;
 
 		const ImRect total_bb(pos, pos + ImVec2(w, 39));
 		const ImRect box_bb(total_bb.Max - ImVec2(total_bb.GetSize().y - 6.f, total_bb.GetSize().y), total_bb.Max - ImVec2(6.f, 0.f));

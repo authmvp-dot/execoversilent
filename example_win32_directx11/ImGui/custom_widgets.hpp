@@ -403,7 +403,7 @@ namespace custom
 	void				EndGroup();
 
 	bool				SubTab(const char* label, int* v, int number);
-	bool				Checkbox(const char* label, bool* v);
+	bool				Checkbox(const char* label, bool* v, float right_margin = 0.f);
 	bool				KeyYorzen(const char* label, bool* v);
 	bool				CheckboxClicked(const char* label, bool* v);
 

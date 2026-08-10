@@ -243,30 +243,37 @@ public:
 
 namespace ImGui
 {
-    NOTIFY_INLINE std::vector<ImGuiToast> notifications;
+    NOTIFY_INLINE std::vector<ImGuiToast>& GetNotifications() {
+        static std::vector<ImGuiToast> notifications;
+        return notifications;
+    }
 
     NOTIFY_INLINE VOID Notification(const ImGuiToast& toast)
     {
-        notifications.push_back(toast);
+        GetNotifications().push_back(toast);
     }
 
     NOTIFY_INLINE VOID RemoveNotification(int index)
     {
-        notifications.erase(notifications.begin() + index);
+        GetNotifications().erase(GetNotifications().begin() + index);
     }
 
 
     NOTIFY_INLINE VOID RenderNotifications()
     {
+        if (GetNotifications().empty()) {
+            return;
+        }
+
         const auto vp = GetMainViewport();
         const auto vp_pos = vp->Pos;
         const auto vp_size = vp->Size;
 
         float height = 0.f;
 
-        for (int i = 0; i < notifications.size(); i++)
+        for (auto i = 0; i < GetNotifications().size(); i++)
         {
-            auto* current_toast = &notifications[i];
+            auto* current_toast = &GetNotifications()[i];
 
             if (current_toast->get_phase() == ImGuiToastPhase_Expired)
             {

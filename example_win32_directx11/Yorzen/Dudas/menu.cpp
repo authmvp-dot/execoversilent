@@ -92,13 +92,13 @@ bool FeatureCheckbox(const char* label, const char* tip, bool* v, std::function<
 		}
 	}
 
-	bool changed = custom::Checkbox(label, v);
+	bool changed = custom::Checkbox(label, v, 70.f);
 	if (changed)
 		NotifyToggle(label, *v);
 
-	ImGui::SameLine(ImGui::GetContentRegionAvail().x - 70.f);
+	ImGui::SameLine(ImGui::GetContentRegionAvail().x - 65.f);
 	ImGui::PushID(label);
-	ImGui::PushItemWidth(70.f);
+	ImGui::PushItemWidth(65.f);
 	custom::Keybind("##kb", &key, &mode);
 	ImGui::PopItemWidth();
 	ImGui::PopID();
