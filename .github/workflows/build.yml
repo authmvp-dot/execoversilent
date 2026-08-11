@@ -43,6 +43,15 @@ jobs:
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v2
 
+    - name: Install ATL/MFC for KeyAuth SDK
+      shell: pwsh
+      run: |
+        $vsWhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+        $installPath = & $vsWhere -latest -property installationPath
+        $installer = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vs_installer.exe"
+        & $installer modify --installPath "$installPath" --add Microsoft.VisualStudio.Component.VC.ATL --quiet --norestart --wait
+        Write-Host "ATL component installed"
+
     - name: Build Project
       run: |
         msbuild "example_win32_directx11/example_win32_directx11.vcxproj" /p:Configuration=Release /p:Platform=x64 /m /p:BuildInParallel=true /v:minimal
