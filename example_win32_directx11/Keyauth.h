@@ -25,9 +25,45 @@ namespace KeyAuth {
             char computerName[MAX_COMPUTERNAME_LENGTH + 1] = { 0 };
             DWORD size = sizeof(computerName);
             GetComputerNameA(computerName, &size);
-            char buf[128];
-            sprintf_s(buf, sizeof(buf), "%X-%s", volumeSerialNumber, computerName);
-            return std::string(buf);
+            
+            HWNODE cpuInfo[4] = { 0 };
+            SYSTEM_INFO sysInfo;
+            GetSystemInfo(&sysInfo);
+
+            char rawHWID[256];
+            sprintf_s(rawHWID, sizeof(rawHWID), "%X-%s-%X-%d-%d",
+                volumeSerialNumber, computerName, sysInfo.dwProcessorType,
+                sysInfo.wProcessorLevel, sysInfo.wProcessorRevision);
+
+            // Generate SHA256 string from rawHWID (64 characters)
+            HCRYPTPROV hProv = 0;
+            HCRYPTHASH hHash = 0;
+            std::string hwidHash = "";
+
+            if (CryptAcquireContextA(&hProv, NULL, NULL, PROV_RSA_AES, CRYPT_VERIFYCONTEXT)) {
+                if (CryptCreateHash(hProv, CALG_SHA_256, 0, 0, &hHash)) {
+                    if (CryptHashData(hHash, (BYTE*)rawHWID, (DWORD)strlen(rawHWID), 0)) {
+                        BYTE hashBuf[32];
+                        DWORD hashLen = 32;
+                        if (CryptGetHashParam(hHash, HP_HASHVAL, hashBuf, &hashLen, 0)) {
+                            char hexBuf[65];
+                            for (DWORD i = 0; i < hashLen; i++) {
+                                sprintf_s(hexBuf + (i * 2), 3, "%02x", hashBuf[i]);
+                            }
+                            hexBuf[64] = '\0';
+                            hwidHash = hexBuf;
+                        }
+                    }
+                    CryptDestroyHash(hHash);
+                }
+                CryptReleaseContext(hProv, 0);
+            }
+
+            if (hwidHash.length() < 20) {
+                // Fallback padding if crypto fails
+                hwidHash = std::string(rawHWID) + "-SECURE-HWID-KEYAUTH-IDENTIFIER-PAD-0001";
+            }
+            return hwidHash;
         }
 
         std::string req(const std::string& postData) {
