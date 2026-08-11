@@ -4,6 +4,7 @@
 #include <mutex>
 #include <windows.h>
 #include <wininet.h>
+#include <stdio.h>
 
 #pragma comment(lib, "wininet.lib")
 
@@ -17,6 +18,17 @@ namespace KeyAuth {
     class api {
     private:
         std::string sessionid;
+
+        std::string get_hwid() {
+            DWORD volumeSerialNumber = 0;
+            GetVolumeInformationA("C:\\", NULL, 0, &volumeSerialNumber, NULL, NULL, NULL, 0);
+            char computerName[MAX_COMPUTERNAME_LENGTH + 1] = { 0 };
+            DWORD size = sizeof(computerName);
+            GetComputerNameA(computerName, &size);
+            char buf[128];
+            sprintf_s(buf, sizeof(buf), "%X-%s", volumeSerialNumber, computerName);
+            return std::string(buf);
+        }
 
         std::string req(const std::string& postData) {
             HINTERNET hInternet = InternetOpenA("KeyAuth/1.3", INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0);
@@ -131,6 +143,7 @@ namespace KeyAuth {
         }
 
         void init() {
+            std::string hwid = get_hwid();
             std::string post = "type=init&name=" + name + "&ownerid=" + ownerid + "&ver=" + version;
             std::string resp = req(post);
             parse(resp);
@@ -138,7 +151,8 @@ namespace KeyAuth {
 
         void login(std::string u, std::string p, std::string code = "") {
             if (sessionid.empty()) init();
-            std::string post = "type=login&username=" + u + "&pass=" + p + "&sessionid=" + sessionid + "&name=" + name + "&ownerid=" + ownerid;
+            std::string hwid = get_hwid();
+            std::string post = "type=login&username=" + u + "&pass=" + p + "&hwid=" + hwid + "&sessionid=" + sessionid + "&name=" + name + "&ownerid=" + ownerid;
             std::string resp = req(post);
             parse(resp);
             if (response.success && !u.empty()) {
@@ -148,7 +162,8 @@ namespace KeyAuth {
 
         void regstr(std::string u, std::string p, std::string k, std::string email = "") {
             if (sessionid.empty()) init();
-            std::string post = "type=register&username=" + u + "&pass=" + p + "&key=" + k + "&sessionid=" + sessionid + "&name=" + name + "&ownerid=" + ownerid;
+            std::string hwid = get_hwid();
+            std::string post = "type=register&username=" + u + "&pass=" + p + "&key=" + k + "&hwid=" + hwid + "&sessionid=" + sessionid + "&name=" + name + "&ownerid=" + ownerid;
             std::string resp = req(post);
             parse(resp);
             if (response.success && !u.empty()) {
@@ -158,7 +173,8 @@ namespace KeyAuth {
 
         void license(std::string k, std::string code = "") {
             if (sessionid.empty()) init();
-            std::string post = "type=license&key=" + k + "&sessionid=" + sessionid + "&name=" + name + "&ownerid=" + ownerid;
+            std::string hwid = get_hwid();
+            std::string post = "type=license&key=" + k + "&hwid=" + hwid + "&sessionid=" + sessionid + "&name=" + name + "&ownerid=" + ownerid;
             std::string resp = req(post);
             parse(resp);
             if (response.success) {

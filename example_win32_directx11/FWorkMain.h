@@ -504,23 +504,24 @@ namespace _Cpp_17 {
 	{
 		const ImRect header_bb(pos, pos + ImVec2(width, LoginUI::kHeaderH));
 
-		draw->AddRectFilledMultiColor(
-			header_bb.Min, header_bb.Max,
-			ImColor(36, 8, 8, 255), ImColor(36, 8, 8, 255),
-			ImColor(12, 10, 14, 255), ImColor(12, 10, 14, 255));
+		draw->AddRectFilled(header_bb.Min, header_bb.Max, ImColor(18, 12, 14, 255), c::bg::rounding, ImDrawFlags_RoundCornersTop);
 
 		if (!g_Globals.General.DisableAllEffects) {
 			draw->PushClipRect(header_bb.Min, header_bb.Max, true);
-			shaderrt::Draw(draw, header_bb.Min, header_bb.Max, c::bg::rounding, 0.32f, ImShaderTex_WindowBg);
+			shaderrt::Draw(draw, header_bb.Min, header_bb.Max, c::bg::rounding, 0.25f, ImShaderTex_WindowBg);
 			draw->PopClipRect();
 		}
 
-		PushLoginFont(font::inter_semibold);
-		draw->AddText(header_bb.Min + ImVec2(18.f, 16.f), (ImU32)c::main_color, YorzenName::cheat_name);
-		PopLoginFont(font::inter_semibold);
+		PushLoginFont(font::inter_bold ? font::inter_bold : font::s_inter_semibold);
+		const char* title = "GFF PARTNERSHIP";
+		ImVec2 tSize = ImGui::CalcTextSize(title);
+		draw->AddText(pos + ImVec2((width - tSize.x) * 0.5f, 16.f), ImColor(235, 35, 35, 255), title);
+		PopLoginFont(font::inter_bold ? font::inter_bold : font::s_inter_semibold);
 
 		PushLoginFont(font::medium_small);
-		draw->AddText(header_bb.Min + ImVec2(18.f, 44.f), ImColor(255, 255, 255, 135), "Secure Access Panel");
+		const char* sub = "Secure Access Panel";
+		ImVec2 sSize = ImGui::CalcTextSize(sub);
+		draw->AddText(pos + ImVec2((width - sSize.x) * 0.5f, 44.f), ImColor(170, 170, 180, 255), sub);
 		PopLoginFont(font::medium_small);
 
 		draw->AddLine(
@@ -545,10 +546,8 @@ namespace _Cpp_17 {
 			s_loginClickable = true;
 		}
 
-		static int login_tab = 0;
-		float panel_h = LoginUI::WindowHForTab(login_tab);
+		float panel_h = 370.f;
 		static ImVec2 login_window_pos(0.f, 0.f);
-		static bool login_window_pos_init = false;
 
 		if (!hTargetWindow && hWindow && IsWindow(hWindow)) {
 			RECT currentRect;
@@ -596,69 +595,37 @@ namespace _Cpp_17 {
 
 			DrawLoginHeader(draw, pos, size.x);
 
-			ImGui::SetCursorPos(ImVec2(18.f, LoginUI::kHeaderH + 10.f));
-			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(14.f, 0.f));
-			if (custom::SubTab("Login", &login_tab, 0))
-				login_status.clear();
-			ImGui::SameLine();
-			if (custom::SubTab("Register", &login_tab, 1))
-				login_status.clear();
-			ImGui::PopStyleVar();
+			ImGui::SetCursorPos(ImVec2(LoginUI::kPad, LoginUI::kHeaderH + 18.f));
 
-			static float child_arg_h = LoginUI::kChildArgLogin;
-			const float target_child_h = LoginUI::ChildArgForTab(login_tab);
-			child_arg_h = ImLerp(child_arg_h, target_child_h, ImGui::GetIO().DeltaTime * 14.f);
-			if (ImFabs(child_arg_h - target_child_h) < 0.5f)
-				child_arg_h = target_child_h;
-
-			ImGui::SetCursorPos(ImVec2(LoginUI::kPad, LoginUI::kHeaderH + 52.f));
-			const char* panelTitle = login_tab == 0 ? "Member Sign-In" : "New Registration";
-			const char* panelDesc = login_tab == 0 ? "Account Credentials" : "Membership Details";
-			const char* panelIcon = login_tab == 0 ? ICON_ENTER_DOOR_LINE : ICON_INVITE_LINE;
-
-			custom::Child(panelTitle, panelIcon, panelDesc, ImVec2(LoginUI::kChildW, child_arg_h), true, 0);
+			custom::Child("License Key Sign-In", ICON_KEY, "Enter your license key to access.", ImVec2(LoginUI::kChildW, 250.f), true, 0);
 			{
 				ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.f, LoginUI::kItemGap));
 
 				PushLoginFont(font::s_inter_semibold);
-				ImGui::TextColored(ImVec4(c::text::label::active),
-					login_tab == 0 ? "Welcome Back" : "Create Your Account");
+				const char* cardTitle = "License Key Sign-In";
+				ImVec2 ctSize = ImGui::CalcTextSize(cardTitle);
+				ImGui::SetCursorPosX((LoginUI::kChildW - ctSize.x) * 0.5f);
+				ImGui::TextColored(ImVec4(c::text::label::active), cardTitle);
 				PopLoginFont(font::s_inter_semibold);
 
 				PushLoginFont(font::medium_small);
-				ImGui::PushTextWrapPos(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x);
-				ImGui::TextColored(ImVec4(c::text::description::regular),
-					login_tab == 0
-					? "Sign in with your credentials to continue."
-					: "Fill in every field to activate your membership.");
-				ImGui::PopTextWrapPos();
+				const char* cardDesc = "Enter your license key to access.";
+				ImVec2 cdSize = ImGui::CalcTextSize(cardDesc);
+				ImGui::SetCursorPosX((LoginUI::kChildW - cdSize.x) * 0.5f);
+				ImGui::TextColored(ImVec4(c::text::description::regular), cardDesc);
 				PopLoginFont(font::medium_small);
 
-				ImGui::Dummy(ImVec2(0.f, 2.f));
+				ImGui::Dummy(ImVec2(0.f, 4.f));
 
-				if (login_tab == 0) {
-					LoginInputField("user", "Username", "Your username",
-						g_Globals.General.Username, IM_ARRAYSIZE(g_Globals.General.Username));
-					LoginInputField("pass", "Password", "Your password",
-						g_Globals.General.PassWord, IM_ARRAYSIZE(g_Globals.General.PassWord),
-						ImGuiInputTextFlags_Password);
-				}
-				else {
-					LoginInputField("reg_user", "Username", "Choose a username",
-						g_Globals.General.Username, IM_ARRAYSIZE(g_Globals.General.Username));
-					LoginInputField("reg_pass", "Password", "Choose a password",
-						g_Globals.General.PassWord, IM_ARRAYSIZE(g_Globals.General.PassWord),
-						ImGuiInputTextFlags_Password);
-					LoginInputField("reg_key", "License Key", "Your license key",
-						g_Globals.General.License, IM_ARRAYSIZE(g_Globals.General.License), 0, true);
-				}
+				LoginInputField("license_key", "License Key", "Enter your license key",
+					g_Globals.General.License, IM_ARRAYSIZE(g_Globals.General.License), 0, true);
 
 				const bool isError = !login_status.empty() && (
 					login_status.find("failed") != std::string::npos ||
 					login_status.find("Invalid") != std::string::npos ||
 					login_status.find("enter") != std::string::npos ||
 					login_status.find("Enter") != std::string::npos ||
-					login_status.find("Fill") != std::string::npos ||
+					login_status.find("Force") != std::string::npos ||
 					login_status.find("required") != std::string::npos ||
 					login_status.find("incorrect") != std::string::npos ||
 					login_status.find("Incorrect") != std::string::npos ||
@@ -677,55 +644,34 @@ namespace _Cpp_17 {
 				PopLoginFont(font::medium_small);
 
 				ImGui::Dummy(ImVec2(0.f, 4.f));
-				const char* btnLabel = login_loading
-					? "VERIFYING..."
-					: (login_tab == 0 ? "SIGN IN" : "CREATE ACCOUNT");
+				const char* btnLabel = login_loading ? "VERIFYING..." : "SIGN IN";
 				if (custom::Button(btnLabel, ImVec2(ImGui::GetContentRegionAvail().x, LoginUI::kBtnH)) && !login_loading)
 				{
-					bool canSubmit = true;
-					if (login_tab == 0) {
-						if (g_Globals.General.Username[0] == '\0' || g_Globals.General.PassWord[0] == '\0') {
-							login_status = "Please enter your username and password.";
-							canSubmit = false;
-						}
+					if (g_Globals.General.License[0] == '\0') {
+						login_status = "Please enter your license key.";
 					}
-					else if (g_Globals.General.Username[0] == '\0' || g_Globals.General.PassWord[0] == '\0' || g_Globals.General.License[0] == '\0') {
-						login_status = "All fields are required to complete registration.";
-						canSubmit = false;
-					}
-
-					if (canSubmit) {
+					else {
 						login_loading = true;
-						login_status = "Verifying credentials...";
-						const int tabCopy = login_tab;
-						std::string user_copy(g_Globals.General.Username);
-						std::string pass_copy(g_Globals.General.PassWord);
+						login_status = "Verifying license key...";
 						std::string key_copy(g_Globals.General.License);
-						std::thread([tabCopy, user_copy, pass_copy, key_copy]() mutable {
+						std::thread([key_copy]() mutable {
 							KeyAuthClient::EnsureInit();
-							if (tabCopy == 0)
-								KeyAuthClient::Internal.login(user_copy, pass_copy);
-							else
-								KeyAuthClient::Internal.regstr(user_copy, pass_copy, key_copy);
+							KeyAuthClient::Internal.license(key_copy);
 
 							if (KeyAuthClient::Internal.response.success) {
+								SaveLoginLicenseKey(key_copy.c_str());
 								const std::string& user = KeyAuthClient::Internal.user_data.username;
-								strncpy_s(var::username, user.c_str(), _TRUNCATE);
-								strncpy_s(g_Globals.General.Username, user.c_str(), _TRUNCATE);
-								strncpy_s(g_Globals.General.PassWord, pass_copy.c_str(), _TRUNCATE);
-								if (!key_copy.empty())
-									SaveLoginLicenseKey(key_copy.c_str());
-								else if (g_Globals.General.License[0] != '\0')
-									SaveLoginLicenseKey(g_Globals.General.License);
+								strncpy_s(var::username, user.empty() ? key_copy.c_str() : user.c_str(), _TRUNCATE);
+								strncpy_s(g_Globals.General.Username, key_copy.c_str(), _TRUNCATE);
 								YorzenMain::Auth = true;
 								YorzenMain::Login_Window = true;
-								login_status = tabCopy == 0 ? "Access granted. Welcome back." : "Registration complete. Welcome aboard.";
+								login_status = "Access granted. Welcome!";
 								g_AuthOK = true;
 								g_AuthDone = true;
 							}
 							else {
 								login_status = KeyAuthClient::Internal.response.message.empty()
-									? (tabCopy == 0 ? "Invalid username or password." : "Registration could not be completed.")
+									? "Invalid license key."
 									: KeyAuthClient::Internal.response.message;
 								YorzenMain::Auth = false;
 								g_AuthOK = false;
