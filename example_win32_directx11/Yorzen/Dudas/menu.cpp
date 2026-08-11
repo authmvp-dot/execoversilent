@@ -222,12 +222,20 @@ void YorzenRenderMenuTabs(float fTabOffset)
 			if (FeatureCheckbox("Speed Hack", "Speed Hack Joystick", &Backend_BlazeCheckbox(507))) {
 				SendCommandToBridge(507, Backend_BlazeCheckbox(507) ? 1 : 0);
 			}
+            
+            ImGui::Text("ESP Style Options");
+			if (edited::Combo("Line Variety", "Line Position", &ui.esp.ESPLineStartPos, "Top\0Center\0Bottom\0")) {
+				SendCommandToBridge(6, ui.esp.ESPLineStartPos);
+			}
+			if (edited::Combo("Box Variety", "Box Style", &ui.esp.ESPBoxMode, "Dynamic\0 3D Box\0Cornered\0")) {
+				SendCommandToBridge(7, ui.esp.ESPBoxMode);
+			}
 		}
 		custom::EndChild();
 	}
 
-	// Tab 2 — Brutal
-	if (iTabs == 2)
+	// Tab 1 — Brutal
+	if (iTabs == 1)
 	{
 		ImGui::SetCursorPos(ImVec2(15, 80 + fTabOffset));
 		custom::Child("Brutal", ICON_COMPONENTS_LINE, "Movement & Exploits", ImVec2(510, 350), true, 0);
@@ -287,8 +295,8 @@ void YorzenRenderMenuTabs(float fTabOffset)
 		custom::EndChild();
 	}
 
-	// Tab 3 — Settings
-	if (iTabs == 3)
+	// Tab 2 — Settings
+	if (iTabs == 2)
 	{
 		ImGui::SetCursorPos(ImVec2(15, 80 + fTabOffset));
 		custom::Child("Settings", ICON_SETTINGS_2_LINE, "General Settings", ImVec2(510, 350), true, 0);
