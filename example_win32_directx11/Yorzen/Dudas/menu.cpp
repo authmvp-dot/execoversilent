@@ -76,11 +76,13 @@ bool FeatureCheckbox(const char* label, const char* tip, bool* v, std::function<
 	int& mode = custom::FeatureKeyModes[label];
 	bool& state = custom::FeatureKeyStates[label];
 
+	bool hotkeyToggled = false;
 	if (key != 0 && mode == 0) {
 		if (GetAsyncKeyState(key) & 0x8000) {
 			if (!state) {
 				state = true;
 				*v = !(*v);
+				hotkeyToggled = true;
 				if (!custom::GlobalMute) {
 					if (*v) std::thread([](){ Beep(600, 100); }).detach();
 					else std::thread([](){ Beep(400, 100); }).detach();
@@ -92,7 +94,6 @@ bool FeatureCheckbox(const char* label, const char* tip, bool* v, std::function<
 	}
 
 	bool changed = custom::Checkbox(label, v, 70.f);
-
 
 	ImGui::SameLine(ImGui::GetContentRegionAvail().x - 65.f);
 	ImGui::PushID(label);
@@ -109,7 +110,7 @@ bool FeatureCheckbox(const char* label, const char* tip, bool* v, std::function<
 		ImGui::Unindent(10.0f);
 	}
 
-	return changed;
+	return changed || hotkeyToggled;
 }
 
 } // namespace
