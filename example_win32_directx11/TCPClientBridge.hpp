@@ -67,33 +67,40 @@ inline void ConnectSocketThread()
 
 inline bool SendCommandToBridge(int id, int value)
 {
-    std::lock_guard<std::mutex> lock(g_SocketMutex);
     SOCKET sock = g_ClientSocket.load();
     if (sock == INVALID_SOCKET) {
         return false;
     }
 
-    // Convert to big-endian (network byte order) for Java DataInputStream
-    int netId = htonl(id);
-    int netVal = htonl(value);
+    std::thread([id, value]() {
+        std::lock_guard<std::mutex> lock(g_SocketMutex);
+        SOCKET sock = g_ClientSocket.load();
+        if (sock == INVALID_SOCKET) {
+            return;
+        }
 
-    // Send ID
-    int bytesSent = send(sock, (char*)&netId, sizeof(netId), 0);
-    if (bytesSent == SOCKET_ERROR) {
-        closesocket(sock);
-        g_ClientSocket = INVALID_SOCKET;
-        g_BridgeConnected = false;
-        return false;
-    }
+        // Convert to big-endian (network byte order) for Java DataInputStream
+        int netId = htonl(id);
+        int netVal = htonl(value);
 
-    // Send Value
-    bytesSent = send(sock, (char*)&netVal, sizeof(netVal), 0);
-    if (bytesSent == SOCKET_ERROR) {
-        closesocket(sock);
-        g_ClientSocket = INVALID_SOCKET;
-        g_BridgeConnected = false;
-        return false;
-    }
+        // Send ID
+        int bytesSent = send(sock, (char*)&netId, sizeof(netId), 0);
+        if (bytesSent == SOCKET_ERROR) {
+            closesocket(sock);
+            g_ClientSocket = INVALID_SOCKET;
+            g_BridgeConnected = false;
+            return;
+        }
+
+        // Send Value
+        bytesSent = send(sock, (char*)&netVal, sizeof(netVal), 0);
+        if (bytesSent == SOCKET_ERROR) {
+            closesocket(sock);
+            g_ClientSocket = INVALID_SOCKET;
+            g_BridgeConnected = false;
+            return;
+        }
+    }).detach();
 
     return true;
 }
