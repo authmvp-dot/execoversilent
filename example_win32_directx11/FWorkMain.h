@@ -546,7 +546,7 @@ namespace _Cpp_17 {
 			s_loginClickable = true;
 		}
 
-		float panel_h = 370.f;
+		float panel_h = 490.f;
 		static ImVec2 login_window_pos(0.f, 0.f);
 
 		if (!hTargetWindow && hWindow && IsWindow(hWindow)) {
@@ -597,25 +597,11 @@ namespace _Cpp_17 {
 
 			ImGui::SetCursorPos(ImVec2(LoginUI::kPad, LoginUI::kHeaderH + 18.f));
 
-			custom::Child("License Key Sign-In", ICON_KEY_2_LINE, "Enter your license key to access.", ImVec2(LoginUI::kChildW, 250.f), true, 0);
+			custom::Child("License Key Sign-In", ICON_KEY_2_LINE, "Enter your license key to access.", ImVec2(LoginUI::kChildW, 350.f), true, 0);
 			{
 				ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.f, LoginUI::kItemGap));
 
-				PushLoginFont(font::s_inter_semibold);
-				const char* cardTitle = "License Key Sign-In";
-				ImVec2 ctSize = ImGui::CalcTextSize(cardTitle);
-				ImGui::SetCursorPosX((LoginUI::kChildW - ctSize.x) * 0.5f);
-				ImGui::TextColored(ImVec4(c::text::label::active), cardTitle);
-				PopLoginFont(font::s_inter_semibold);
-
-				PushLoginFont(font::medium_small);
-				const char* cardDesc = "Enter your license key to access.";
-				ImVec2 cdSize = ImGui::CalcTextSize(cardDesc);
-				ImGui::SetCursorPosX((LoginUI::kChildW - cdSize.x) * 0.5f);
-				ImGui::TextColored(ImVec4(c::text::description::regular), cardDesc);
-				PopLoginFont(font::medium_small);
-
-				ImGui::Dummy(ImVec2(0.f, 4.f));
+				ImGui::Dummy(ImVec2(0.f, 10.f));
 
 				LoginInputField("license_key", "License Key", "Enter your license key",
 					g_Globals.General.License, IM_ARRAYSIZE(g_Globals.General.License), 0, true);
@@ -643,7 +629,7 @@ namespace _Cpp_17 {
 				ImGui::PopStyleColor();
 				PopLoginFont(font::medium_small);
 
-				ImGui::Dummy(ImVec2(0.f, 4.f));
+				ImGui::Dummy(ImVec2(0.f, 12.f));
 				const char* btnLabel = login_loading ? "VERIFYING..." : "SIGN IN";
 				if (custom::Button(btnLabel, ImVec2(ImGui::GetContentRegionAvail().x, LoginUI::kBtnH)) && !login_loading)
 				{
