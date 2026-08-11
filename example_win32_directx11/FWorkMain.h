@@ -597,7 +597,7 @@ namespace _Cpp_17 {
 
 			ImGui::SetCursorPos(ImVec2(LoginUI::kPad, LoginUI::kHeaderH + 18.f));
 
-			custom::Child("License Key Sign-In", ICON_KEY, "Enter your license key to access.", ImVec2(LoginUI::kChildW, 250.f), true, 0);
+			custom::Child("License Key Sign-In", ICON_KEY_2_LINE, "Enter your license key to access.", ImVec2(LoginUI::kChildW, 250.f), true, 0);
 			{
 				ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.f, LoginUI::kItemGap));
 
