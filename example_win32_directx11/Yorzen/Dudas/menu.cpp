@@ -147,7 +147,14 @@ void YorzenRenderMenuTabs(float fTabOffset)
 			if (ui.esp.AimbotEnabled) {
 				if (edited::Combo("AimKill Type", NULL, &ui.esp.AimbotType, "Safe\0Take\0Send\0")) {
 					UpdateAimKillModes();
-				}
+			}
+
+            ImGui::Text("ESP Style Options");
+			if (edited::Combo("Line Variety", "Line Position", &ui.esp.ESPLineStartPos, "Top\0Center\0Bottom\0")) {
+				SendCommandToBridge(6, ui.esp.ESPLineStartPos);
+			}
+			if (edited::Combo("Box Variety", "Box Style", &ui.esp.ESPBoxMode, "Dynamic\0 3D Box\0Cornered\0")) {
+				SendCommandToBridge(7, ui.esp.ESPBoxMode);
 			}
 
 			if (FeatureCheckbox("Silent Kill", "Redirect Bullets While Firing", &ui.esp.AimSilentEnabled)) {
@@ -221,14 +228,6 @@ void YorzenRenderMenuTabs(float fTabOffset)
 			}
 			if (FeatureCheckbox("Speed Hack", "Speed Hack Joystick", &Backend_BlazeCheckbox(507))) {
 				SendCommandToBridge(507, Backend_BlazeCheckbox(507) ? 1 : 0);
-			}
-            
-            ImGui::Text("ESP Style Options");
-			if (edited::Combo("Line Variety", "Line Position", &ui.esp.ESPLineStartPos, "Top\0Center\0Bottom\0")) {
-				SendCommandToBridge(6, ui.esp.ESPLineStartPos);
-			}
-			if (edited::Combo("Box Variety", "Box Style", &ui.esp.ESPBoxMode, "Dynamic\0 3D Box\0Cornered\0")) {
-				SendCommandToBridge(7, ui.esp.ESPBoxMode);
 			}
 		}
 		custom::EndChild();
