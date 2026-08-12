@@ -601,7 +601,7 @@ namespace _Cpp_17 {
 			{
 				ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.f, LoginUI::kItemGap));
 
-				ImGui::Dummy(ImVec2(0.f, 10.f));
+				ImGui::Dummy(ImVec2(0.f, 25.f));
 
 				LoginInputField("license_key", "License Key", "Enter your license key",
 					g_Globals.General.License, IM_ARRAYSIZE(g_Globals.General.License), 0, true);
@@ -629,7 +629,7 @@ namespace _Cpp_17 {
 				ImGui::PopStyleColor();
 				PopLoginFont(font::medium_small);
 
-				ImGui::Dummy(ImVec2(0.f, 12.f));
+				ImGui::Dummy(ImVec2(0.f, 28.f));
 				const char* btnLabel = login_loading ? "VERIFYING..." : "SIGN IN";
 				if (custom::Button(btnLabel, ImVec2(ImGui::GetContentRegionAvail().x, LoginUI::kBtnH)) && !login_loading)
 				{
@@ -681,7 +681,7 @@ namespace _Cpp_17 {
 		if (!ImGui::GetCurrentContext())
 			return;
 
-		ImVec2 window_size(440.f, 260.f);
+		ImVec2 window_size(440.f, 310.f);
 		ImVec2 window_pos(0.f, 0.f);
 
 		if (!hTargetWindow && hWindow && IsWindow(hWindow)) {
@@ -726,7 +726,7 @@ namespace _Cpp_17 {
 		// Center Animated Spinner
 		ImVec2 spinnerCenter = pos + ImVec2(size.x * 0.5f, 130.f);
 		if (g_ConnectionStarted.load() && !g_ConnectionDone.load()) {
-			DrawLoadingSpinner(draw, spinnerCenter, 22.f, (ImU32)c::main_color, 3.5f, 4.0f);
+			DrawLoadingSpinner(draw, spinnerCenter, 22.f, (ImU32)c::main_color, ImGui::GetColorU32(c::text::label::regular), 3.5f, 4.0f);
 		} else if (g_ConnectionDone.load()) {
 			// Green Checkmark Icon / Circle when CONNECTED DONE
 			draw->AddCircleFilled(spinnerCenter, 22.f, ImColor(40, 180, 80, 220));
@@ -744,8 +744,16 @@ namespace _Cpp_17 {
 			g_CurrentStepLog.c_str());
 		PopLoginFont(font::medium_small);
 
-		// Connect Button / Status Badge
+		// Game Version Dropdown
 		ImGui::SetCursorPos(ImVec2(30.f, 202.f));
+		if (!g_ConnectionStarted.load()) {
+			ImGui::PushItemWidth(size.x - 60.f);
+			edited::Combo("##game_version", "Game Version", &g_SelectedGameVersion, "Free Fire Max\0Free Fire\0");
+			ImGui::PopItemWidth();
+		}
+
+		// Connect Button / Status Badge
+		ImGui::SetCursorPos(ImVec2(30.f, 248.f));
 		if (!g_ConnectionStarted.load()) {
 			if (custom::Button("CONNECT TO EMULATOR", ImVec2(size.x - 60.f, 38.f))) {
 				std::thread(ExecuteBridgeConnectSequence).detach();

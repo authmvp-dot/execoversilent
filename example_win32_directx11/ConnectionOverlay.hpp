@@ -15,19 +15,49 @@ inline std::atomic<bool> g_ConnectionDone{ false };
 inline std::atomic<bool> g_TransitionToMenu{ false };
 inline std::string g_CurrentStepLog = "Click CONNECT to initialize bridge system";
 inline std::string g_DetectedEmulatorName = "None";
+inline int g_SelectedGameVersion = 0; // 0 = Free Fire Max, 1 = Free Fire
 
-inline void DrawLoadingSpinner(ImDrawList* drawList, ImVec2 center, float radius, ImU32 color, float thickness, float speed = 3.5f) {
+inline void DrawLoadingSpinner(ImDrawList* drawList, ImVec2 center, float radius, ImU32 color, ImU32 cloudColor, float thickness, float speed = 3.5f) {
     static float angle = 0.0f;
     angle += ImGui::GetIO().DeltaTime * speed;
     if (angle > 3.14159f * 2.0f) angle -= 3.14159f * 2.0f;
 
     int num_segments = 30;
-    float start_angle = angle;
-    float end_angle = angle + 3.14159f * 1.3f; // Capsule arc length
+
+    // Draw central cloud shape
+    float cr = radius * 0.45f;
+    ImVec2 c1 = center + ImVec2(-cr * 0.6f, cr * 0.3f);
+    ImVec2 c2 = center + ImVec2(cr * 0.5f, cr * 0.1f);
+    ImVec2 c3 = center + ImVec2(0.0f, -cr * 0.4f);
+    drawList->AddCircleFilled(c1, cr * 0.6f, cloudColor, 20);
+    drawList->AddCircleFilled(c2, cr * 0.7f, cloudColor, 20);
+    drawList->AddCircleFilled(c3, cr * 0.8f, cloudColor, 20);
+    drawList->AddRectFilled(c1 + ImVec2(0.f, -cr * 0.2f), c2 + ImVec2(0.f, cr * 0.7f), cloudColor, 0.f);
+
+    // Draw two rotating arcs (sync effect)
+    float start_angle1 = angle;
+    float end_angle1 = angle + 3.14159f * 0.7f; 
+    float start_angle2 = angle + 3.14159f;
+    float end_angle2 = start_angle2 + 3.14159f * 0.7f;
 
     drawList->PathClear();
-    drawList->PathArcTo(center, radius, start_angle, end_angle, num_segments);
+    drawList->PathArcTo(center, radius, start_angle1, end_angle1, num_segments);
     drawList->PathStroke(color, false, thickness);
+
+    drawList->PathClear();
+    drawList->PathArcTo(center, radius, start_angle2, end_angle2, num_segments);
+    drawList->PathStroke(color, false, thickness);
+
+    // Draw Arrow heads
+    auto drawArrow = [&](float end_ang) {
+        ImVec2 p1 = center + ImVec2(cosf(end_ang + 0.1f) * radius, sinf(end_ang + 0.1f) * radius);
+        ImVec2 p2 = center + ImVec2(cosf(end_ang - 0.15f) * (radius - 5.f), sinf(end_ang - 0.15f) * (radius - 5.f));
+        ImVec2 p3 = center + ImVec2(cosf(end_ang - 0.15f) * (radius + 5.f), sinf(end_ang - 0.15f) * (radius + 5.f));
+        drawList->AddTriangleFilled(p1, p2, p3, color);
+    };
+    
+    drawArrow(end_angle1);
+    drawArrow(end_angle2);
 }
 
 inline void ExecuteBridgeConnectSequence() {
@@ -108,8 +138,11 @@ inline void ExecuteBridgeConnectSequence() {
     }
 
     g_CurrentStepLog = "[4/6] Auto-launching Free Fire Game...";
-    RunSilentCommand(adb + target + "shell am start -n com.dts.freefireth/com.dts.freefireth.FFMainActivity");
-    RunSilentCommand(adb + target + "shell am start -n com.dts.freefiremax/com.dts.freefireth.FFMainActivity");
+    if (g_SelectedGameVersion == 0) {
+        RunSilentCommand(adb + target + "shell am start -n com.dts.freefiremax/com.dts.freefireth.FFMainActivity");
+    } else {
+        RunSilentCommand(adb + target + "shell am start -n com.dts.freefireth/com.dts.freefireth.FFMainActivity");
+    }
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
     // Step 5: 5s Safety Delay

@@ -68,7 +68,13 @@ namespace custom {
 
 namespace {
 
-
+void RemoveDuplicateKeybind(int vk, const char* currentLabel) {
+	for (auto& [name, key] : custom::FeatureKeys) {
+		if (name != currentLabel && key == vk) {
+			key = 0; // Clear the key from previous feature
+		}
+	}
+}
 
 bool FeatureCheckbox(const char* label, const char* tip, bool* v, std::function<void()> cb = nullptr)
 {
@@ -98,7 +104,11 @@ bool FeatureCheckbox(const char* label, const char* tip, bool* v, std::function<
 	ImGui::SameLine(ImGui::GetContentRegionAvail().x - 65.f);
 	ImGui::PushID(label);
 	ImGui::PushItemWidth(65.f);
-	custom::Keybind("##kb", &key, &mode);
+	bool keybindAssigned = custom::Keybind("##kb", &key, &mode);
+	if (keybindAssigned && key != 0) {
+		state = true; // Prevent immediate toggle on assign
+		RemoveDuplicateKeybind(key, label); // Clear duplicate from other features
+	}
 	ImGui::PopItemWidth();
 	ImGui::PopID();
 
