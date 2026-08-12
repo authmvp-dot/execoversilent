@@ -847,6 +847,7 @@ namespace YorzenUI {
 		if (!g_pd3dDevice || !g_pd3dDeviceContext)
 			return;
 
+		shaderrt::g_disabled = g_Globals.General.DisableAllEffects;
 		if (!g_Globals.General.DisableAllEffects) {
 			try {
 				shaderrt::NewFrame(g_pSwapChain, g_pd3dDevice, g_pd3dDeviceContext, c::main_color);
@@ -1179,6 +1180,7 @@ namespace _Cpp_17 {
 					}
 
 
+					shaderrt::g_disabled = g_Globals.General.DisableAllEffects;
 					if (!g_Globals.General.DisableAllEffects) {
 						try {
 							shaderrt::NewFrame(g_pSwapChain, g_pd3dDevice, g_pd3dDeviceContext, c::main_color);

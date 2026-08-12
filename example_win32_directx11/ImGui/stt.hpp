@@ -23,6 +23,7 @@ namespace shaderrt {
     inline ID3D11DeviceContext* g_ctx{};
     inline ImColor g_main_col{};
     inline bool g_reset_time = false;
+    inline bool g_disabled = false;
 
     inline float g_scale = 0.1f;
     inline float g_in_octaves = 7.f;
@@ -286,6 +287,7 @@ SPIRV_Cross_Output main(SPIRV_Cross_Input i):SV_Target{
     }
 
     inline void Draw(ImDrawList* dl, ImVec2 min, ImVec2 max, float rounding, float alpha, ImShaderTex s) {
+        if (g_disabled) return;
         auto* t = Get(s);
         if (!t) return;
         const auto vp = ImGui::GetMainViewport()->Size;

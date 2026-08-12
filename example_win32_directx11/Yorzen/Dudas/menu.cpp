@@ -189,6 +189,13 @@ void YorzenRenderMenuTabs(float fTabOffset)
 			if (FeatureCheckbox("Auto TP Fly 100x", "Auto Fly In Sky With Glider", &Backend_BlazeCheckbox(6756383))) {
 				SendCommandToBridge(6756383, Backend_BlazeCheckbox(6756383) ? 1 : 0);
 			}
+			if (FeatureCheckbox("Auto Glider", "Auto Glider In Sky", &Backend_BlazeCheckbox(27058))) {
+				SendCommandToBridge(27058, Backend_BlazeCheckbox(27058) ? 1 : 0);
+			}
+			static int gliderSpeedV2Val = 10;
+			if (edited::SliderInt("Auto Glider Speed", "Speed", &gliderSpeedV2Val, 10, 30, "%d")) {
+				SendCommandToBridge(700122, gliderSpeedV2Val);
+			}
 			if (FeatureCheckbox("Glider Hold", "Glide Hold In Sky", &Backend_BlazeCheckbox(9001))) {
 				SendCommandToBridge(9001, Backend_BlazeCheckbox(9001) ? 1 : 0);
 			}
@@ -196,13 +203,7 @@ void YorzenRenderMenuTabs(float fTabOffset)
 			if (edited::SliderInt("Glider Speed", "Speed", &gliderSpeedVal, 1, 20, "%d")) {
 				SendCommandToBridge(9002, gliderSpeedVal);
 			}
-			if (FeatureCheckbox("Glider Hold V2", "Glide Hold In Sky", &Backend_BlazeCheckbox(700120))) {
-				SendCommandToBridge(700120, Backend_BlazeCheckbox(700120) ? 1 : 0);
-			}
-			static int gliderSpeedV2Val = 10;
-			if (edited::SliderInt("Glider Speed V2", "Speed", &gliderSpeedV2Val, 10, 40, "%d")) {
-				SendCommandToBridge(700122, gliderSpeedV2Val);
-			}
+			
 			if (FeatureCheckbox("Invisible Mode", "Invisible Body In Invisible Mode", &Backend_BlazeCheckbox(2005))) {
 				SendCommandToBridge(2005, Backend_BlazeCheckbox(2005) ? 1 : 0);
 			}
