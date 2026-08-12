@@ -1299,7 +1299,10 @@ namespace custom
 
 		
 
-		GetWindowDrawList()->AddText(ImVec2(total_bb.Min.x + 10.5f, utils::center_text(total_bb.Min, total_bb.Max, label).y), GetColorU32(it_anim->second.text), label);
+		const char* display_end = FindRenderedTextEnd(label);
+		if (display_end > label) {
+			GetWindowDrawList()->AddText(ImVec2(total_bb.Min.x + 10.5f, utils::center_text(total_bb.Min, total_bb.Max, label).y), GetColorU32(it_anim->second.text), label, display_end);
+		}
 
 		if (preview_value && *preview_value) {
 			ImVec2 text_pos = utils::center_text(total_bb.Min, total_bb.Max, preview_value);
