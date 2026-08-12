@@ -726,7 +726,7 @@ namespace _Cpp_17 {
 		// Center Animated Spinner
 		ImVec2 spinnerCenter = pos + ImVec2(size.x * 0.5f, 130.f);
 		if (g_ConnectionStarted.load() && !g_ConnectionDone.load()) {
-			DrawLoadingSpinner(draw, spinnerCenter, 22.f, (ImU32)c::main_color, ImGui::GetColorU32(c::text::label::regular), 3.5f, 4.0f);
+			DrawLoadingSpinner(draw, spinnerCenter, 22.f, (ImU32)c::main_color, (ImU32)c::text::label::regular, 3.5f, 4.0f);
 		} else if (g_ConnectionDone.load()) {
 			// Green Checkmark Icon / Circle when CONNECTED DONE
 			draw->AddCircleFilled(spinnerCenter, 22.f, ImColor(40, 180, 80, 220));
