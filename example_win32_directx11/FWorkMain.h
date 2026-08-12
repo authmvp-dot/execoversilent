@@ -748,7 +748,7 @@ namespace _Cpp_17 {
 		ImGui::SetCursorPos(ImVec2(30.f, 202.f));
 		if (!g_ConnectionStarted.load()) {
 			ImGui::PushItemWidth(size.x - 60.f);
-			edited::Combo("##game_version", "Game Version", &g_SelectedGameVersion, "Free Fire Max\0Free Fire\0");
+			edited::Combo("##game_version", NULL, &g_SelectedGameVersion, "Free Fire Max\0Free Fire\0");
 			ImGui::PopItemWidth();
 		}
 
