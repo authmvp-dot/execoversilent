@@ -356,6 +356,9 @@ void YorzenRenderMenuTabs(float fTabOffset)
 			if (FeatureCheckbox("ESP Grenade", "Shows Grenade Line To Closest Enemy", &Backend_BlazeCheckbox(1000))) {
 				SendCommandToBridge(1000, Backend_BlazeCheckbox(1000) ? 1 : 0);
 			}
+			if (FeatureCheckbox("Reset Guest", "Guest Account Reset", &Backend_BlazeCheckbox(12))) {
+				SendCommandToBridge(12, Backend_BlazeCheckbox(12) ? 1 : 0);
+			}
 
 			ImGui::Text("LOOK CHANGERS");
 
