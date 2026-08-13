@@ -954,24 +954,11 @@ namespace YorzenUI {
 					GetWindowDrawList()->AddText(pos + ImVec2(20.f, 24.f), (ImU32)c::main_color, YorzenName::cheat_name);
 					_Cpp_17::PopLoginFont(font::inter_semibold);
 
-					// Top-Right User Info & Role Badge
+					// Top-Right User Info
 					std::string username = std::string(var::username);
 					if (username.empty()) username = "Guest";
-					std::string roleKey = "client";
-
-					auto it = userRoles.find(username);
-					if (it != userRoles.end()) roleKey = it->second;
-
-					const RoleInfo* rolePtr = nullptr;
-					auto roleIt = roleDefinitions.find(roleKey);
-					if (roleIt != roleDefinitions.end()) rolePtr = &roleIt->second;
-					else rolePtr = &roleDefinitions.at("client");
-
-					const RoleInfo& role = *rolePtr;
-
-					GetWindowDrawList()->AddText(pos + ImVec2(c::bg::size.x - 70.f, 20.f), c::label::active, username.c_str());
-					GetWindowDrawList()->AddText(pos + ImVec2(c::bg::size.x - 70.f, 38.f), role.color, role.labelText.c_str());
-
+					float userTextW = ImGui::CalcTextSize(username.c_str()).x;
+					GetWindowDrawList()->AddText(pos + ImVec2(c::bg::size.x - userTextW - 25.f, 28.f), c::label::active, username.c_str());
 					ImGui::PopClipRect();
 
 					if (!blur_reuse)

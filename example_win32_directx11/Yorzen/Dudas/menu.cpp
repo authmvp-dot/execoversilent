@@ -287,7 +287,7 @@ void YorzenRenderMenuTabs(float fTabOffset)
 			}
 			ImGui::TextColored(g_FireAddress > 0 && g_SpeedAddress > 0 ? ImVec4(0, 1, 0, 1) : ImVec4(1, 0.7f, 0, 1), "Status: %s", g_MemStatus.c_str());
 
-			if (custom::Checkbox("Global Speed", &g_GlobalSpeedState)) {
+			if (FeatureCheckbox("Global Speed", "Speed Hack Global Memory Patch", &g_GlobalSpeedState)) {
 				if (g_GlobalSpeedState) {
 					g_FastFireState = false;
 					if (g_FireAddress > 0) {
@@ -300,7 +300,7 @@ void YorzenRenderMenuTabs(float fTabOffset)
 				}
 			}
 
-			if (custom::Checkbox("Fast Fire", &g_FastFireState)) {
+			if (FeatureCheckbox("Fast Fire", "Fast Weapon Fire Rate Patch", &g_FastFireState)) {
 				if (g_FastFireState) {
 					g_GlobalSpeedState = false;
 					if (g_SpeedAddress > 0) {
