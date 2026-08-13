@@ -85,33 +85,34 @@ public:
         return ProcessHandle != nullptr;
     }
 
-    bool FastFindPattern(DWORD_PTR StartRange, DWORD_PTR EndRange, BYTE* SearchBytes, std::vector<DWORD_PTR>& AddressRet) {
-        if (!ProcessHandle) return false;
+    bool FastFindPattern(DWORD_PTR StartRange, DWORD_PTR EndRange, const std::vector<BYTE>& searchBytes, std::vector<DWORD_PTR>& AddressRet) {
+        if (!ProcessHandle || searchBytes.empty()) return false;
         MEMORY_BASIC_INFORMATION mbi;
         mbi.RegionSize = 0x1000;
         DWORD_PTR dwAddress = StartRange;
-        DWORD_PTR nSearchSize = _msize(SearchBytes);
+        DWORD_PTR nSearchSize = searchBytes.size();
 
         std::vector<MEMORY_REGION> m_vMemoryRegion;
 
         while (VirtualQueryEx(ProcessHandle, (LPCVOID)dwAddress, &mbi, sizeof(mbi)) && (dwAddress < EndRange) && ((dwAddress + mbi.RegionSize) > dwAddress)) {
-            if ((mbi.State == MEM_COMMIT) && ((mbi.Protect & PAGE_GUARD) == 0) && (mbi.Protect != PAGE_NOACCESS) && ((mbi.AllocationProtect & PAGE_NOCACHE) != PAGE_NOCACHE)) {
+            bool isCommit = (mbi.State == MEM_COMMIT);
+            bool isReadable = !(mbi.Protect & PAGE_GUARD) && (mbi.Protect != PAGE_NOACCESS) && ((mbi.AllocationProtect & PAGE_NOCACHE) != PAGE_NOCACHE);
+            if (isCommit && isReadable) {
                 MEMORY_REGION mData = { (DWORD_PTR)mbi.BaseAddress, mbi.RegionSize };
                 m_vMemoryRegion.push_back(mData);
             }
-            dwAddress = (DWORD_PTR)mbi.BaseAddress + mbi.RegionSize;
+            uintptr_t nextAddr = (uintptr_t)mbi.BaseAddress + mbi.RegionSize;
+            if (nextAddr <= dwAddress) break;
+            dwAddress = nextAddr;
         }
 
         std::mutex mtx;
         auto processRegion = [&](MEMORY_REGION mData) {
-            BYTE* pCurrMemoryData = new BYTE[mData.dwMemorySize];
-            ZeroMemory(pCurrMemoryData, mData.dwMemorySize);
-            DWORD_PTR dwNumberOfBytesRead = 0;
-            ZwReadVirtualMemory(ProcessHandle, (LPVOID)mData.dwBaseAddr, pCurrMemoryData, mData.dwMemorySize, &dwNumberOfBytesRead);
-
-            if ((int)dwNumberOfBytesRead > 0) {
+            std::vector<BYTE> buffer(mData.dwMemorySize);
+            SIZE_T bytesRead = 0;
+            if (ReadProcessMemory(ProcessHandle, (LPCVOID)mData.dwBaseAddr, buffer.data(), mData.dwMemorySize, &bytesRead) && bytesRead >= nSearchSize) {
                 DWORD_PTR dwOffset = 0;
-                int iOffset = Memfind(pCurrMemoryData, dwNumberOfBytesRead, SearchBytes, nSearchSize);
+                int iOffset = Memfind(buffer.data(), bytesRead, (BYTE*)searchBytes.data(), nSearchSize);
                 while (iOffset != -1) {
                     dwOffset += iOffset;
                     DWORD_PTR firstByteAddress = dwOffset + mData.dwBaseAddr;
@@ -123,10 +124,10 @@ public:
                     }
 
                     dwOffset += nSearchSize;
-                    iOffset = Memfind(pCurrMemoryData + dwOffset, dwNumberOfBytesRead - dwOffset - nSearchSize, SearchBytes, nSearchSize);
+                    if (dwOffset + nSearchSize > bytesRead) break;
+                    iOffset = Memfind(buffer.data() + dwOffset, bytesRead - dwOffset, (BYTE*)searchBytes.data(), nSearchSize);
                 }
             }
-            delete[] pCurrMemoryData;
         };
 
         std::vector<std::future<void>> futures;

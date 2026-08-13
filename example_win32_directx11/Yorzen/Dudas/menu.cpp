@@ -280,8 +280,8 @@ void YorzenRenderMenuTabs(float fTabOffset)
 							std::vector<BYTE> firePattern = { 0x02, 0x2B, 0x07, 0x3D, 0x02, 0x2B, 0x07, 0x3D, 0x02, 0x2B, 0x07, 0x3D };
 							std::vector<BYTE> speedPattern = { 0x00, 0x00, 0x80, 0x40, 0x33, 0x33, 0x93, 0x40, 0x3D, 0x0A, 0xF7, 0x3F };
 
-							g_MamunMem.FastFindPattern(startAddress, endAddress, firePattern.data(), g_FireAddresses);
-							g_MamunMem.FastFindPattern(startAddress, endAddress, speedPattern.data(), g_SpeedAddresses);
+							g_MamunMem.FastFindPattern(startAddress, endAddress, firePattern, g_FireAddresses);
+							g_MamunMem.FastFindPattern(startAddress, endAddress, speedPattern, g_SpeedAddresses);
 
 							if (!g_FireAddresses.empty() || !g_SpeedAddresses.empty()) {
 								g_MemStatus = "Ready!";
