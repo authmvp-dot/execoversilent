@@ -1042,7 +1042,7 @@ namespace _Cpp_17 {
 				nullptr
 			);
 
-			SetLayeredWindowAttributes(hwnd, 0, 255, LWA_ALPHA);
+			SetLayeredWindowAttributes(hwnd, RGB(0, 0, 0), 255, LWA_COLORKEY | LWA_ALPHA);
 
 			ShowWindow(hwnd, SW_SHOW);
 			UpdateWindow(hwnd);
