@@ -126,35 +126,20 @@ inline void ExecuteBridgeConnectSequence() {
     }
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
-    // Step 4: Auto Launching FF & APK
+    // Step 4: Auto Launching APK & Free Fire Instantly
     g_ConnectionStep = 4;
-    g_CurrentStepLog = "[4/6] Auto-launching APK...";
+    g_CurrentStepLog = "[4/6] Auto-launching APK & Free Fire...";
     RunSilentCommand(adb + target + "shell am start -n com.mamun/.MainActivity --ez LAUNCHED_FROM_EXE true");
     
-    // Wait for 5 seconds to let APK initialize and show its UI/Permissions
-    for (int i = 5; i >= 1; i--) {
-        g_CurrentStepLog = "[4/6] Waiting for APK " + std::to_string(i) + "s...";
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    }
-
-    g_CurrentStepLog = "[4/6] Auto-launching Free Fire Game...";
     if (g_SelectedGameVersion == 0) {
         RunSilentCommand(adb + target + "shell am start -n com.dts.freefiremax/com.dts.freefireth.FFMainActivity");
     } else {
         RunSilentCommand(adb + target + "shell am start -n com.dts.freefireth/com.dts.freefireth.FFMainActivity");
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
-    // Step 5: 5s Safety Delay
+    // Step 5: Socket Bridge Setup (Port 8888)
     g_ConnectionStep = 5;
-    for (int i = 5; i >= 1; i--) {
-        g_CurrentStepLog = "[5/6] System initialized. Delay " + std::to_string(i) + "s for memory setup...";
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    }
-
-    // Step 6: Socket Bridge Connection Handshake
-    g_ConnectionStep = 6;
-    g_CurrentStepLog = "[6/6] Establishing TCP Socket Bridge (Port 8888)...";
+    g_CurrentStepLog = "[5/6] Establishing TCP Socket Bridge (Port 8888)...";
     RunSilentCommand(adb + target + "forward tcp:8888 tcp:8888");
     RunSilentCommand(adb + " forward tcp:8888 tcp:8888");
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
