@@ -958,7 +958,7 @@ namespace YorzenUI {
 					std::string username = std::string(var::username);
 					if (username.empty()) username = "Guest";
 					float userTextW = ImGui::CalcTextSize(username.c_str()).x;
-					GetWindowDrawList()->AddText(pos + ImVec2(c::bg::size.x - userTextW - 25.f, 28.f), c::label::active, username.c_str());
+					GetWindowDrawList()->AddText(pos + ImVec2(c::bg::size.x - userTextW - 50.f, 28.f), c::label::active, username.c_str());
 					ImGui::PopClipRect();
 
 					if (!blur_reuse)

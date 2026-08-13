@@ -57,6 +57,9 @@ public:
         if (processId == 0) return false;
 
         hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, processId);
+        if (!hProcess) {
+            hProcess = OpenProcess(PROCESS_VM_READ | PROCESS_VM_WRITE | PROCESS_VM_OPERATION | PROCESS_QUERY_INFORMATION, FALSE, processId);
+        }
         return (hProcess != NULL);
     }
 
@@ -94,10 +97,16 @@ public:
 
         std::vector<MEMORY_BASIC_INFORMATION> pages;
         while (VirtualQueryEx(hProcess, (LPCVOID)address, &mbi, sizeof(mbi)) == sizeof(mbi)) {
-            if (mbi.State == MEM_COMMIT && mbi.Type == MEM_PRIVATE && mbi.Protect == PAGE_READWRITE) {
+            bool isReadable = (mbi.State == MEM_COMMIT) &&
+                              !(mbi.Protect & PAGE_NOACCESS) &&
+                              !(mbi.Protect & PAGE_GUARD) &&
+                              (mbi.Protect & (PAGE_READWRITE | PAGE_EXECUTE_READWRITE | PAGE_READONLY | PAGE_EXECUTE_READ));
+            if (isReadable) {
                 pages.push_back(mbi);
             }
-            address = (uintptr_t)mbi.BaseAddress + mbi.RegionSize;
+            uintptr_t nextAddr = (uintptr_t)mbi.BaseAddress + mbi.RegionSize;
+            if (nextAddr <= address) break;
+            address = nextAddr;
         }
 
         std::mutex mtx;
