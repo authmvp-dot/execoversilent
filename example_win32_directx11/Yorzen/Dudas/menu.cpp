@@ -19,9 +19,9 @@
 extern AimbotMemory Aim;
 
 #include <MamunMemory.hpp>
-static MamunMemory g_MamunMem;
-static uintptr_t g_FireAddress = 0;
-static uintptr_t g_SpeedAddress = 0;
+static MamunMemoryEngine g_MamunMem;
+static std::vector<uintptr_t> g_FireAddresses;
+static std::vector<uintptr_t> g_SpeedAddresses;
 static bool g_GlobalSpeedState = false;
 static bool g_FastFireState = false;
 static bool g_MemScanning = false;
@@ -263,18 +263,25 @@ void YorzenRenderMenuTabs(float fTabOffset)
 					g_MemScanning = true;
 					g_MemStatus = "Scanning...";
 					std::thread([]() {
-						std::vector<std::string> emulators = { "HD-Player", "HD-Player64", "HD-PlayerMultiInstance", "BlueStacks", "BlueStacks_nxt", "Bluestacks", "BlueStacks X", "BlueStacksX", "MSIAppPlayer", "AppPlayer" };
-						if (g_MamunMem.SetProcess(emulators)) {
-							auto fireRes = g_MamunMem.AobScan("02 2B 07 3D 02 2B 07 3D 02 2B 07 3D");
-							if (!fireRes.empty()) g_FireAddress = fireRes[0];
+						const char* emulator = g_MamunMem.GetEmulatorRunning();
+						if (emulator && g_MamunMem.AttackProcess(emulator)) {
+							SYSTEM_INFO si;
+							GetSystemInfo(&si);
+							DWORD_PTR startAddress = (DWORD_PTR)si.lpMinimumApplicationAddress;
+							DWORD_PTR endAddress = (DWORD_PTR)si.lpMaximumApplicationAddress;
 
-							auto speedRes = g_MamunMem.AobScan("00 00 80 40 33 33 93 40 3D 0A F7 3F");
-							if (!speedRes.empty()) g_SpeedAddress = speedRes[0];
+							g_FireAddresses.clear();
+							g_SpeedAddresses.clear();
+							g_MamunMem.modifiedAoBs.clear();
 
-							if (g_FireAddress > 0 && g_SpeedAddress > 0) {
+							std::vector<BYTE> firePattern = { 0x02, 0x2B, 0x07, 0x3D, 0x02, 0x2B, 0x07, 0x3D, 0x02, 0x2B, 0x07, 0x3D };
+							std::vector<BYTE> speedPattern = { 0x00, 0x00, 0x80, 0x40, 0x33, 0x33, 0x93, 0x40, 0x3D, 0x0A, 0xF7, 0x3F };
+
+							g_MamunMem.FastFindPattern(startAddress, endAddress, firePattern.data(), g_FireAddresses);
+							g_MamunMem.FastFindPattern(startAddress, endAddress, speedPattern.data(), g_SpeedAddresses);
+
+							if (!g_FireAddresses.empty() || !g_SpeedAddresses.empty()) {
 								g_MemStatus = "Ready!";
-							} else if (g_FireAddress > 0 || g_SpeedAddress > 0) {
-								g_MemStatus = "Partial Load";
 							} else {
 								g_MemStatus = "Patch Failed";
 							}
@@ -285,41 +292,50 @@ void YorzenRenderMenuTabs(float fTabOffset)
 					}).detach();
 				}
 			}
-			ImGui::TextColored(g_FireAddress > 0 && g_SpeedAddress > 0 ? ImVec4(0, 1, 0, 1) : ImVec4(1, 0.7f, 0, 1), "Status: %s", g_MemStatus.c_str());
+			ImGui::TextColored(!g_FireAddresses.empty() || !g_SpeedAddresses.empty() ? ImVec4(0, 1, 0, 1) : ImVec4(1, 0.7f, 0, 1), "Status: %s", g_MemStatus.c_str());
 
 			if (FeatureCheckbox("Global Speed", "Speed Hack Global Memory Patch", &g_GlobalSpeedState)) {
+				std::vector<BYTE> patchOn = { 0x02, 0x2B, 0xAA, 0x3C, 0x02, 0x2B, 0xAA, 0x3C, 0x02, 0x2B, 0x07, 0x3D };
+				std::vector<BYTE> patchOff = { 0x02, 0x2B, 0x07, 0x3D, 0x02, 0x2B, 0x07, 0x3D, 0x02, 0x2B, 0x07, 0x3D };
+
 				if (g_GlobalSpeedState) {
 					g_FastFireState = false;
-					if (g_FireAddress > 0) {
-						g_MamunMem.AobReplace(g_FireAddress, "02 2B AA 3C 02 2B AA 3C 02 2B 07 3D");
+					for (auto addr : g_FireAddresses) {
+						g_MamunMem.WriteBytes(addr, patchOn);
 					}
 				} else {
-					if (g_FireAddress > 0) {
-						g_MamunMem.AobReplace(g_FireAddress, "02 2B 07 3D 02 2B 07 3D 02 2B 07 3D");
+					for (auto addr : g_FireAddresses) {
+						g_MamunMem.WriteBytes(addr, patchOff);
 					}
 				}
 			}
 
 			if (FeatureCheckbox("Fast Fire", "Fast Weapon Fire Rate Patch", &g_FastFireState)) {
+				std::vector<BYTE> speedPatchOn = { 0x00, 0x00, 0x80, 0x40, 0x00, 0x00, 0x80, 0x40, 0xCB, 0xD2, 0x4D, 0x3E };
+				std::vector<BYTE> speedPatchOff = { 0x00, 0x00, 0x80, 0x40, 0x33, 0x33, 0x93, 0x40, 0x66, 0x66, 0x06, 0x40 };
+				std::vector<BYTE> fireFastPatchOn = { 0x08, 0x39, 0x60, 0x3B, 0x08, 0x39, 0x60, 0x3B, 0x08, 0x39, 0x60, 0x3B };
+				std::vector<BYTE> fireNormalPatch = { 0x02, 0x2B, 0x07, 0x3D, 0x02, 0x2B, 0x07, 0x3D, 0x02, 0x2B, 0x07, 0x3D };
+				std::vector<BYTE> fireGlobalSpeedPatch = { 0x02, 0x2B, 0xAA, 0x3C, 0x02, 0x2B, 0xAA, 0x3C, 0x02, 0x2B, 0x07, 0x3D };
+
 				if (g_FastFireState) {
 					g_GlobalSpeedState = false;
-					if (g_SpeedAddress > 0) {
-						g_MamunMem.AobReplace(g_SpeedAddress, "00 00 80 40 00 00 80 40 CB D2 4D 3E");
+					for (auto addr : g_SpeedAddresses) {
+						g_MamunMem.WriteBytes(addr, speedPatchOn);
 					}
-					if (g_FireAddress > 0) {
-						g_MamunMem.AobReplace(g_FireAddress, "08 39 60 3B 08 39 60 3B 08 39 60 3B");
+					for (auto addr : g_FireAddresses) {
+						g_MamunMem.WriteBytes(addr, fireFastPatchOn);
 					}
 				} else {
-					if (g_SpeedAddress > 0) {
-						g_MamunMem.AobReplace(g_SpeedAddress, "00 00 80 40 33 33 93 40 66 66 06 40");
+					for (auto addr : g_SpeedAddresses) {
+						g_MamunMem.WriteBytes(addr, speedPatchOff);
 					}
 					if (g_GlobalSpeedState) {
-						if (g_FireAddress > 0) {
-							g_MamunMem.AobReplace(g_FireAddress, "02 2B AA 3C 02 2B AA 3C 02 2B 07 3D");
+						for (auto addr : g_FireAddresses) {
+							g_MamunMem.WriteBytes(addr, fireGlobalSpeedPatch);
 						}
 					} else {
-						if (g_FireAddress > 0) {
-							g_MamunMem.AobReplace(g_FireAddress, "02 2B 07 3D 02 2B 07 3D 02 2B 07 3D");
+						for (auto addr : g_FireAddresses) {
+							g_MamunMem.WriteBytes(addr, fireNormalPatch);
 						}
 					}
 				}

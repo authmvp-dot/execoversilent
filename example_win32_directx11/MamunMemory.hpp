@@ -1,174 +1,167 @@
 #pragma once
-#include <windows.h>
-#include <tlhelp32.h>
+#include <Windows.h>
 #include <vector>
 #include <string>
+#include <unordered_map>
+#include <iostream>
+#include <TlHelp32.h>
+#include <tchar.h>
+#define WIN32_LEAN_AND_MEAN
+#include <winternl.h>
 #include <sstream>
-#include <iomanip>
-#include <algorithm>
-#include <thread>
+#include <mmsystem.h>
 #include <mutex>
+#include <future>
 
-class MamunMemory {
+#pragma comment(lib, "winmm.lib")
+#pragma comment(lib, "ntdll.lib")
+
+extern "C" NTSTATUS ZwReadVirtualMemory(HANDLE hProcess, LPVOID lpBaseAddress, void* lpBuffer, SIZE_T nSize, SIZE_T* lpNumberOfBytesRead = NULL);
+extern "C" NTSTATUS ZwWriteVirtualMemory(HANDLE hProcess, LPVOID lpBaseAddress, void* lpBuffer, SIZE_T nSize, SIZE_T* lpNumberOfBytesRead = NULL);
+extern "C" NTSTATUS ZwProtectVirtualMemory(HANDLE hProcess, LPVOID BaseAddress, size_t NumberOfBytesToProtect, ULONG NewAccessProtection, PULONG OldAccessProtection);
+
+class MamunMemoryEngine {
 public:
-    HANDLE hProcess = NULL;
-    DWORD processId = 0;
+    DWORD ProcessId = 0;
+    HANDLE ProcessHandle = nullptr;
 
-    ~MamunMemory() {
-        if (hProcess && hProcess != INVALID_HANDLE_VALUE) {
-            CloseHandle(hProcess);
-            hProcess = NULL;
-        }
+    typedef struct _MEMORY_REGION
+    {
+        DWORD_PTR dwBaseAddr;
+        DWORD_PTR dwMemorySize;
+    } MEMORY_REGION;
+
+    std::unordered_map<DWORD_PTR, int> modifiedAoBs;
+
+    const char* GetEmulatorRunning()
+    {
+        if (GetPid("HD-Player.exe") != 0) return "HD-Player.exe";
+        else if (GetPid("HD-Player") != 0) return "HD-Player";
+        else if (GetPid("HD-Player64.exe") != 0) return "HD-Player64.exe";
+        else if (GetPid("HD-Player64") != 0) return "HD-Player64";
+        else if (GetPid("MEmuHeadless.exe") != 0) return "MEmuHeadless.exe";
+        else if (GetPid("LdVBoxHeadless.exe") != 0) return "LdVBoxHeadless.exe";
+        else if (GetPid("AndroidProcess.exe") != 0) return "AndroidProcess.exe";
+        else if (GetPid("Nox.exe") != 0) return "Nox.exe";
+        return nullptr;
     }
 
-    bool SetProcess(const std::vector<std::string>& processNames) {
-        if (hProcess && processId > 0) {
-            DWORD exitCode = 0;
-            if (GetExitCodeProcess(hProcess, &exitCode) && exitCode == STILL_ACTIVE) {
-                return true;
-            }
-            CloseHandle(hProcess);
-            hProcess = NULL;
-            processId = 0;
-        }
+    int GetPid(const char* procname)
+    {
+        if (procname == NULL) return 0;
+        DWORD pid = 0;
+        DWORD threadCount = 0;
 
-        HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-        if (hSnapshot == INVALID_HANDLE_VALUE) return false;
+        HANDLE hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+        if (hSnap == INVALID_HANDLE_VALUE) return 0;
 
-        PROCESSENTRY32W pe32;
-        pe32.dwSize = sizeof(PROCESSENTRY32W);
-
-        if (Process32FirstW(hSnapshot, &pe32)) {
+        PROCESSENTRY32 pe;
+        pe.dwSize = sizeof(PROCESSENTRY32);
+        if (Process32First(hSnap, &pe)) {
             do {
-                std::wstring wName(pe32.szExeFile);
-                std::string exeName(wName.begin(), wName.end());
-                for (const auto& target : processNames) {
-                    if (_stricmp(exeName.c_str(), target.c_str()) == 0 ||
-                        _stricmp(exeName.c_str(), (target + ".exe").c_str()) == 0) {
-                        processId = pe32.th32ProcessID;
-                        break;
+                if (_tcsicmp(pe.szExeFile, procname) == 0) {
+                    if ((int)pe.cntThreads > threadCount) {
+                        threadCount = pe.cntThreads;
+                        pid = pe.th32ProcessID;
                     }
                 }
-                if (processId > 0) break;
-            } while (Process32NextW(hSnapshot, &pe32));
+            } while (Process32Next(hSnap, &pe));
         }
-        CloseHandle(hSnapshot);
-
-        if (processId == 0) return false;
-
-        hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, processId);
-        if (!hProcess) {
-            hProcess = OpenProcess(PROCESS_VM_READ | PROCESS_VM_WRITE | PROCESS_VM_OPERATION | PROCESS_QUERY_INFORMATION, FALSE, processId);
-        }
-        return (hProcess != NULL);
+        CloseHandle(hSnap);
+        return pid;
     }
 
-    struct PatternData {
-        std::vector<BYTE> pattern;
-        std::vector<BYTE> mask;
-    };
+    BOOL AttackProcess(const char* procname)
+    {
+        if (!procname) return false;
+        DWORD ProcId = GetPid(procname);
+        if (ProcId == 0) return false;
 
-    static PatternData ParsePattern(const std::string& patternStr) {
-        PatternData pd;
-        std::stringstream ss(patternStr);
-        std::string token;
-        while (ss >> token) {
-            if (token == "??" || token == "?") {
-                pd.pattern.push_back(0x00);
-                pd.mask.push_back(0x00);
-            } else {
-                BYTE val = (BYTE)strtoul(token.c_str(), nullptr, 16);
-                pd.pattern.push_back(val);
-                pd.mask.push_back(0xFF);
-            }
+        ProcessId = ProcId;
+        ProcessHandle = OpenProcess(PROCESS_ALL_ACCESS, 0, ProcessId);
+        if (!ProcessHandle) {
+            ProcessHandle = OpenProcess(PROCESS_VM_READ | PROCESS_VM_WRITE | PROCESS_VM_OPERATION | PROCESS_QUERY_INFORMATION, 0, ProcessId);
         }
-        return pd;
+        return ProcessHandle != nullptr;
     }
 
-    std::vector<uintptr_t> AobScan(const std::string& patternStr) {
-        std::vector<uintptr_t> results;
-        if (!hProcess) return results;
-
-        PatternData pd = ParsePattern(patternStr);
-        if (pd.pattern.empty()) return results;
-
+    bool FastFindPattern(DWORD_PTR StartRange, DWORD_PTR EndRange, BYTE* SearchBytes, std::vector<DWORD_PTR>& AddressRet) {
+        if (!ProcessHandle) return false;
         MEMORY_BASIC_INFORMATION mbi;
-        uintptr_t address = 0;
+        mbi.RegionSize = 0x1000;
+        DWORD_PTR dwAddress = StartRange;
+        DWORD_PTR nSearchSize = _msize(SearchBytes);
 
-        std::vector<MEMORY_BASIC_INFORMATION> pages;
-        while (VirtualQueryEx(hProcess, (LPCVOID)address, &mbi, sizeof(mbi)) == sizeof(mbi)) {
-            bool isReadable = (mbi.State == MEM_COMMIT) &&
-                              !(mbi.Protect & PAGE_NOACCESS) &&
-                              !(mbi.Protect & PAGE_GUARD) &&
-                              (mbi.Protect & (PAGE_READWRITE | PAGE_EXECUTE_READWRITE | PAGE_READONLY | PAGE_EXECUTE_READ));
-            if (isReadable) {
-                pages.push_back(mbi);
+        std::vector<MEMORY_REGION> m_vMemoryRegion;
+
+        while (VirtualQueryEx(ProcessHandle, (LPCVOID)dwAddress, &mbi, sizeof(mbi)) && (dwAddress < EndRange) && ((dwAddress + mbi.RegionSize) > dwAddress)) {
+            if ((mbi.State == MEM_COMMIT) && ((mbi.Protect & PAGE_GUARD) == 0) && (mbi.Protect != PAGE_NOACCESS) && ((mbi.AllocationProtect & PAGE_NOCACHE) != PAGE_NOCACHE)) {
+                MEMORY_REGION mData = { (DWORD_PTR)mbi.BaseAddress, mbi.RegionSize };
+                m_vMemoryRegion.push_back(mData);
             }
-            uintptr_t nextAddr = (uintptr_t)mbi.BaseAddress + mbi.RegionSize;
-            if (nextAddr <= address) break;
-            address = nextAddr;
+            dwAddress = (DWORD_PTR)mbi.BaseAddress + mbi.RegionSize;
         }
 
         std::mutex mtx;
-        size_t patternLen = pd.pattern.size();
+        auto processRegion = [&](MEMORY_REGION mData) {
+            BYTE* pCurrMemoryData = new BYTE[mData.dwMemorySize];
+            ZeroMemory(pCurrMemoryData, mData.dwMemorySize);
+            DWORD_PTR dwNumberOfBytesRead = 0;
+            ZwReadVirtualMemory(ProcessHandle, (LPVOID)mData.dwBaseAddr, pCurrMemoryData, mData.dwMemorySize, &dwNumberOfBytesRead);
 
-        auto worker = [&](size_t startIdx, size_t endIdx) {
-            for (size_t i = startIdx; i < endIdx; ++i) {
-                const auto& page = pages[i];
-                std::vector<BYTE> buffer(page.RegionSize);
-                SIZE_T bytesRead = 0;
-                
-                if (ReadProcessMemory(hProcess, page.BaseAddress, buffer.data(), page.RegionSize, &bytesRead) && bytesRead >= patternLen) {
-                    for (size_t pos = 0; pos <= bytesRead - patternLen; ++pos) {
-                        bool match = true;
-                        for (size_t k = 0; k < patternLen; ++k) {
-                            if ((buffer[pos + k] & pd.mask[k]) != (pd.pattern[k] & pd.mask[k])) {
-                                match = false;
-                                break;
-                            }
-                        }
-                        if (match) {
-                            std::lock_guard<std::mutex> lock(mtx);
-                            results.push_back((uintptr_t)page.BaseAddress + pos);
-                        }
+            if ((int)dwNumberOfBytesRead > 0) {
+                DWORD_PTR dwOffset = 0;
+                int iOffset = Memfind(pCurrMemoryData, dwNumberOfBytesRead, SearchBytes, nSearchSize);
+                while (iOffset != -1) {
+                    dwOffset += iOffset;
+                    DWORD_PTR firstByteAddress = dwOffset + mData.dwBaseAddr;
+
+                    std::lock_guard<std::mutex> lock(mtx);
+                    if (modifiedAoBs.find(firstByteAddress) == modifiedAoBs.end()) {
+                        AddressRet.push_back(firstByteAddress);
+                        modifiedAoBs[firstByteAddress] = 1;
                     }
+
+                    dwOffset += nSearchSize;
+                    iOffset = Memfind(pCurrMemoryData + dwOffset, dwNumberOfBytesRead - dwOffset - nSearchSize, SearchBytes, nSearchSize);
                 }
             }
+            delete[] pCurrMemoryData;
         };
 
-        unsigned int numThreads = std::thread::hardware_concurrency();
-        if (numThreads == 0) numThreads = 4;
-        std::vector<std::thread> threads;
-        size_t totalPages = pages.size();
-        size_t chunkSize = (totalPages + numThreads - 1) / numThreads;
-
-        for (unsigned int t = 0; t < numThreads; ++t) {
-            size_t startIdx = t * chunkSize;
-            size_t endIdx = (std::min)(startIdx + chunkSize, totalPages);
-            if (startIdx < endIdx) {
-                threads.emplace_back(worker, startIdx, endIdx);
-            }
+        std::vector<std::future<void>> futures;
+        for (auto& region : m_vMemoryRegion) {
+            futures.push_back(std::async(std::launch::async, processRegion, region));
         }
 
-        for (auto& th : threads) {
-            if (th.joinable()) th.join();
+        for (auto& fut : futures) {
+            fut.get();
         }
 
-        std::sort(results.begin(), results.end());
-        return results;
+        return true;
     }
 
-    bool AobReplace(uintptr_t address, const std::string& hexPattern) {
-        if (!hProcess || address == 0) return false;
-        std::stringstream ss(hexPattern);
-        std::string token;
-        std::vector<BYTE> bytes;
-        while (ss >> token) {
-            bytes.push_back((BYTE)strtoul(token.c_str(), nullptr, 16));
+    int Memfind(BYTE* buffer, DWORD_PTR dwBufferSize, BYTE* bstr, DWORD_PTR dwStrLen)
+    {
+        if (dwBufferSize < 0) return -1;
+        DWORD_PTR i, j;
+        for (i = 0; i < dwBufferSize; i++) {
+            for (j = 0; j < dwStrLen; j++) {
+                if (buffer[i + j] != bstr[j] && bstr[j] != '?')
+                    break;
+            }
+            if (j == dwStrLen) return i;
         }
-        if (bytes.empty()) return false;
+        return -1;
+    }
 
+    bool WriteBytes(DWORD_PTR address, const std::vector<BYTE>& bytes) {
+        if (!ProcessHandle || address == 0 || bytes.empty()) return false;
+        DWORD oldProtect;
+        VirtualProtectEx(ProcessHandle, (LPVOID)address, bytes.size(), PAGE_EXECUTE_READWRITE, &oldProtect);
         SIZE_T written = 0;
-        return WriteProcessMemory(hProcess, (LPVOID)address, bytes.data(), bytes.size(), &written) && written == bytes.size();
+        bool result = WriteProcessMemory(ProcessHandle, (LPVOID)address, bytes.data(), bytes.size(), &written);
+        VirtualProtectEx(ProcessHandle, (LPVOID)address, bytes.size(), oldProtect, &oldProtect);
+        return result;
     }
 };
