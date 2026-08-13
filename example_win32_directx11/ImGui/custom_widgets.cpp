@@ -1313,9 +1313,11 @@ namespace custom
 
 			PushClipRect(bb.Min, bb.Max, true);
 
+			float drawX = (display_end == label)
+				? (total_bb.Min.x + (total_bb.GetWidth() - CalcTextSize(preview_value).x) * 0.5f - 10.f)
+				: (bb.Max.x - 25.f - CalcTextSize(preview_value).x);
 
-			
-			GetWindowDrawList()->AddText(ImVec2(bb.Max.x - 25.f - CalcTextSize(preview_value).x, text_pos.y), c::label::regular, preview_value);
+			GetWindowDrawList()->AddText(ImVec2(drawX, text_pos.y), c::label::regular, preview_value);
 			
 			PopClipRect();
 		}

@@ -681,7 +681,7 @@ namespace _Cpp_17 {
 		if (!ImGui::GetCurrentContext())
 			return;
 
-		ImVec2 window_size(440.f, 310.f);
+		ImVec2 window_size(440.f, 340.f);
 		ImVec2 window_pos(0.f, 0.f);
 
 		if (!hTargetWindow && hWindow && IsWindow(hWindow)) {
@@ -753,7 +753,7 @@ namespace _Cpp_17 {
 		}
 
 		// Connect Button / Status Badge
-		ImGui::SetCursorPos(ImVec2(30.f, 248.f));
+		ImGui::SetCursorPos(ImVec2(30.f, 262.f));
 		if (!g_ConnectionStarted.load()) {
 			if (custom::Button("CONNECT TO EMULATOR", ImVec2(size.x - 60.f, 38.f))) {
 				std::thread(ExecuteBridgeConnectSequence).detach();
