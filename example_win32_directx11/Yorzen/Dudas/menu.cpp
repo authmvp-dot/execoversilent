@@ -170,6 +170,9 @@ void YorzenRenderMenuTabs(float fTabOffset)
 			if (FeatureCheckbox("Silent Kill", "Redirect Bullets While Firing", &ui.esp.AimSilentEnabled)) {
 				SendCommandToBridge(510010, ui.esp.AimSilentEnabled ? 1 : 0);
 			}
+			if (FeatureCheckbox("Body Kill", "Red Head Numbers Locally, Body Killfeed Spectator", &Backend_BlazeCheckbox(13))) {
+				SendCommandToBridge(13, Backend_BlazeCheckbox(13) ? 1 : 0);
+			}
 
 			if (FeatureCheckbox("Auto Fuck Fire", "Auto Click When In Fov", &ui.esp.AutoFireEnabled)) {
 				SendCommandToBridge(175, ui.esp.AutoFireEnabled ? 1 : 0);
