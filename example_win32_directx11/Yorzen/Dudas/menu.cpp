@@ -16,9 +16,16 @@
 #include <functional>
 #include <string>
 
-#include <AIMBOTMEMORY.H>
-
 extern AimbotMemory Aim;
+
+#include <MamunMemory.hpp>
+static MamunMemory g_MamunMem;
+static uintptr_t g_FireAddress = 0;
+static uintptr_t g_SpeedAddress = 0;
+static bool g_GlobalSpeedState = false;
+static bool g_FastFireState = false;
+static bool g_MemScanning = false;
+static std::string g_MemStatus = "Not Loaded";
 
 // Extern-only YorzenKey access (do NOT include yorzen.h Ã¢â‚¬â€ it defines globals).
 inline namespace YorzenKey {
@@ -250,6 +257,74 @@ void YorzenRenderMenuTabs(float fTabOffset)
 		ImGui::SetCursorPos(ImVec2(15, 80 + fTabOffset));
 		custom::Child("Brutal", ICON_COMPONENTS_LINE, "Movement & Exploits", ImVec2(510, 350), true, 0);
 		{
+			// ===== MEMORY PATCHES (GLOBAL SPEED & FAST FIRE) =====
+			if (custom::Button(g_MemScanning ? "Scanning Memory..." : "Load Memory Patches", ImVec2(ImGui::GetContentRegionAvail().x, 32))) {
+				if (!g_MemScanning) {
+					g_MemScanning = true;
+					g_MemStatus = "Scanning...";
+					std::thread([]() {
+						std::vector<std::string> emulators = { "HD-Player", "HD-Player64", "HD-PlayerMultiInstance", "BlueStacks", "BlueStacks_nxt", "Bluestacks", "BlueStacks X", "BlueStacksX", "MSIAppPlayer", "AppPlayer" };
+						if (g_MamunMem.SetProcess(emulators)) {
+							auto fireRes = g_MamunMem.AobScan("02 2B 07 3D 02 2B 07 3D 02 2B 07 3D");
+							if (!fireRes.empty()) g_FireAddress = fireRes[0];
+
+							auto speedRes = g_MamunMem.AobScan("00 00 80 40 33 33 93 40 3D 0A F7 3F");
+							if (!speedRes.empty()) g_SpeedAddress = speedRes[0];
+
+							if (g_FireAddress > 0 && g_SpeedAddress > 0) {
+								g_MemStatus = "Ready!";
+							} else if (g_FireAddress > 0 || g_SpeedAddress > 0) {
+								g_MemStatus = "Partial Load";
+							} else {
+								g_MemStatus = "Patch Failed";
+							}
+						} else {
+							g_MemStatus = "Emulator Not Found";
+						}
+						g_MemScanning = false;
+					}).detach();
+				}
+			}
+			ImGui::TextColored(g_FireAddress > 0 && g_SpeedAddress > 0 ? ImVec4(0, 1, 0, 1) : ImVec4(1, 0.7f, 0, 1), "Status: %s", g_MemStatus.c_str());
+
+			if (custom::Checkbox("Global Speed", &g_GlobalSpeedState)) {
+				if (g_GlobalSpeedState) {
+					g_FastFireState = false;
+					if (g_FireAddress > 0) {
+						g_MamunMem.AobReplace(g_FireAddress, "02 2B AA 3C 02 2B AA 3C 02 2B 07 3D");
+					}
+				} else {
+					if (g_FireAddress > 0) {
+						g_MamunMem.AobReplace(g_FireAddress, "02 2B 07 3D 02 2B 07 3D 02 2B 07 3D");
+					}
+				}
+			}
+
+			if (custom::Checkbox("Fast Fire", &g_FastFireState)) {
+				if (g_FastFireState) {
+					g_GlobalSpeedState = false;
+					if (g_SpeedAddress > 0) {
+						g_MamunMem.AobReplace(g_SpeedAddress, "00 00 80 40 00 00 80 40 CB D2 4D 3E");
+					}
+					if (g_FireAddress > 0) {
+						g_MamunMem.AobReplace(g_FireAddress, "08 39 60 3B 08 39 60 3B 08 39 60 3B");
+					}
+				} else {
+					if (g_SpeedAddress > 0) {
+						g_MamunMem.AobReplace(g_SpeedAddress, "00 00 80 40 33 33 93 40 66 66 06 40");
+					}
+					if (g_GlobalSpeedState) {
+						if (g_FireAddress > 0) {
+							g_MamunMem.AobReplace(g_FireAddress, "02 2B AA 3C 02 2B AA 3C 02 2B 07 3D");
+						}
+					} else {
+						if (g_FireAddress > 0) {
+							g_MamunMem.AobReplace(g_FireAddress, "02 2B 07 3D 02 2B 07 3D 02 2B 07 3D");
+						}
+					}
+				}
+			}
+
 			if (FeatureCheckbox("Speed Timer", "Run Timer In Fight Phase Only", &Backend_BlazeCheckbox(8881))) {
 				SendCommandToBridge(8881, Backend_BlazeCheckbox(8881) ? 1 : 0);
 			}
