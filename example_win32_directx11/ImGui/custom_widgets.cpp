@@ -1256,9 +1256,11 @@ namespace custom
 		const ImVec2 label_size = CalcTextSize(label, NULL, true);
 		const float w = ((GetContentRegionMax().x - style.WindowPadding.x));
 
+		const char* display_end = FindRenderedTextEnd(label);
+
 		const ImRect total_bb(pos, pos + ImVec2(w, 47));
 
-		const ImRect bb_box(total_bb.Max - ImVec2(total_bb.GetWidth() / 2, total_bb.GetHeight()), total_bb.Max);
+		const ImRect bb_box((display_end == label) ? total_bb.Min : (total_bb.Max - ImVec2(total_bb.GetWidth() / 2, total_bb.GetHeight())), total_bb.Max);
 
 		const ImRect bb(bb_box.Min + ImVec2(10.5f, 8.5f), bb_box.Max - ImVec2(10.5f, 8.5f));
 
@@ -1299,7 +1301,6 @@ namespace custom
 
 		
 
-		const char* display_end = FindRenderedTextEnd(label);
 		if (display_end > label) {
 			GetWindowDrawList()->AddText(ImVec2(total_bb.Min.x + 10.5f, utils::center_text(total_bb.Min, total_bb.Max, label).y), GetColorU32(it_anim->second.text), label, display_end);
 		}
@@ -1314,7 +1315,7 @@ namespace custom
 			PushClipRect(bb.Min, bb.Max, true);
 
 			float drawX = (display_end == label)
-				? (total_bb.Min.x + (total_bb.GetWidth() - CalcTextSize(preview_value).x) * 0.5f - 10.f)
+				? (total_bb.Min.x + (total_bb.GetWidth() - CalcTextSize(preview_value).x) * 0.5f)
 				: (bb.Max.x - 25.f - CalcTextSize(preview_value).x);
 
 			GetWindowDrawList()->AddText(ImVec2(drawX, text_pos.y), c::label::regular, preview_value);
