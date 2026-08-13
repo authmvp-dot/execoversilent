@@ -126,9 +126,10 @@ inline void ExecuteBridgeConnectSequence() {
     }
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
-    // Step 4: Auto Launching APK & Free Fire Instantly
+    // Step 4: Auto Launching APK & Selected Game Instantly
     g_ConnectionStep = 4;
-    g_CurrentStepLog = "[4/6] Auto-launching APK & Free Fire...";
+    std::string gameName = (g_SelectedGameVersion == 0) ? "Free Fire Max" : "Free Fire";
+    g_CurrentStepLog = "[4/6] Auto-launching APK & " + gameName + "...";
     RunSilentCommand(adb + target + "shell am start -n com.mamun/.MainActivity --ez LAUNCHED_FROM_EXE true");
     
     if (g_SelectedGameVersion == 0) {
