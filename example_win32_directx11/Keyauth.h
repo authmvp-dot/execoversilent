@@ -16,7 +16,7 @@ namespace KeyAuthClient {
     inline const std::string name = "AIMKILLEXE";
     inline const std::string ownerid = "dcc307c596";
     inline const std::string version = "1.0";
-    inline const std::string url = "http://syzoraauth.mvpcheats.online/api/1.3/";
+    inline const std::string url = "http://syzoraauth.mvpcheats.online/api/1.2/";
     inline const std::string path = "";
 
     inline api Internal(name, ownerid, version, url, path);
